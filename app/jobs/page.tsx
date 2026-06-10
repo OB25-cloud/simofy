@@ -1,0 +1,18 @@
+import { supabase } from '@/lib/supabase'
+import JobsView from '@/app/components/jobs/JobsView'
+
+export const dynamic = 'force-dynamic'
+
+export default async function JobsPage() {
+  const [{ data: jobs }, { data: clients }, { data: staff }] = await Promise.all([
+    supabase.from('jobs').select('*, clients(name, business_name), staff(name)').order('created_at', { ascending: false }),
+    supabase.from('clients').select('id, name, business_name').order('name'),
+    supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
+  ])
+
+  return (
+    <div className="p-8">
+      <JobsView jobs={jobs ?? []} clients={clients ?? []} staff={staff ?? []} />
+    </div>
+  )
+}
