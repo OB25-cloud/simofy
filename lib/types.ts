@@ -47,6 +47,48 @@ export type Staff = {
   created_at: string
 }
 
+export type Quote = {
+  id: string
+  client_id: string | null
+  job_id: string | null
+  status: string | null
+  valid_until: string | null
+  notes: string | null
+  subtotal: number | null
+  gst: number | null
+  total: number | null
+  created_at: string
+  clients: { name: string; email: string | null; phone: string | null } | null
+  jobs: { title: string | null; job_type: string | null } | null
+}
+
+export type QuoteLineItem = {
+  id: string
+  quote_id: string
+  description: string | null
+  quantity: number | null
+  unit_price: number | null
+  amount: number | null
+  sort_order: number | null
+}
+
+export type Invoice = {
+  id: string
+  client_id: string | null
+  job_id: string | null
+  quote_id: string | null
+  amount: number | null
+  tax: number | null
+  total: number | null
+  status: string | null
+  due_date: string | null
+  notes: string | null
+  created_at: string
+  clients: { name: string; email: string | null; phone: string | null } | null
+  jobs: { title: string | null; job_type: string | null } | null
+  quotes: { id: string } | null
+}
+
 export type JobPhoto = {
   id: string
   job_id: string

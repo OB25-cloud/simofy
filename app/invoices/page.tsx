@@ -1,22 +1,28 @@
-export default function InvoicesPage() {
+import { supabase } from '@/lib/supabase'
+import type { Invoice, Client, Job, Quote } from '@/lib/types'
+import InvoicesView from '@/app/components/invoices/InvoicesView'
+
+export const dynamic = 'force-dynamic'
+
+export default async function InvoicesPage() {
+  const [{ data: invoices }, { data: clients }, { data: jobs }, { data: quotes }] = await Promise.all([
+    supabase
+      .from('invoices')
+      .select('*, clients(name, email, phone), jobs(title, job_type), quotes(id)')
+      .order('created_at', { ascending: false }),
+    supabase.from('clients').select('id, name, business_name').order('name'),
+    supabase.from('jobs').select('id, title, job_type, client_id').order('created_at', { ascending: false }),
+    supabase.from('quotes').select('id, client_id, total').order('created_at', { ascending: false }),
+  ])
+
   return (
     <div className="p-8">
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Invoices</h1>
-          <p className="mt-1 text-sm text-gray-500">Track billing and payments</p>
-        </div>
-        <button
-          className="px-4 py-2 text-sm font-medium text-white rounded-md"
-          style={{ background: '#B8922A' }}
-        >
-          New Invoice
-        </button>
-      </div>
-
-      <div className="rounded-lg border border-gray-100 bg-gray-50 p-12 text-center">
-        <p className="text-sm text-gray-400">Invoices list coming soon</p>
-      </div>
+      <InvoicesView
+        invoices={(invoices ?? []) as unknown as Invoice[]}
+        clients={(clients  ?? []) as unknown as Pick<Client, 'id' | 'name' | 'business_name'>[]}
+        jobs={(jobs        ?? []) as unknown as Pick<Job, 'id' | 'title' | 'job_type' | 'client_id'>[]}
+        quotes={(quotes    ?? []) as unknown as Pick<Quote, 'id' | 'client_id' | 'total'>[]}
+      />
     </div>
   )
 }
