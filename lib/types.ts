@@ -89,6 +89,18 @@ export type Invoice = {
   quotes: { id: string } | null
 }
 
+export type Lead = {
+  id: string
+  name: string | null
+  email: string | null
+  phone: string | null
+  message: string | null
+  source: string | null
+  status: string | null
+  notes: string | null
+  created_at: string
+}
+
 export type JobPhoto = {
   id: string
   job_id: string
