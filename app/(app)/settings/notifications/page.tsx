@@ -26,18 +26,6 @@ export default async function NotificationSettingsPage() {
         initialDefaults={defaults ?? []}
         clientCount={clientCount ?? 0}
       />
-
-      {/* Setup note */}
-      <div
-        className="mt-8 rounded-lg border p-4"
-        style={{ borderColor: 'rgba(184,146,42,0.3)', background: 'rgba(184,146,42,0.04)' }}
-      >
-        <p className="text-xs font-semibold mb-1" style={{ color: '#B8922A' }}>Database setup required</p>
-        <p className="text-xs text-gray-500 leading-relaxed">
-          Run <code className="bg-gray-100 px-1 py-0.5 rounded text-gray-700">supabase/create_notification_tables.sql</code> in your
-          Supabase SQL editor to create the required tables before using notifications.
-        </p>
-      </div>
     </div>
   )
 }

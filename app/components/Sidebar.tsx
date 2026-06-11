@@ -159,7 +159,7 @@ export default function Sidebar({ role, userName, userEmail, onNavigate }: Props
       <div className="h-px mx-4 mb-4" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
       {/* Nav sections */}
-      <nav className="flex-1 px-3 pb-4 overflow-y-auto">
+      <nav className="flex-1 px-3 pb-4 overflow-y-scroll scrollbar-hidden">
         {sections.map((section, si) => (
           <div key={section.label} className={si > 0 ? 'mt-5' : ''}>
             <p
