@@ -126,7 +126,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
                   <option value="">Select client…</option>
                   {clients.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
+                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` — ${c.business_name}` : ''}</option>
                   ))}
                 </select>
               </div>

@@ -109,7 +109,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
                 >
                   <option value="">Select client…</option>
                   {clients.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
+                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` — ${c.business_name}` : ''}</option>
                   ))}
                 </select>
               </div>
@@ -136,7 +136,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
                 <select value={form.quote_id} onChange={setField('quote_id')} className={inputClass}>
                   <option value="">No linked quote</option>
                   {filteredQuotes.map(q => (
-                    <option key={q.id} value={q.id}>{invoiceNumber(q.id)}{q.total != null ? ` â€” $${q.total.toFixed(2)}` : ''}</option>
+                    <option key={q.id} value={q.id}>{invoiceNumber(q.id)}{q.total != null ? ` — $${q.total.toFixed(2)}` : ''}</option>
                   ))}
                 </select>
               </div>

@@ -169,7 +169,7 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
               <option value="">Select client…</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}
+                  {c.name}{c.business_name ? ` — ${c.business_name}` : ''}
                 </option>
               ))}
             </select>
