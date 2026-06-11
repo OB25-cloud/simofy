@@ -27,7 +27,8 @@ export default function ClientsView({ clients }: { clients: Client[] }) {
   const [statusFilter, setStatusFilter] = useState('all')
   const [showModal, setShowModal] = useState(false)
 
-  const startOfMonth = new Date(new Date().getFullYear(), new Date().getMonth(), 1)
+  const _now = new Date()
+  const startOfMonth = new Date(Date.UTC(_now.getUTCFullYear(), _now.getUTCMonth(), 1))
 
   const stats = [
     { label: 'Total Clients',    value: String(clients.length),                                                          accent: true  },

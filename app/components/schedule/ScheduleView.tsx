@@ -91,6 +91,9 @@ export default function ScheduleView() {
   const [weekStart, setWeekStart] = useState<Date>(() => getMonday(new Date()))
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
+  // Empty string on server/hydration; set client-side to avoid timezone mismatch
+  const [todayKey, setTodayKey] = useState('')
+  useEffect(() => { setTodayKey(toDateKey(new Date())) }, [])
 
   const weekKey = toDateKey(weekStart)
 
@@ -117,8 +120,6 @@ export default function ScheduleView() {
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weekKey])
-
-  const todayKey = toDateKey(new Date())
 
   const days = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(weekStart)
