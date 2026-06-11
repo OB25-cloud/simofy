@@ -173,59 +173,52 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                 </button>
               </div>
 
-              {/* Column headers */}
-              <div className="grid grid-cols-[1fr_60px_108px_80px_28px] gap-2 px-1 mb-1">
-                <span className="text-xs text-gray-400">Description</span>
-                <span className="text-xs text-gray-400 text-right">Qty</span>
-                <span className="text-xs text-gray-400 text-right">Unit Price</span>
-                <span className="text-xs text-gray-400 text-right">Amount</span>
-                <span />
-              </div>
-
-              <div className="space-y-1.5">
+              <div className="space-y-3">
                 {lineItems.map((item, idx) => (
-                  <div key={item.id} className="grid grid-cols-[1fr_60px_108px_80px_28px] gap-2 items-start">
+                  <div key={item.id} className="space-y-1.5">
                     <textarea
                       value={item.description}
                       onChange={e => setItem(item.id, 'description', e.target.value)}
                       placeholder="Description…"
-                      rows={3}
+                      rows={2}
                       className={`${inputClass} resize-none`}
                     />
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={e => setItem(item.id, 'quantity', e.target.value)}
-                      min="0"
-                      step="0.01"
-                      className={numClass}
-                    />
-                    <div className="relative">
-                      <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
+                    <div className="grid grid-cols-[60px_1fr_80px_28px] gap-2 items-center">
                       <input
                         type="number"
-                        value={item.unit_price}
-                        onChange={e => setItem(item.id, 'unit_price', e.target.value)}
+                        value={item.quantity}
+                        onChange={e => setItem(item.id, 'quantity', e.target.value)}
                         min="0"
                         step="0.01"
-                        placeholder="0.00"
-                        className={`${numClass} pl-6`}
+                        className={numClass}
                       />
+                      <div className="relative">
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
+                        <input
+                          type="number"
+                          value={item.unit_price}
+                          onChange={e => setItem(item.id, 'unit_price', e.target.value)}
+                          min="0"
+                          step="0.01"
+                          placeholder="0.00"
+                          className={`${numClass} pl-6`}
+                        />
+                      </div>
+                      <span className="text-sm text-right text-gray-600 tabular-nums">
+                        ${calc.amounts[idx].toFixed(2)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => removeItem(item.id)}
+                        disabled={lineItems.length === 1}
+                        className="flex items-center justify-center w-6 h-6 rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors disabled:opacity-0"
+                        aria-label="Remove line item"
+                      >
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+                          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </button>
                     </div>
-                    <span className="text-sm text-right text-gray-600 tabular-nums">
-                      ${calc.amounts[idx].toFixed(2)}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      disabled={lineItems.length === 1}
-                      className="flex items-center justify-center w-6 h-6 rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors disabled:opacity-0"
-                      aria-label="Remove line item"
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                      </svg>
-                    </button>
                   </div>
                 ))}
               </div>
