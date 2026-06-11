@@ -83,7 +83,7 @@ export default function AddLeadModal({ onClose }: Props) {
               <label className="block text-xs font-medium text-gray-600 mb-1.5">
                 Name <span style={{ color: '#B8922A' }}>*</span>
               </label>
-              <input type="text" value={form.name} onChange={setField('name')} placeholder="Full nameâ€¦" className={inputClass} />
+              <input type="text" value={form.name} onChange={setField('name')} placeholder="Full name…" className={inputClass} />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
@@ -101,7 +101,7 @@ export default function AddLeadModal({ onClose }: Props) {
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">Source</label>
                 <select value={form.source} onChange={setField('source')} className={inputClass}>
-                  <option value="">Select sourceâ€¦</option>
+                  <option value="">Select source…</option>
                   {SOURCE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
@@ -115,12 +115,12 @@ export default function AddLeadModal({ onClose }: Props) {
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Message</label>
-              <textarea value={form.message} onChange={setField('message')} placeholder="Their enquiry or messageâ€¦" rows={3} className={`${inputClass} resize-none`} />
+              <textarea value={form.message} onChange={setField('message')} placeholder="Their enquiry or message…" rows={3} className={`${inputClass} resize-none`} />
             </div>
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
-              <textarea value={form.notes} onChange={setField('notes')} placeholder="Internal notesâ€¦" rows={2} className={`${inputClass} resize-none`} />
+              <textarea value={form.notes} onChange={setField('notes')} placeholder="Internal notes…" rows={2} className={`${inputClass} resize-none`} />
             </div>
 
             {error && <p className="text-xs text-red-500">{error}</p>}
@@ -131,7 +131,7 @@ export default function AddLeadModal({ onClose }: Props) {
               Cancel
             </button>
             <button type="submit" disabled={loading} className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
-              {loading ? 'Savingâ€¦' : 'Add Lead'}
+              {loading ? 'Saving…' : 'Add Lead'}
             </button>
           </div>
         </form>

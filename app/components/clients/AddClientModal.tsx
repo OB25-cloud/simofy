@@ -145,7 +145,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
             <textarea
               value={form.notes}
               onChange={set('notes')}
-              placeholder="Any relevant notesâ€¦"
+              placeholder="Any relevant notes…"
               rows={3}
               className={`${inputClass} resize-none`}
             />
@@ -188,7 +188,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Savingâ€¦' : 'Add Client'}
+              {loading ? 'Saving…' : 'Add Client'}
             </button>
           </div>
         </form>

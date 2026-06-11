@@ -144,7 +144,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Job Type</label>
               <select value={form.job_type} onChange={set('job_type')} className={inputClass}>
-                <option value="">Select typeâ€¦</option>
+                <option value="">Select type…</option>
                 {JOB_TYPES.map((t) => (
                   <option key={t} value={t}>{t}</option>
                 ))}
@@ -173,7 +173,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">Client</label>
             <select value={form.client_id} onChange={handleClientChange} className={inputClass}>
-              <option value="">Select clientâ€¦</option>
+              <option value="">Select client…</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}
@@ -191,7 +191,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
               className={`${inputClass} disabled:opacity-50`}
             >
               <option value="">
-                {loadingSites ? 'Loading sitesâ€¦' : !form.client_id ? 'Select a client first' : 'Select siteâ€¦'}
+                {loadingSites ? 'Loading sites…' : !form.client_id ? 'Select a client first' : 'Select site…'}
               </option>
               {sites.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -248,7 +248,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Savingâ€¦' : 'Save Changes'}
+              {loading ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
         </form>

@@ -112,7 +112,7 @@ export default function EditLeadModal({ lead, onClose }: Props) {
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">Source</label>
                 <select value={form.source} onChange={setField('source')} className={inputClass}>
-                  <option value="">Select sourceâ€¦</option>
+                  <option value="">Select source…</option>
                   {SOURCE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
@@ -142,7 +142,7 @@ export default function EditLeadModal({ lead, onClose }: Props) {
               Cancel
             </button>
             <button type="submit" disabled={loading} className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
-              {loading ? 'Savingâ€¦' : 'Save Changes'}
+              {loading ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
         </form>

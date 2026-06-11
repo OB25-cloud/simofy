@@ -139,7 +139,7 @@ export default function AddStaffModal({ onClose }: { onClose: () => void }) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Savingâ€¦' : 'Add Staff'}
+              {loading ? 'Saving…' : 'Add Staff'}
             </button>
           </div>
         </form>

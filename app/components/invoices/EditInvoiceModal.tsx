@@ -111,7 +111,7 @@ export default function EditInvoiceModal({ invoice, clients, jobs, quotes, onClo
                   onChange={e => setForm(p => ({ ...p, client_id: e.target.value, job_id: '', quote_id: '' }))}
                   className={inputClass}
                 >
-                  <option value="">Select clientâ€¦</option>
+                  <option value="">Select client…</option>
                   {clients.map(c => (
                     <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
                   ))}
@@ -197,7 +197,7 @@ export default function EditInvoiceModal({ invoice, clients, jobs, quotes, onClo
               Cancel
             </button>
             <button type="submit" disabled={loading} className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
-              {loading ? 'Savingâ€¦' : 'Save Changes'}
+              {loading ? 'Saving…' : 'Save Changes'}
             </button>
           </div>
         </form>

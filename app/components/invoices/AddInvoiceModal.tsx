@@ -107,7 +107,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
                   onChange={e => setForm(p => ({ ...p, client_id: e.target.value, job_id: '', quote_id: '' }))}
                   className={inputClass}
                 >
-                  <option value="">Select clientâ€¦</option>
+                  <option value="">Select client…</option>
                   {clients.map(c => (
                     <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
                   ))}
@@ -183,7 +183,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
-              <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this invoiceâ€¦" rows={3} className={`${inputClass} resize-none`} />
+              <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this invoice…" rows={3} className={`${inputClass} resize-none`} />
             </div>
 
             {error && <p className="text-xs text-red-500">{error}</p>}
@@ -194,7 +194,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
               Cancel
             </button>
             <button type="submit" disabled={loading} className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
-              {loading ? 'Savingâ€¦' : 'Add Invoice'}
+              {loading ? 'Saving…' : 'Add Invoice'}
             </button>
           </div>
         </form>

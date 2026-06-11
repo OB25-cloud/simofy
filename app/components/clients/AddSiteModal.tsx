@@ -114,7 +114,7 @@ export default function AddSiteModal({
             <textarea
               value={form.access_notes}
               onChange={set('access_notes')}
-              placeholder="e.g. Gate code is 1234, park on drivewayâ€¦"
+              placeholder="e.g. Gate code is 1234, park on driveway…"
               rows={2}
               className={`${inputClass} resize-none`}
             />
@@ -127,7 +127,7 @@ export default function AddSiteModal({
             <textarea
               value={form.hazard_notes}
               onChange={set('hazard_notes')}
-              placeholder="e.g. Uneven ground near fence, dog on propertyâ€¦"
+              placeholder="e.g. Uneven ground near fence, dog on property…"
               rows={2}
               className={`${inputClass} resize-none`}
             />
@@ -149,7 +149,7 @@ export default function AddSiteModal({
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Savingâ€¦' : 'Add Site'}
+              {loading ? 'Saving…' : 'Add Site'}
             </button>
           </div>
         </form>

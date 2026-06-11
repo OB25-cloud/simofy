@@ -124,7 +124,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                   Client <span style={{ color: '#B8922A' }}>*</span>
                 </label>
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
-                  <option value="">Select clientâ€¦</option>
+                  <option value="">Select client…</option>
                   {clients.map(c => (
                     <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
                   ))}
@@ -158,7 +158,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
             {/* Notes */}
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
-              <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this quoteâ€¦" rows={2} className={`${inputClass} resize-none`} />
+              <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this quote…" rows={2} className={`${inputClass} resize-none`} />
             </div>
 
             {/* Line Items */}
@@ -184,13 +184,13 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
 
               <div className="space-y-1.5">
                 {lineItems.map((item, idx) => (
-                  <div key={item.id} className="grid grid-cols-[1fr_60px_108px_80px_28px] gap-2 items-center">
-                    <input
-                      type="text"
+                  <div key={item.id} className="grid grid-cols-[1fr_60px_108px_80px_28px] gap-2 items-start">
+                    <textarea
                       value={item.description}
                       onChange={e => setItem(item.id, 'description', e.target.value)}
-                      placeholder="Descriptionâ€¦"
-                      className={inputClass}
+                      placeholder="Description…"
+                      rows={3}
+                      className={`${inputClass} resize-none`}
                     />
                     <input
                       type="number"
@@ -263,7 +263,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Savingâ€¦' : 'Add Quote'}
+              {loading ? 'Saving…' : 'Add Quote'}
             </button>
           </div>
         </form>
