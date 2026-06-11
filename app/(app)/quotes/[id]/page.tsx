@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Quote, QuoteLineItem, Client, Job } from '@/lib/types'
 import QuoteActions from '@/app/components/quotes/QuoteActions'
+import QuotePDFButton from '@/app/components/quotes/QuotePDFButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -72,7 +73,10 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
             {statusCfg.label}
           </span>
         </div>
-        <QuoteActions quote={typedQuote} clients={typedClients} jobs={typedJobs} />
+        <div className="flex items-center gap-2 flex-wrap">
+          <QuotePDFButton quote={typedQuote} lineItems={typedItems} />
+          <QuoteActions quote={typedQuote} clients={typedClients} jobs={typedJobs} />
+        </div>
       </div>
 
       {/* Info cards */}
