@@ -18,7 +18,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="h-full flex">
-      <Sidebar role={role} userEmail={user.email} />
+      <Sidebar role={role} userName={profile?.name} userEmail={user.email} />
       <main className="flex-1 bg-white overflow-y-auto">
         {children}
       </main>
