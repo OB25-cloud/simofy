@@ -50,6 +50,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
   const [loadingSites, setLoadingSites] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [notifBanner, setNotifBanner] = useState('')
 
   useEffect(() => {
     if (!job.client_id) return
@@ -99,6 +100,33 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
       setError(dbError.message)
       setLoading(false)
       return
+    }
+
+    // Check notification settings when status changes to a trigger point
+    const prevStatus = job.status
+    const newStatus = form.status
+    const clientId = form.client_id
+
+    if (clientId && prevStatus !== newStatus) {
+      let notifType: string | null = null
+      let notifLabel = ''
+      if (newStatus === 'scheduled') { notifType = 'job_confirmation'; notifLabel = 'Job Confirmation' }
+      else if (newStatus === 'complete') { notifType = 'job_completion'; notifLabel = 'Job Completion' }
+
+      if (notifType) {
+        const { data: setting } = await supabase
+          .from('client_notification_settings')
+          .select('enabled')
+          .eq('client_id', clientId)
+          .eq('notification_type', notifType)
+          .maybeSingle()
+
+        const isEnabled = setting?.enabled ?? true  // default true if no row yet
+        if (isEnabled) {
+          setNotifBanner(`✓ ${notifLabel} notification queued for this client`)
+          await new Promise(resolve => setTimeout(resolve, 1800))
+        }
+      }
     }
 
     onClose()
@@ -231,6 +259,15 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
               className={`${inputClass} resize-none`}
             />
           </div>
+
+          {notifBanner && (
+            <div className="flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium" style={{ background: 'rgba(184,146,42,0.1)', color: '#B8922A' }}>
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              {notifBanner}
+            </div>
+          )}
 
           {error && <p className="text-xs text-red-500">{error}</p>}
 

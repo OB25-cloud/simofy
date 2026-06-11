@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Job, Site } from '@/lib/types'
 import SitesSection from '@/app/components/clients/SitesSection'
+import NotificationsSection from '@/app/components/clients/NotificationsSection'
 
 function JobStatusBadge({ status }: { status: string | null }) {
   if (!status) return <span className="text-gray-300 text-xs">—</span>
@@ -28,10 +29,11 @@ export default async function ClientDetailPage({
 }) {
   const { id } = await params
 
-  const [{ data: client }, { data: jobs }, { data: sites }] = await Promise.all([
+  const [{ data: client }, { data: jobs }, { data: sites }, { data: notifSettings }] = await Promise.all([
     supabase.from('clients').select('*').eq('id', id).single(),
     supabase.from('jobs').select('*').eq('client_id', id).order('created_at', { ascending: false }),
     supabase.from('sites').select('*').eq('client_id', id).order('created_at', { ascending: true }),
+    supabase.from('client_notification_settings').select('notification_type, enabled').eq('client_id', id),
   ])
 
   if (!client) notFound()
@@ -143,6 +145,12 @@ export default async function ClientDetailPage({
 
       {/* Sites — Client Component to support Add Site modal */}
       <SitesSection clientId={id} sites={siteList} />
+
+      {/* Notification Preferences */}
+      <NotificationsSection
+        clientId={id}
+        initialSettings={notifSettings ?? []}
+      />
 
       {/* Jobs */}
       <div className="mt-8">
