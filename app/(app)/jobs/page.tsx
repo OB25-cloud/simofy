@@ -11,7 +11,7 @@ export default async function JobsPage() {
   ])
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <JobsView jobs={jobs ?? []} clients={clients ?? []} staff={staff ?? []} />
     </div>
   )

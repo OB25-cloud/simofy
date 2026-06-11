@@ -51,7 +51,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
   const statusCfg = STATUS_CONFIG[status ?? ''] ?? STATUS_CONFIG.draft
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
     <div className="max-w-3xl mx-auto">
       {/* Breadcrumb */}
       <div className="mb-5 flex items-center gap-2 text-sm text-gray-400">

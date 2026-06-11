@@ -49,7 +49,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   const typedQuotes  = (quotes  ?? []) as unknown as Pick<Quote, 'id' | 'client_id' | 'total'>[]
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
         <div className="mb-5 flex items-center gap-2 text-sm text-gray-400">
@@ -74,7 +74,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         </div>
 
         {/* Info cards */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
           {/* Client */}
           <div className="rounded-lg border border-gray-100 p-5">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Client</p>

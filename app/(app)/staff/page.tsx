@@ -10,7 +10,7 @@ export default async function StaffPage() {
     .order('name', { ascending: true })
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <StaffView staff={staff ?? []} />
     </div>
   )

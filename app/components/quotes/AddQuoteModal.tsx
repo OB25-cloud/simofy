@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useMemo } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -98,11 +98,11 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex sm:items-center sm:justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl max-h-[92vh] flex flex-col">
+      <div className="bg-white w-full h-full sm:h-[92vh] sm:max-w-2xl sm:rounded-xl shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
           <h2 className="text-sm font-semibold text-gray-900">Add Quote</h2>
@@ -124,9 +124,9 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                   Client <span style={{ color: '#B8922A' }}>*</span>
                 </label>
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
-                  <option value="">Select client…</option>
+                  <option value="">Select clientâ€¦</option>
                   {clients.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` — ${c.business_name}` : ''}</option>
+                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
                   ))}
                 </select>
               </div>
@@ -158,7 +158,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
             {/* Notes */}
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
-              <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this quote…" rows={2} className={`${inputClass} resize-none`} />
+              <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this quoteâ€¦" rows={2} className={`${inputClass} resize-none`} />
             </div>
 
             {/* Line Items */}
@@ -189,7 +189,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                       type="text"
                       value={item.description}
                       onChange={e => setItem(item.id, 'description', e.target.value)}
-                      placeholder="Description…"
+                      placeholder="Descriptionâ€¦"
                       className={inputClass}
                     />
                     <input
@@ -263,7 +263,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Saving…' : 'Add Quote'}
+              {loading ? 'Savingâ€¦' : 'Add Quote'}
             </button>
           </div>
         </form>

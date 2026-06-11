@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -100,11 +100,11 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex sm:items-center sm:justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-xl w-full max-w-lg shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white w-full h-full sm:h-auto sm:max-w-lg sm:rounded-xl sm:max-h-[90vh] shadow-2xl overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
           <h2 className="text-sm font-semibold text-gray-900">Add Job</h2>
           <button
@@ -137,7 +137,7 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">Job Type</label>
             <select value={form.job_type} onChange={set('job_type')} className={inputClass}>
-              <option value="">Select type…</option>
+              <option value="">Select typeâ€¦</option>
               {JOB_TYPES.map((t) => (
                 <option key={t} value={t}>{t}</option>
               ))}
@@ -166,10 +166,10 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">Client</label>
             <select value={form.client_id} onChange={handleClientChange} className={inputClass}>
-              <option value="">Select client…</option>
+              <option value="">Select clientâ€¦</option>
               {clients.map((c) => (
                 <option key={c.id} value={c.id}>
-                  {c.name}{c.business_name ? ` — ${c.business_name}` : ''}
+                  {c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}
                 </option>
               ))}
             </select>
@@ -184,7 +184,7 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
               className={`${inputClass} disabled:opacity-50`}
             >
               <option value="">
-                {loadingSites ? 'Loading sites…' : !form.client_id ? 'Select a client first' : 'Select site…'}
+                {loadingSites ? 'Loading sitesâ€¦' : !form.client_id ? 'Select a client first' : 'Select siteâ€¦'}
               </option>
               {sites.map((s) => (
                 <option key={s.id} value={s.id}>
@@ -220,7 +220,7 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
             <textarea
               value={form.notes}
               onChange={set('notes')}
-              placeholder="Any relevant notes…"
+              placeholder="Any relevant notesâ€¦"
               rows={3}
               className={`${inputClass} resize-none`}
             />
@@ -242,7 +242,7 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Saving…' : 'Add Job'}
+              {loading ? 'Savingâ€¦' : 'Add Job'}
             </button>
           </div>
         </form>

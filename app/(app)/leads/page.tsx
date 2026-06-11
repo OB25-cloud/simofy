@@ -11,7 +11,7 @@ export default async function LeadsPage() {
     .order('created_at', { ascending: false })
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <LeadsView leads={(data ?? []) as unknown as Lead[]} />
     </div>
   )

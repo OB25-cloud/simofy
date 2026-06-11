@@ -119,9 +119,10 @@ interface Props {
   role: string
   userName?: string | null
   userEmail?: string | null
+  onNavigate?: () => void
 }
 
-export default function Sidebar({ role, userName, userEmail }: Props) {
+export default function Sidebar({ role, userName, userEmail, onNavigate }: Props) {
   const pathname = usePathname()
   const sections = role === 'admin' ? ADMIN_SECTIONS : FIELD_SECTIONS
 
@@ -159,6 +160,7 @@ export default function Sidebar({ role, userName, userEmail }: Props) {
                 <Link
                   key={href}
                   href={href}
+                  onClick={onNavigate}
                   className="flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
                   style={{
                     color:      isActive ? '#B8922A'                : 'rgba(255,255,255,0.45)',

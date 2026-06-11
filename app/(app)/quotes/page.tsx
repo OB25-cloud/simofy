@@ -15,7 +15,7 @@ export default async function QuotesPage() {
   ])
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <QuotesView
         quotes={(quotes ?? []) as unknown as Quote[]}
         clients={(clients ?? []) as unknown as Pick<Client, 'id' | 'name' | 'business_name'>[]}

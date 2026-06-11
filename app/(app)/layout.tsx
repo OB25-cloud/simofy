@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabaseServer'
-import Sidebar from '@/app/components/Sidebar'
+import AppShell from '@/app/components/AppShell'
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createServerSupabase()
@@ -17,11 +17,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const role = profile?.role ?? 'field'
 
   return (
-    <div className="h-full flex">
-      <Sidebar role={role} userName={profile?.name} userEmail={user.email} />
-      <main className="flex-1 bg-white overflow-y-auto">
-        {children}
-      </main>
-    </div>
+    <AppShell role={role} userName={profile?.name} userEmail={user.email}>
+      {children}
+    </AppShell>
   )
 }

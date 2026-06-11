@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useMemo, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -127,11 +127,11 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex sm:items-center sm:justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
-      <div className="bg-white rounded-xl w-full max-w-2xl shadow-2xl max-h-[92vh] flex flex-col">
+      <div className="bg-white w-full h-full sm:h-[92vh] sm:max-w-2xl sm:rounded-xl shadow-2xl flex flex-col overflow-hidden">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
           <h2 className="text-sm font-semibold text-gray-900">Edit Quote</h2>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors" aria-label="Close">
@@ -150,9 +150,9 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
                   Client <span style={{ color: '#B8922A' }}>*</span>
                 </label>
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
-                  <option value="">Select client…</option>
+                  <option value="">Select clientâ€¦</option>
                   {clients.map(c => (
-                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` — ${c.business_name}` : ''}</option>
+                    <option key={c.id} value={c.id}>{c.name}{c.business_name ? ` â€” ${c.business_name}` : ''}</option>
                   ))}
                 </select>
               </div>
@@ -206,12 +206,12 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
               </div>
 
               {loadingItems ? (
-                <p className="text-xs text-gray-400 py-3 text-center">Loading items…</p>
+                <p className="text-xs text-gray-400 py-3 text-center">Loading itemsâ€¦</p>
               ) : (
                 <div className="space-y-1.5">
                   {lineItems.map((item, idx) => (
                     <div key={item.id} className="grid grid-cols-[1fr_60px_108px_80px_28px] gap-2 items-center">
-                      <input type="text" value={item.description} onChange={e => setItem(item.id, 'description', e.target.value)} placeholder="Description…" className={inputClass} />
+                      <input type="text" value={item.description} onChange={e => setItem(item.id, 'description', e.target.value)} placeholder="Descriptionâ€¦" className={inputClass} />
                       <input type="number" value={item.quantity} onChange={e => setItem(item.id, 'quantity', e.target.value)} min="0" step="0.01" className={numClass} />
                       <div className="relative">
                         <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
@@ -251,7 +251,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
               Cancel
             </button>
             <button type="submit" disabled={loading || loadingItems} className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
-              {loading ? 'Saving…' : 'Save Changes'}
+              {loading ? 'Savingâ€¦' : 'Save Changes'}
             </button>
           </div>
         </form>

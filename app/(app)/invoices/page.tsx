@@ -16,7 +16,7 @@ export default async function InvoicesPage() {
   ])
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <InvoicesView
         invoices={(invoices ?? []) as unknown as Invoice[]}
         clients={(clients  ?? []) as unknown as Pick<Client, 'id' | 'name' | 'business_name'>[]}

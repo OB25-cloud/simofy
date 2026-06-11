@@ -135,7 +135,7 @@ export default async function DashboardPage() {
   })
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       {/* Header */}
       <div className="mb-7">
         <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
@@ -143,7 +143,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Top stat cards */}
-      <div className="grid grid-cols-5 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <StatCard label="Active Clients"    value={String(activeClientsCount ?? 0)} accent />
         <StatCard label="Jobs Today"        value={String(jobsToday.length)}         accent sub={`${jobsToday.length} scheduled`} />
         <StatCard label="In Progress"       value={String(inProgressCount ?? 0)}    accent />
@@ -152,7 +152,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Revenue + Jobs by Status */}
-      <div className="grid grid-cols-2 gap-5 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
 
         {/* Revenue summary */}
         <div className="rounded-lg border border-gray-100 overflow-hidden">
@@ -226,7 +226,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Jobs Today + Recent Activity */}
-      <div className="grid grid-cols-2 gap-5 mb-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
 
         {/* Jobs Today */}
         <div className="rounded-lg border border-gray-100 overflow-hidden">
@@ -303,7 +303,7 @@ export default async function DashboardPage() {
 
       {/* Overdue Invoices */}
       {overdueInvoices.length > 0 && (
-        <div className="rounded-lg border border-red-100 overflow-hidden mb-5">
+        <div className="rounded-lg border border-red-100 overflow-x-auto mb-5">
           <div className="flex items-center justify-between px-5 py-3.5 border-b border-red-100" style={{ background: '#fef2f2' }}>
             <div className="flex items-center gap-3">
               <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: '#dc2626' }}>Overdue Invoices</p>
@@ -315,7 +315,7 @@ export default async function DashboardPage() {
               View all →
             </Link>
           </div>
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[480px] text-sm">
             <thead>
               <tr className="border-b border-gray-50">
                 <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-400">Invoice</th>
@@ -357,8 +357,8 @@ export default async function DashboardPage() {
       )}
 
       {/* New Leads */}
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-3.5 bg-gray-50 border-b border-gray-100">
+      <div className="rounded-lg border border-gray-100 overflow-x-auto">
+        <div className="flex items-center justify-between px-5 py-3.5 bg-gray-50 border-b border-gray-100" style={{ minWidth: '480px' }}>
           <div className="flex items-center gap-3">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">New Leads</p>
             {leads.length > 0 && (
@@ -377,7 +377,7 @@ export default async function DashboardPage() {
             <p className="text-sm text-gray-300">No new uncontacted leads</p>
           </div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[480px] text-sm">
             <thead>
               <tr className="border-b border-gray-50">
                 <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-400">Name</th>

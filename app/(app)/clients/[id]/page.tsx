@@ -40,7 +40,7 @@ export default async function ClientDetailPage({
   const siteList: Site[] = sites ?? []
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 md:p-8 max-w-4xl">
       <Link
         href="/clients"
         className="inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-gray-600 transition-colors mb-6"

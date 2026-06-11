@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -57,13 +57,13 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex sm:items-center sm:justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className="bg-white rounded-xl w-full max-w-md shadow-2xl">
+      <div className="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-xl shadow-2xl overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="text-sm font-semibold text-gray-900">Add Client</h2>
           <button
@@ -145,7 +145,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
             <textarea
               value={form.notes}
               onChange={set('notes')}
-              placeholder="Any relevant notes…"
+              placeholder="Any relevant notesâ€¦"
               rows={3}
               className={`${inputClass} resize-none`}
             />
@@ -188,7 +188,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Saving…' : 'Add Client'}
+              {loading ? 'Savingâ€¦' : 'Add Client'}
             </button>
           </div>
         </form>

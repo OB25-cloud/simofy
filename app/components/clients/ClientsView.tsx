@@ -70,7 +70,7 @@ export default function ClientsView({ clients }: { clients: Client[] }) {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {stats.map(s => (
           <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
@@ -82,7 +82,7 @@ export default function ClientsView({ clients }: { clients: Client[] }) {
       </div>
 
       {/* Filters */}
-      <div className="mb-5 flex gap-3">
+      <div className="mb-5 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <SearchIcon />
           <input
@@ -113,8 +113,8 @@ export default function ClientsView({ clients }: { clients: Client[] }) {
           </p>
         </div>
       ) : (
-        <div className="rounded-lg border border-gray-100 overflow-hidden">
-          <table className="w-full text-sm">
+        <div className="rounded-lg border border-gray-100 overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr className="bg-gray-50 border-b border-gray-100">
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Name</th>

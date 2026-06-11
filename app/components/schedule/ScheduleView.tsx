@@ -194,7 +194,8 @@ export default function ScheduleView() {
       </div>
 
       {/* Calendar */}
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
+      <div className="overflow-x-auto">
+      <div className="rounded-lg border border-gray-100 overflow-hidden min-w-[640px]">
         {/* Day headers */}
         <div className="grid grid-cols-7 border-b border-gray-100">
           {days.map((day, i) => {
@@ -244,6 +245,7 @@ export default function ScheduleView() {
         )}
       </div>
 
+      </div>
       {!loading && jobs.length === 0 && (
         <p className="mt-6 text-center text-sm text-gray-400">
           No jobs scheduled for this week

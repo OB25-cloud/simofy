@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -58,13 +58,13 @@ export default function AddSiteModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-50 flex sm:items-center sm:justify-center sm:p-4"
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className="bg-white rounded-xl w-full max-w-md shadow-2xl">
+      <div className="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-xl shadow-2xl overflow-y-auto">
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <h2 className="text-sm font-semibold text-gray-900">Add Site</h2>
           <button
@@ -114,7 +114,7 @@ export default function AddSiteModal({
             <textarea
               value={form.access_notes}
               onChange={set('access_notes')}
-              placeholder="e.g. Gate code is 1234, park on driveway…"
+              placeholder="e.g. Gate code is 1234, park on drivewayâ€¦"
               rows={2}
               className={`${inputClass} resize-none`}
             />
@@ -127,7 +127,7 @@ export default function AddSiteModal({
             <textarea
               value={form.hazard_notes}
               onChange={set('hazard_notes')}
-              placeholder="e.g. Uneven ground near fence, dog on property…"
+              placeholder="e.g. Uneven ground near fence, dog on propertyâ€¦"
               rows={2}
               className={`${inputClass} resize-none`}
             />
@@ -149,7 +149,7 @@ export default function AddSiteModal({
               className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#B8922A' }}
             >
-              {loading ? 'Saving…' : 'Add Site'}
+              {loading ? 'Savingâ€¦' : 'Add Site'}
             </button>
           </div>
         </form>
