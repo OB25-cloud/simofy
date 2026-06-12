@@ -35,12 +35,14 @@ export default async function JobDetailPage({
 }) {
   const { id } = await params
 
-  const [{ data: job }, { data: photos }, { data: clients }, { data: staff }] = await Promise.all([
+  const [{ data: job }, { data: photos, error: photosError }, { data: clients }, { data: staff }] = await Promise.all([
     supabase.from('jobs').select('*, clients(name, business_name), staff(name)').eq('id', id).single(),
     supabase.from('job_photos').select('*').eq('job_id', id).order('created_at', { ascending: true }),
     supabase.from('clients').select('id, name, business_name').order('name'),
     supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
   ])
+
+  console.log('[JobDetailPage] job_photos fetch — count:', photos?.length ?? 0, '| error:', photosError ? { code: photosError.code, message: photosError.message } : null)
 
   if (!job) notFound()
 
