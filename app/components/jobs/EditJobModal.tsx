@@ -107,63 +107,105 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
     const newStatus = form.status
     const clientId = form.client_id
 
+    console.log('[Notifications] Status transition:', prevStatus, '→', newStatus, '| clientId:', clientId)
+
     if (clientId && prevStatus !== newStatus) {
       const queued: string[] = []
 
       if (newStatus === 'scheduled') {
-        const { data: setting } = await supabase
+        const { data: setting, error: settingErr } = await supabase
           .from('client_notification_settings')
           .select('enabled')
           .eq('client_id', clientId)
           .eq('notification_type', 'job_confirmation')
           .maybeSingle()
+        console.log('[Notifications] job_confirmation setting:', setting, '| error:', settingErr)
         if (setting?.enabled ?? true) queued.push('Job Confirmation')
       }
 
       if (newStatus === 'complete') {
         // Check job_completion setting
-        const { data: completionSetting } = await supabase
+        const { data: completionSetting, error: completionSettingErr } = await supabase
           .from('client_notification_settings')
           .select('enabled')
           .eq('client_id', clientId)
           .eq('notification_type', 'job_completion')
           .maybeSingle()
-        if (completionSetting?.enabled ?? true) queued.push('Job Completion')
+        console.log('[Notifications] job_completion setting:', completionSetting, '| error:', completionSettingErr)
+
+        if (completionSetting?.enabled ?? true) {
+          const completionPayload = {
+            client_id: clientId,
+            job_id: job.id,
+            type: 'completion',
+            scheduled_for: new Date().toISOString(),
+            status: 'pending',
+            review_link: 'https://g.page/r/PLACEHOLDER/review',
+          }
+          console.log('[Notifications] inserting job_completion payload:', completionPayload)
+          const { data: completionInsertData, error: completionInsertErr } = await supabase
+            .from('notifications')
+            .insert(completionPayload)
+            .select()
+          if (completionInsertErr) {
+            console.error('[Notifications] job_completion insert FAILED — code:', completionInsertErr.code, '| message:', completionInsertErr.message, '| details:', completionInsertErr.details, '| hint:', completionInsertErr.hint)
+          } else {
+            console.log('[Notifications] job_completion insert SUCCESS — data:', completionInsertData)
+            queued.push('Job Completion')
+          }
+        }
 
         // Check review_request setting and insert into notifications queue
-        const { data: reviewSetting } = await supabase
+        const { data: reviewSetting, error: reviewSettingErr } = await supabase
           .from('client_notification_settings')
           .select('enabled')
           .eq('client_id', clientId)
           .eq('notification_type', 'review_request')
           .maybeSingle()
+        console.log('[Notifications] review_request setting:', reviewSetting, '| error:', reviewSettingErr)
 
         if (reviewSetting?.enabled ?? true) {
-          const { data: reviewDefault } = await supabase
+          const { data: reviewDefault, error: reviewDefaultErr } = await supabase
             .from('notification_defaults')
             .select('review_request_delay_hours')
             .eq('notification_type', 'review_request')
             .maybeSingle()
+          console.log('[Notifications] notification_defaults row:', reviewDefault, '| error:', reviewDefaultErr)
 
           const delayHours: number = (reviewDefault as any)?.review_request_delay_hours ?? 24
           const scheduledFor = new Date(Date.now() + delayHours * 60 * 60 * 1000).toISOString()
 
-          const { error: insertErr } = await supabase.from('notifications').insert({
+          const reviewPayload = {
             client_id: clientId,
             job_id: job.id,
-            notification_type: 'review_request',
+            type: 'review_request',
             scheduled_for: scheduledFor,
+            status: 'pending',
             review_link: 'https://g.page/r/PLACEHOLDER/review',
-          })
+          }
+          console.log('[Notifications] inserting review_request payload:', reviewPayload)
+
+          const { data: insertData, error: insertErr } = await supabase
+            .from('notifications')
+            .insert(reviewPayload)
+            .select()
+          if (insertErr) {
+            console.error('[Notifications] insert FAILED — code:', insertErr.code, '| message:', insertErr.message, '| details:', insertErr.details, '| hint:', insertErr.hint)
+          } else {
+            console.log('[Notifications] insert SUCCESS — data:', insertData)
+          }
 
           if (!insertErr) queued.push('Review Request')
         }
       }
 
+      console.log('[Notifications] queued array:', queued)
       if (queued.length > 0) {
         setNotifBanner(`✓ ${queued.join(' & ')} notification${queued.length > 1 ? 's' : ''} queued for this client`)
         await new Promise(resolve => setTimeout(resolve, 1800))
       }
+    } else {
+      console.log('[Notifications] skipped — clientId falsy or status unchanged')
     }
 
     onClose()
