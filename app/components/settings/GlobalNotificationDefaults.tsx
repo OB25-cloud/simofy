@@ -12,9 +12,10 @@ interface DefaultSetting {
 interface Props {
   initialDefaults: DefaultSetting[]
   clientCount: number
+  initialReviewDelayHours: number
 }
 
-export default function GlobalNotificationDefaults({ initialDefaults, clientCount }: Props) {
+export default function GlobalNotificationDefaults({ initialDefaults, clientCount, initialReviewDelayHours }: Props) {
   const initial = Object.fromEntries(
     NOTIFICATION_TYPES.map(t => [
       t.key,
@@ -26,6 +27,8 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
   const [applying, setApplying] = useState(false)
   const [applyDone, setApplyDone] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [reviewDelayHours, setReviewDelayHours] = useState(initialReviewDelayHours)
+  const [savingDelay, setSavingDelay] = useState(false)
 
   async function toggleDefault(type: string) {
     const newValue = !defaults[type]
@@ -50,6 +53,23 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
       setDefaults(prev => ({ ...prev, [type]: !newValue }))
       setError('Failed to save default. Make sure the notification_defaults table exists in Supabase.')
     }
+  }
+
+  async function saveReviewDelay(raw: number) {
+    const hours = Math.max(1, Math.min(168, Math.round(raw)))
+    setReviewDelayHours(hours)
+    setSavingDelay(true)
+    setError(null)
+
+    const { error: dbErr } = await supabase
+      .from('notification_defaults')
+      .upsert(
+        { notification_type: 'review_request', review_request_delay_hours: hours, updated_at: new Date().toISOString() },
+        { onConflict: 'notification_type' }
+      )
+
+    setSavingDelay(false)
+    if (dbErr) setError('Failed to save delay setting.')
   }
 
   async function applyToAllClients() {
@@ -112,6 +132,22 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
               <div className="min-w-0 flex-1 pr-6">
                 <p className="text-sm font-medium text-gray-900">{type.label}</p>
                 <p className="text-xs text-gray-400 mt-0.5">{type.description}</p>
+                {type.key === 'review_request' && (
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-xs text-gray-400">Send after</span>
+                    <input
+                      type="number"
+                      min={1}
+                      max={168}
+                      value={reviewDelayHours}
+                      onChange={e => setReviewDelayHours(Number(e.target.value))}
+                      onBlur={e => saveReviewDelay(Number(e.target.value))}
+                      disabled={savingDelay}
+                      className="w-16 border border-gray-200 rounded px-2 py-0.5 text-xs text-gray-900 focus:outline-none focus:border-[#B8922A] disabled:opacity-50"
+                    />
+                    <span className="text-xs text-gray-400">hours after job completion</span>
+                  </div>
+                )}
               </div>
               <button
                 role="switch"

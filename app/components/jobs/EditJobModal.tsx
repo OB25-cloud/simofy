@@ -108,24 +108,61 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
     const clientId = form.client_id
 
     if (clientId && prevStatus !== newStatus) {
-      let notifType: string | null = null
-      let notifLabel = ''
-      if (newStatus === 'scheduled') { notifType = 'job_confirmation'; notifLabel = 'Job Confirmation' }
-      else if (newStatus === 'complete') { notifType = 'job_completion'; notifLabel = 'Job Completion' }
+      const queued: string[] = []
 
-      if (notifType) {
+      if (newStatus === 'scheduled') {
         const { data: setting } = await supabase
           .from('client_notification_settings')
           .select('enabled')
           .eq('client_id', clientId)
-          .eq('notification_type', notifType)
+          .eq('notification_type', 'job_confirmation')
+          .maybeSingle()
+        if (setting?.enabled ?? true) queued.push('Job Confirmation')
+      }
+
+      if (newStatus === 'complete') {
+        // Check job_completion setting
+        const { data: completionSetting } = await supabase
+          .from('client_notification_settings')
+          .select('enabled')
+          .eq('client_id', clientId)
+          .eq('notification_type', 'job_completion')
+          .maybeSingle()
+        if (completionSetting?.enabled ?? true) queued.push('Job Completion')
+
+        // Check review_request setting and insert into notifications queue
+        const { data: reviewSetting } = await supabase
+          .from('client_notification_settings')
+          .select('enabled')
+          .eq('client_id', clientId)
+          .eq('notification_type', 'review_request')
           .maybeSingle()
 
-        const isEnabled = setting?.enabled ?? true  // default true if no row yet
-        if (isEnabled) {
-          setNotifBanner(`✓ ${notifLabel} notification queued for this client`)
-          await new Promise(resolve => setTimeout(resolve, 1800))
+        if (reviewSetting?.enabled ?? true) {
+          const { data: reviewDefault } = await supabase
+            .from('notification_defaults')
+            .select('review_request_delay_hours')
+            .eq('notification_type', 'review_request')
+            .maybeSingle()
+
+          const delayHours: number = (reviewDefault as any)?.review_request_delay_hours ?? 24
+          const scheduledFor = new Date(Date.now() + delayHours * 60 * 60 * 1000).toISOString()
+
+          const { error: insertErr } = await supabase.from('notifications').insert({
+            client_id: clientId,
+            job_id: job.id,
+            notification_type: 'review_request',
+            scheduled_for: scheduledFor,
+            review_link: 'https://g.page/r/PLACEHOLDER/review',
+          })
+
+          if (!insertErr) queued.push('Review Request')
         }
+      }
+
+      if (queued.length > 0) {
+        setNotifBanner(`✓ ${queued.join(' & ')} notification${queued.length > 1 ? 's' : ''} queued for this client`)
+        await new Promise(resolve => setTimeout(resolve, 1800))
       }
     }
 

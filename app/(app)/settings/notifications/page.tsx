@@ -5,9 +5,12 @@ export const dynamic = 'force-dynamic'
 
 export default async function NotificationSettingsPage() {
   const [{ data: defaults }, { count: clientCount }] = await Promise.all([
-    supabase.from('notification_defaults').select('notification_type, enabled'),
+    supabase.from('notification_defaults').select('notification_type, enabled, review_request_delay_hours'),
     supabase.from('clients').select('id', { count: 'exact', head: true }),
   ])
+
+  const reviewRequestRow = defaults?.find(d => d.notification_type === 'review_request')
+  const reviewRequestDelayHours: number = (reviewRequestRow as any)?.review_request_delay_hours ?? 24
 
   return (
     <div className="p-4 md:p-8 max-w-2xl">
@@ -25,6 +28,7 @@ export default async function NotificationSettingsPage() {
       <GlobalNotificationDefaults
         initialDefaults={defaults ?? []}
         clientCount={clientCount ?? 0}
+        initialReviewDelayHours={reviewRequestDelayHours}
       />
     </div>
   )
