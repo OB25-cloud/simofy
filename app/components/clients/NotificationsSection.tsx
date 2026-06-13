@@ -58,7 +58,7 @@ export default function NotificationsSection({ clientId, initialSettings }: Prop
   }
 
   return (
-    <div className="mt-10">
+    <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-base font-semibold text-gray-900">Notification Preferences</h2>
         <span className="text-xs text-gray-400">Per-client overrides</span>
