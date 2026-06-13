@@ -30,10 +30,19 @@ export type Job = {
   status: string | null
   location: string | null
   scheduled_date: string | null
+  completed_date: string | null
   notes: string | null
   created_at: string | null
   clients: { name: string; business_name: string | null } | null
   staff: { name: string } | null
+}
+
+export type JobNote = {
+  id: string
+  job_id: string
+  content: string
+  created_by: string | null
+  created_at: string
 }
 
 export type Staff = {

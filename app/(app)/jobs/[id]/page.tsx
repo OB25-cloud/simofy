@@ -1,17 +1,17 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import type { JobPhoto } from '@/lib/types'
-import JobPhotos from '@/app/components/jobs/JobPhotos'
+import type { JobPhoto, JobNote } from '@/lib/types'
+import JobTabs from '@/app/components/jobs/JobTabs'
 import JobActions from '@/app/components/jobs/JobActions'
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending' },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled' },
+  pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
+  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
   in_progress: { bg: '#fdf8ee', text: '#B8922A', dot: '#B8922A', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete' },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced' },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled' },
+  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
+  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
+  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
 }
 
 function StatusBadge({ status }: { status: string | null }) {
@@ -36,18 +36,19 @@ export default async function JobDetailPage({
   const { id } = await params
   const supabase = await createServerSupabase()
 
-  const [{ data: job }, { data: photos, error: photosError }, { data: clients }, { data: staff }] = await Promise.all([
-    supabase.from('jobs').select('*, clients(name, business_name), staff(name)').eq('id', id).single(),
-    supabase.from('job_photos').select('*').eq('job_id', id).order('taken_at', { ascending: true }),
-    supabase.from('clients').select('id, name, business_name').order('name'),
-    supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
-  ])
-
-  console.log('[JobDetailPage] job_photos fetch — count:', photos?.length ?? 0, '| error:', photosError ? { code: photosError.code, message: photosError.message } : null)
+  const [{ data: job }, { data: photos }, { data: notes }, { data: clients }, { data: staff }] =
+    await Promise.all([
+      supabase.from('jobs').select('*, clients(name, business_name), staff(name)').eq('id', id).single(),
+      supabase.from('job_photos').select('*').eq('job_id', id).order('taken_at', { ascending: true }),
+      supabase.from('job_notes').select('*').eq('job_id', id).order('created_at', { ascending: false }),
+      supabase.from('clients').select('id, name, business_name').order('name'),
+      supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
+    ])
 
   if (!job) notFound()
 
   const photoList: JobPhoto[] = photos ?? []
+  const noteList: JobNote[] = notes ?? []
 
   return (
     <div className="p-4 md:p-8 max-w-4xl">
@@ -77,88 +78,7 @@ export default async function JobDetailPage({
         <JobActions job={job} clients={clients ?? []} staff={staff ?? []} />
       </div>
 
-      {/* Details grid */}
-      <div className="grid grid-cols-2 gap-5 mb-8">
-        <div className="rounded-lg border border-gray-100 p-5">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-            Job Details
-          </h2>
-          <dl className="space-y-3.5">
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Job Type</dt>
-              <dd className="text-sm text-gray-900">
-                {job.job_type ?? <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Client</dt>
-              <dd className="text-sm text-gray-900">
-                {job.client_id ? (
-                  <Link
-                    href={`/clients/${job.client_id}`}
-                    className="hover:underline"
-                    style={{ color: '#B8922A' }}
-                  >
-                    {job.clients?.name ?? 'View client'}
-                  </Link>
-                ) : (
-                  <span className="text-gray-300">—</span>
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Assigned To</dt>
-              <dd className="text-sm text-gray-900">
-                {job.staff?.name ?? <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Location</dt>
-              <dd className="text-sm text-gray-900">
-                {job.location ?? <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Scheduled Date</dt>
-              <dd className="text-sm text-gray-900">
-                {job.scheduled_date
-                  ? new Date(job.scheduled_date).toLocaleDateString('en-NZ', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })
-                  : <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Created</dt>
-              <dd className="text-sm text-gray-900">
-                {job.created_at
-                  ? new Date(job.created_at).toLocaleDateString('en-NZ', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric',
-                    })
-                  : <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-          </dl>
-        </div>
-
-        <div className="rounded-lg border border-gray-100 p-5">
-          <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-            Notes
-          </h2>
-          {job.notes ? (
-            <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.notes}</p>
-          ) : (
-            <p className="text-sm text-gray-300 italic">No notes added</p>
-          )}
-        </div>
-      </div>
-
-      {/* Photos — client component for upload interactivity */}
-      <JobPhotos jobId={id} initialPhotos={photoList} />
+      <JobTabs job={job} initialPhotos={photoList} initialNotes={noteList} />
     </div>
   )
 }
