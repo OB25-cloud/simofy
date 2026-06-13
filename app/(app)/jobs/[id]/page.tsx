@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createServerSupabase } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { JobPhoto } from '@/lib/types'
@@ -34,10 +34,11 @@ export default async function JobDetailPage({
   params: Promise<{ id: string }>
 }) {
   const { id } = await params
+  const supabase = await createServerSupabase()
 
   const [{ data: job }, { data: photos, error: photosError }, { data: clients }, { data: staff }] = await Promise.all([
     supabase.from('jobs').select('*, clients(name, business_name), staff(name)').eq('id', id).single(),
-    supabase.from('job_photos').select('*').eq('job_id', id).order('created_at', { ascending: true }),
+    supabase.from('job_photos').select('*').eq('job_id', id).order('taken_at', { ascending: true }),
     supabase.from('clients').select('id, name, business_name').order('name'),
     supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
   ])
