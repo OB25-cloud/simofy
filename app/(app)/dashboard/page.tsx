@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+import { createServerSupabase } from '@/lib/supabaseServer'
 import Link from 'next/link'
 import type { Lead } from '@/lib/types'
 
@@ -71,15 +71,80 @@ function StatCard({
   )
 }
 
+// ─── AI Insights card ────────────────────────────────────────────────────────
+
+type Insight = { icon: React.ReactNode; text: string; positive?: boolean; negative?: boolean }
+
+function InsightIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md" style={{ background: 'rgba(184,146,42,0.15)' }}>
+      {children}
+    </span>
+  )
+}
+
+function AiInsightsCard({ insights }: { insights: Insight[] }) {
+  return (
+    <div className="rounded-xl mb-6 overflow-hidden" style={{ background: '#111' }}>
+      {/* Header */}
+      <div className="flex items-center gap-2.5 px-5 py-4 border-b" style={{ borderColor: 'rgba(184,146,42,0.2)' }}>
+        <span style={{ color: '#B8922A', fontSize: '16px', lineHeight: 1 }}>✦</span>
+        <span className="text-sm font-semibold tracking-wide" style={{ color: '#B8922A' }}>
+          AI Insights
+        </span>
+        <span className="ml-auto text-xs" style={{ color: 'rgba(184,146,42,0.45)' }}>
+          refreshed now
+        </span>
+      </div>
+
+      {/* Insights list */}
+      <div className="divide-y" style={{ borderColor: 'rgba(255,255,255,0.04)' }}>
+        {insights.map((insight, i) => (
+          <div
+            key={i}
+            className="flex items-center gap-3.5 px-5 py-3.5"
+            style={{ borderLeft: '3px solid rgba(184,146,42,0.5)' }}
+          >
+            <InsightIcon>{insight.icon}</InsightIcon>
+            <p
+              className="text-sm leading-snug"
+              style={{
+                color: insight.negative ? '#f87171' : insight.positive ? '#86efac' : '#B8922A',
+              }}
+            >
+              {insight.text}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ─── page ────────────────────────────────────────────────────────────────────
 
 export default async function DashboardPage() {
-  const today = new Date()
-  const todayStr    = today.toISOString().split('T')[0]
-  const tomorrow    = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1)
-  const tomorrowStr = tomorrow.toISOString().split('T')[0]
-  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
+  const supabase = await createServerSupabase()
 
+  const today = new Date()
+  const todayStr     = today.toISOString().split('T')[0]
+  const tomorrow     = new Date(today); tomorrow.setDate(tomorrow.getDate() + 1)
+  const tomorrowStr  = tomorrow.toISOString().split('T')[0]
+  const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
+  const startOfMonthDate = startOfMonth.split('T')[0]
+
+  // Last month date range
+  const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1).toISOString()
+  const lastMonthEnd   = new Date(today.getFullYear(), today.getMonth(), 1).toISOString()
+
+  // Start of this week (Monday)
+  const dayOfWeek    = today.getDay()
+  const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+  const weekStart    = new Date(today)
+  weekStart.setDate(today.getDate() - daysToMonday)
+  const startOfWeekStr = weekStart.toISOString().split('T')[0]
+
+  // ── Wave 1: all parallel queries ─────────────────────────────────────────────
   const [
     { count: activeClientsCount },
     { data: rawJobsToday },
@@ -91,6 +156,10 @@ export default async function DashboardPage() {
     { data: rawAllJobs },
     { data: rawOverdueInvoices },
     { data: paidThisMonth },
+    { data: paidLastMonth },
+    { data: staffJobsThisWeek },
+    { data: quotesThisMonth },
+    { data: completedJobsThisMonth },
   ] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('jobs').select('id, title, job_type, status, created_at, clients(name), staff(name)')
@@ -105,16 +174,42 @@ export default async function DashboardPage() {
     supabase.from('invoices').select('id, total, due_date, clients(name)')
       .eq('status', 'overdue').order('due_date', { ascending: true }).limit(8),
     supabase.from('invoices').select('total').eq('status', 'paid').gte('created_at', startOfMonth),
+    // Insights: last month revenue
+    supabase.from('invoices').select('total').eq('status', 'paid')
+      .gte('created_at', lastMonthStart).lt('created_at', lastMonthEnd),
+    // Insights: staff jobs completed this week
+    supabase.from('jobs').select('staff(name)').eq('status', 'complete')
+      .gte('completed_date', startOfWeekStr),
+    // Insights: quote totals this month grouped by job type
+    supabase.from('quotes').select('total, jobs(job_type)').gte('created_at', startOfMonth)
+      .not('total', 'is', null),
+    // Insights: completed jobs this month (for margin calc)
+    supabase.from('jobs').select('id, staff(pay_rate)').eq('status', 'complete')
+      .gte('completed_date', startOfMonthDate),
   ])
 
-  const jobsToday      = (rawJobsToday        ?? []) as unknown as DashJob[]
-  const recentJobs     = (rawRecentJobs        ?? []) as unknown as DashJob[]
-  const leads          = (rawLeads            ?? []) as unknown as Lead[]
-  const allJobs        = (rawAllJobs          ?? []) as { status: string | null }[]
-  const overdueInvoices = (rawOverdueInvoices ?? []) as unknown as OverdueInvoice[]
+  // ── Wave 2: margin sub-queries (need completed job IDs first) ────────────────
+  const completedIds = (completedJobsThisMonth ?? []).map((j: { id: string }) => j.id)
 
-  const outstandingVal = (outstandingInvoices ?? []).reduce((sum: number, inv: { total: number | null }) => sum + (inv.total ?? 0), 0)
-  const revenueThisMonth = (paidThisMonth ?? []).reduce((sum: number, inv: { total: number | null }) => sum + (inv.total ?? 0), 0)
+  const [{ data: completedMaterials }, { data: completedQuotes }] = await Promise.all([
+    completedIds.length > 0
+      ? supabase.from('job_materials').select('job_id, quantity, unit_cost').in('job_id', completedIds)
+      : Promise.resolve({ data: [] as { job_id: string; quantity: number; unit_cost: number }[], error: null }),
+    completedIds.length > 0
+      ? supabase.from('quotes').select('job_id, total').in('job_id', completedIds).not('total', 'is', null)
+      : Promise.resolve({ data: [] as { job_id: string; total: number }[], error: null }),
+  ])
+
+  // ── Derived values ────────────────────────────────────────────────────────────
+  const jobsToday       = (rawJobsToday         ?? []) as unknown as DashJob[]
+  const recentJobs      = (rawRecentJobs         ?? []) as unknown as DashJob[]
+  const leads           = (rawLeads             ?? []) as unknown as Lead[]
+  const allJobs         = (rawAllJobs           ?? []) as { status: string | null }[]
+  const overdueInvoices = (rawOverdueInvoices   ?? []) as unknown as OverdueInvoice[]
+
+  const outstandingVal    = (outstandingInvoices ?? []).reduce((s, inv: { total: number | null }) => s + (inv.total ?? 0), 0)
+  const revenueThisMonth  = (paidThisMonth       ?? []).reduce((s, inv: { total: number | null }) => s + (inv.total ?? 0), 0)
+  const revenueLastMonth  = (paidLastMonth       ?? []).reduce((s, inv: { total: number | null }) => s + (inv.total ?? 0), 0)
 
   const jobsByStatus = Object.entries(
     allJobs.reduce((acc: Record<string, number>, j) => {
@@ -134,6 +229,168 @@ export default async function DashboardPage() {
     weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
   })
 
+  // ── Compute insights ──────────────────────────────────────────────────────────
+
+  // 1. Overdue invoices
+  const overdueTotal = overdueInvoices.reduce((s, inv) => s + (inv.total ?? 0), 0)
+
+  // 2. Most profitable job type this month (by sum of quote totals)
+  const byJobType: Record<string, number> = {}
+  for (const q of (quotesThisMonth ?? []) as unknown as { total: number | null; jobs: { job_type: string | null } | null }[]) {
+    const type = q.jobs?.job_type ?? 'General'
+    byJobType[type] = (byJobType[type] ?? 0) + (q.total ?? 0)
+  }
+  const topJobType = Object.entries(byJobType).sort((a, b) => b[1] - a[1])[0] ?? null
+
+  // 3. Top staff performer this week
+  const staffCount: Record<string, number> = {}
+  for (const j of (staffJobsThisWeek ?? []) as unknown as { staff: { name: string } | null }[]) {
+    const name = j.staff?.name
+    if (name) staffCount[name] = (staffCount[name] ?? 0) + 1
+  }
+  const topStaff = Object.entries(staffCount).sort((a, b) => b[1] - a[1])[0] ?? null
+
+  // 4. Revenue change this month vs last
+  const revPct = revenueLastMonth > 0
+    ? Math.round(((revenueThisMonth - revenueLastMonth) / revenueLastMonth) * 100)
+    : null
+
+  // 5. New leads — already have leads.length
+
+  // 6. Average profit margin on completed jobs this month
+  const matsByJob: Record<string, number> = {}
+  for (const m of (completedMaterials ?? []) as { job_id: string; quantity: number; unit_cost: number }[]) {
+    matsByJob[m.job_id] = (matsByJob[m.job_id] ?? 0) + m.quantity * m.unit_cost
+  }
+  const quoteTotalByJob: Record<string, number> = {}
+  for (const q of (completedQuotes ?? []) as { job_id: string; total: number }[]) {
+    quoteTotalByJob[q.job_id] = q.total
+  }
+  const margins: number[] = []
+  for (const job of (completedJobsThisMonth ?? []) as unknown as { id: string; staff: { pay_rate: number | null } | null }[]) {
+    const qt = quoteTotalByJob[job.id]
+    if (qt == null || qt === 0) continue
+    const matCost    = matsByJob[job.id] ?? 0
+    const labourCost = (job.staff?.pay_rate ?? 0) * 2
+    const margin     = ((qt - matCost - labourCost) / qt) * 100
+    margins.push(margin)
+  }
+  const avgMargin = margins.length > 0
+    ? Math.round(margins.reduce((a, b) => a + b, 0) / margins.length)
+    : null
+
+  // ── Build insight list ────────────────────────────────────────────────────────
+
+  const AlertIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+  )
+  const TrendIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
+    </svg>
+  )
+  const StarIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+    </svg>
+  )
+  const RevenueIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+    </svg>
+  )
+  const BellIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+    </svg>
+  )
+  const PctIcon = (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
+    </svg>
+  )
+
+  const insights: Insight[] = []
+
+  // 1. Overdue
+  if ((overdueCount ?? 0) === 0) {
+    insights.push({ icon: AlertIcon, text: 'No overdue invoices — all accounts clear.', positive: true })
+  } else {
+    insights.push({
+      icon: AlertIcon,
+      text: `${overdueCount} overdue invoice${(overdueCount ?? 0) > 1 ? 's' : ''} totalling ${fmtMoney(overdueTotal)} — follow up today.`,
+      negative: true,
+    })
+  }
+
+  // 2. Top job type
+  if (topJobType) {
+    insights.push({
+      icon: TrendIcon,
+      text: `${topJobType[0]} is your top earner this month — ${fmtMoney(topJobType[1])} in quotes.`,
+    })
+  } else {
+    insights.push({ icon: TrendIcon, text: 'No quotes raised this month yet — time to send some.' })
+  }
+
+  // 3. Top staff
+  if (topStaff) {
+    insights.push({
+      icon: StarIcon,
+      text: `${topStaff[0]} completed ${topStaff[1]} job${topStaff[1] > 1 ? 's' : ''} this week — leading the team.`,
+      positive: true,
+    })
+  } else {
+    insights.push({ icon: StarIcon, text: 'No jobs completed by staff this week yet.' })
+  }
+
+  // 4. Revenue vs last month
+  if (revPct !== null) {
+    const dir = revPct >= 0 ? 'up' : 'down'
+    insights.push({
+      icon: RevenueIcon,
+      text: `Revenue ${dir} ${Math.abs(revPct)}% vs last month (${fmtMoney(revenueLastMonth)} → ${fmtMoney(revenueThisMonth)}).`,
+      positive: revPct >= 0,
+      negative: revPct < 0,
+    })
+  } else if (revenueThisMonth > 0) {
+    insights.push({
+      icon: RevenueIcon,
+      text: `${fmtMoney(revenueThisMonth)} collected this month — first month of tracked revenue.`,
+      positive: true,
+    })
+  } else {
+    insights.push({ icon: RevenueIcon, text: 'No revenue recorded this month yet.' })
+  }
+
+  // 5. New leads
+  if (leads.length === 0) {
+    insights.push({ icon: BellIcon, text: 'All new leads have been followed up — inbox clear.', positive: true })
+  } else {
+    insights.push({
+      icon: BellIcon,
+      text: `${leads.length} new lead${leads.length > 1 ? 's' : ''} waiting for follow-up — don't let them go cold.`,
+      negative: leads.length > 2,
+    })
+  }
+
+  // 6. Avg margin
+  if (avgMargin !== null) {
+    insights.push({
+      icon: PctIcon,
+      text: `Avg. ${avgMargin}% profit margin across completed jobs this month${avgMargin < 20 ? ' — margins are tight, review costs.' : '.'}`,
+      positive: avgMargin >= 30,
+      negative: avgMargin < 10,
+    })
+  } else {
+    insights.push({
+      icon: PctIcon,
+      text: 'Add quotes and materials to completed jobs to track profit margins.',
+    })
+  }
+
   return (
     <div className="p-4 md:p-8">
       {/* Header */}
@@ -144,12 +401,15 @@ export default async function DashboardPage() {
 
       {/* Top stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-        <StatCard label="Active Clients"    value={String(activeClientsCount ?? 0)} accent />
-        <StatCard label="Jobs Today"        value={String(jobsToday.length)}         accent sub={`${jobsToday.length} scheduled`} />
-        <StatCard label="In Progress"       value={String(inProgressCount ?? 0)}    accent />
-        <StatCard label="Outstanding"       value={fmtMoney(outstandingVal)}         accent sub="sent + overdue" />
-        <StatCard label="Overdue Invoices"  value={String(overdueCount ?? 0)}        danger={(overdueCount ?? 0) > 0} sub={(overdueCount ?? 0) > 0 ? 'requires attention' : 'all clear'} />
+        <StatCard label="Active Clients"   value={String(activeClientsCount ?? 0)} accent />
+        <StatCard label="Jobs Today"       value={String(jobsToday.length)}         accent sub={`${jobsToday.length} scheduled`} />
+        <StatCard label="In Progress"      value={String(inProgressCount ?? 0)}    accent />
+        <StatCard label="Outstanding"      value={fmtMoney(outstandingVal)}         accent sub="sent + overdue" />
+        <StatCard label="Overdue Invoices" value={String(overdueCount ?? 0)}        danger={(overdueCount ?? 0) > 0} sub={(overdueCount ?? 0) > 0 ? 'requires attention' : 'all clear'} />
       </div>
+
+      {/* AI Insights */}
+      <AiInsightsCard insights={insights} />
 
       {/* Revenue + Jobs by Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
@@ -262,7 +522,7 @@ export default async function DashboardPage() {
           )}
         </div>
 
-        {/* Recent Activity */}
+        {/* Recent Jobs */}
         <div className="rounded-lg border border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-3.5 bg-gray-50 border-b border-gray-100">
             <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Recent Jobs</p>
@@ -371,7 +631,6 @@ export default async function DashboardPage() {
             View all →
           </Link>
         </div>
-
         {leads.length === 0 ? (
           <div className="px-5 py-12 text-center">
             <p className="text-sm text-gray-300">No new uncontacted leads</p>
