@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Client, Site, Staff } from '@/lib/types'
+import { buildOccurrences } from '@/lib/recurrence'
 
 const STATUS_OPTIONS = [
   { value: 'pending',     label: 'Pending' },
@@ -11,6 +12,13 @@ const STATUS_OPTIONS = [
   { value: 'complete',    label: 'Complete' },
   { value: 'invoiced',    label: 'Invoiced' },
   { value: 'cancelled',   label: 'Cancelled' },
+]
+
+const RECURRENCE_OPTIONS = [
+  { value: 'none',        label: 'None (one-off)' },
+  { value: 'weekly',      label: 'Weekly'         },
+  { value: 'fortnightly', label: 'Fortnightly'    },
+  { value: 'monthly',     label: 'Monthly'        },
 ]
 
 const JOB_TYPES = [
@@ -43,6 +51,7 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
     site_id: '',
     location: '',
     scheduled_date: '',
+    recurrence_pattern: 'none',
     notes: '',
   })
   const [sites, setSites] = useState<Site[]>([])
@@ -76,6 +85,9 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
     setLoading(true)
     setError('')
 
+    const isRecurring = form.recurrence_pattern !== 'none'
+    const seriesId = isRecurring ? crypto.randomUUID() : null
+
     const { error: dbError } = await supabase.from('jobs').insert({
       title: form.title.trim(),
       job_type: form.job_type || null,
@@ -84,6 +96,9 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
       site_id: form.site_id || null,
       location: form.location.trim() || null,
       scheduled_date: form.scheduled_date || null,
+      is_recurring: isRecurring,
+      recurrence_pattern: isRecurring ? form.recurrence_pattern : null,
+      recurring_series_id: seriesId,
       notes: form.notes.trim() || null,
       status: form.status,
     })
@@ -92,6 +107,27 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
       setError(dbError.message)
       setLoading(false)
       return
+    }
+
+    if (isRecurring && seriesId && form.scheduled_date) {
+      const occurrences = buildOccurrences(
+        form.scheduled_date,
+        form.recurrence_pattern,
+        8,
+        seriesId,
+        {
+          title: form.title.trim(),
+          job_type: form.job_type || null,
+          client_id: form.client_id || null,
+          site_id: form.site_id || null,
+          staff_id: form.staff_id || null,
+          location: form.location.trim() || null,
+          notes: form.notes.trim() || null,
+        },
+      )
+      const { error: seriesErr } = await supabase.from('jobs').insert(occurrences)
+      if (seriesErr) console.error('[Recurrence] series generation failed:', seriesErr)
+      else console.log('[Recurrence] generated 8 occurrences for series', seriesId)
     }
 
     onClose()
@@ -213,6 +249,15 @@ export default function AddJobModal({ clients, staff, onClose }: Props) {
               onChange={set('scheduled_date')}
               className={inputClass}
             />
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5">Recurrence</label>
+            <select value={form.recurrence_pattern} onChange={set('recurrence_pattern')} className={inputClass}>
+              {RECURRENCE_OPTIONS.map(o => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
           </div>
 
           <div>

@@ -31,6 +31,9 @@ export type Job = {
   location: string | null
   scheduled_date: string | null
   completed_date: string | null
+  is_recurring: boolean | null
+  recurrence_pattern: string | null
+  recurring_series_id: string | null
   notes: string | null
   created_at: string | null
   clients: { name: string; business_name: string | null } | null

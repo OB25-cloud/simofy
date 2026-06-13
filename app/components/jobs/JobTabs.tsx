@@ -6,6 +6,12 @@ import { supabase } from '@/lib/supabase'
 import type { Job, JobPhoto, JobNote } from '@/lib/types'
 import JobPhotos from './JobPhotos'
 
+const RECURRENCE_LABELS: Record<string, string> = {
+  weekly:      'Weekly',
+  fortnightly: 'Fortnightly',
+  monthly:     'Monthly',
+}
+
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
   scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
@@ -177,6 +183,25 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
                 <dt className="text-xs text-gray-400 mb-0.5">Job Type</dt>
                 <dd className="text-sm text-gray-900">
                   {job.job_type ?? <span className="text-gray-300">—</span>}
+                </dd>
+              </div>
+              <div>
+                <dt className="text-xs text-gray-400 mb-0.5">Recurrence</dt>
+                <dd className="text-sm text-gray-900">
+                  {job.recurrence_pattern
+                    ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <span
+                          className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
+                          style={{ background: '#fdf8ee', color: '#B8922A' }}
+                        >
+                          Recurring
+                        </span>
+                        {RECURRENCE_LABELS[job.recurrence_pattern] ?? job.recurrence_pattern}
+                      </span>
+                    )
+                    : <span className="text-gray-300">One-off</span>
+                  }
                 </dd>
               </div>
               <div>
