@@ -1,7 +1,7 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import type { JobPhoto, JobNote } from '@/lib/types'
+import type { JobPhoto, JobNote, Material, JobMaterial } from '@/lib/types'
 import JobTabs from '@/app/components/jobs/JobTabs'
 import JobActions from '@/app/components/jobs/JobActions'
 
@@ -36,19 +36,29 @@ export default async function JobDetailPage({
   const { id } = await params
   const supabase = await createServerSupabase()
 
-  const [{ data: job }, { data: photos }, { data: notes }, { data: clients }, { data: staff }] =
-    await Promise.all([
-      supabase.from('jobs').select('*, clients(name, business_name), staff(name)').eq('id', id).single(),
-      supabase.from('job_photos').select('*').eq('job_id', id).order('taken_at', { ascending: true }),
-      supabase.from('job_notes').select('*').eq('job_id', id).order('created_at', { ascending: false }),
-      supabase.from('clients').select('id, name, business_name').order('name'),
-      supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
-    ])
+  const [
+    { data: job },
+    { data: photos },
+    { data: notes },
+    { data: clients },
+    { data: staff },
+    { data: materials },
+    { data: jobMaterials },
+    { data: quotes },
+  ] = await Promise.all([
+    supabase.from('jobs').select('*, clients(name, business_name), staff(name, pay_rate)').eq('id', id).single(),
+    supabase.from('job_photos').select('*').eq('job_id', id).order('taken_at', { ascending: true }),
+    supabase.from('job_notes').select('*').eq('job_id', id).order('created_at', { ascending: false }),
+    supabase.from('clients').select('id, name, business_name').order('name'),
+    supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
+    supabase.from('materials').select('*').order('category').order('name'),
+    supabase.from('job_materials').select('*, materials(name, unit)').eq('job_id', id).order('created_at'),
+    supabase.from('quotes').select('total').eq('job_id', id).order('created_at', { ascending: false }).limit(1),
+  ])
 
   if (!job) notFound()
 
-  const photoList: JobPhoto[] = photos ?? []
-  const noteList: JobNote[] = notes ?? []
+  const quoteTotal: number | null = quotes?.[0]?.total ?? null
 
   return (
     <div className="p-4 md:p-8 max-w-4xl">
@@ -78,7 +88,14 @@ export default async function JobDetailPage({
         <JobActions job={job} clients={clients ?? []} staff={staff ?? []} />
       </div>
 
-      <JobTabs job={job} initialPhotos={photoList} initialNotes={noteList} />
+      <JobTabs
+        job={job}
+        initialPhotos={(photos ?? []) as JobPhoto[]}
+        initialNotes={(notes ?? []) as JobNote[]}
+        materials={(materials ?? []) as Material[]}
+        initialJobMaterials={(jobMaterials ?? []) as JobMaterial[]}
+        quoteTotal={quoteTotal}
+      />
     </div>
   )
 }

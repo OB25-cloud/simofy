@@ -37,7 +37,7 @@ export type Job = {
   notes: string | null
   created_at: string | null
   clients: { name: string; business_name: string | null } | null
-  staff: { name: string } | null
+  staff: { name: string; pay_rate: number | null } | null
 }
 
 export type JobNote = {
@@ -119,4 +119,23 @@ export type JobPhoto = {
   url: string
   tag: 'before' | 'after' | null
   created_at: string
+}
+
+export type Material = {
+  id: string
+  name: string
+  unit: string
+  unit_cost: number
+  category: string | null
+  created_at: string
+}
+
+export type JobMaterial = {
+  id: string
+  job_id: string
+  material_id: string
+  quantity: number
+  unit_cost: number
+  created_at: string
+  materials: { name: string; unit: string } | null
 }

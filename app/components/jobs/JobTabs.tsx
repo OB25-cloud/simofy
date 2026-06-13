@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import type { Job, JobPhoto, JobNote } from '@/lib/types'
+import type { Job, JobPhoto, JobNote, Material, JobMaterial } from '@/lib/types'
 import JobPhotos from './JobPhotos'
+import MaterialsSection from './MaterialsSection'
 
 const RECURRENCE_LABELS: Record<string, string> = {
   weekly:      'Weekly',
@@ -46,20 +47,35 @@ function fmtDateTime(s: string) {
   })
 }
 
+function fmtCurrency(n: number) {
+  return new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD' }).format(n)
+}
+
 const TABS = [
-  { key: 'overview',  label: 'Overview'  },
-  { key: 'notes',     label: 'Notes'     },
-  { key: 'photos',    label: 'Photos'    },
-  { key: 'activity',  label: 'Activity'  },
+  { key: 'overview',   label: 'Overview'   },
+  { key: 'notes',      label: 'Notes'      },
+  { key: 'photos',     label: 'Photos'     },
+  { key: 'materials',  label: 'Materials'  },
+  { key: 'activity',   label: 'Activity'   },
 ]
 
 interface Props {
   job: Job
   initialPhotos: JobPhoto[]
   initialNotes: JobNote[]
+  materials: Material[]
+  initialJobMaterials: JobMaterial[]
+  quoteTotal: number | null
 }
 
-export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
+export default function JobTabs({
+  job,
+  initialPhotos,
+  initialNotes,
+  materials,
+  initialJobMaterials,
+  quoteTotal,
+}: Props) {
   const [activeTab, setActiveTab] = useState('overview')
   const [notes, setNotes] = useState<JobNote[]>(initialNotes)
   const [noteText, setNoteText] = useState('')
@@ -69,6 +85,13 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
   const [editText, setEditText] = useState('')
   const [updatingId, setUpdatingId] = useState<string | null>(null)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  // Cost summary calculations
+  const materialsCost = initialJobMaterials.reduce((sum, m) => sum + m.quantity * m.unit_cost, 0)
+  const payRate = job.staff?.pay_rate ?? 0
+  const labourCost = payRate * 2
+  const totalCost = materialsCost + labourCost
+  const margin = quoteTotal !== null ? quoteTotal - totalCost : null
 
   async function handleAddNote() {
     const content = noteText.trim()
@@ -169,89 +192,134 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
 
       {/* Overview */}
       {activeTab === 'overview' && (
-        <div className="grid grid-cols-2 gap-5">
-          <div className="rounded-lg border border-gray-100 p-5">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-              Job Details
-            </h2>
-            <dl className="space-y-3.5">
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Status</dt>
-                <dd><StatusBadge status={job.status} /></dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Job Type</dt>
-                <dd className="text-sm text-gray-900">
-                  {job.job_type ?? <span className="text-gray-300">—</span>}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Recurrence</dt>
-                <dd className="text-sm text-gray-900">
-                  {job.recurrence_pattern
-                    ? (
-                      <span className="inline-flex items-center gap-1.5">
-                        <span
-                          className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
-                          style={{ background: '#fdf8ee', color: '#B8922A' }}
-                        >
-                          Recurring
+        <div className="space-y-5">
+          <div className="grid grid-cols-2 gap-5">
+            <div className="rounded-lg border border-gray-100 p-5">
+              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                Job Details
+              </h2>
+              <dl className="space-y-3.5">
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Status</dt>
+                  <dd><StatusBadge status={job.status} /></dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Job Type</dt>
+                  <dd className="text-sm text-gray-900">
+                    {job.job_type ?? <span className="text-gray-300">—</span>}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Recurrence</dt>
+                  <dd className="text-sm text-gray-900">
+                    {job.recurrence_pattern
+                      ? (
+                        <span className="inline-flex items-center gap-1.5">
+                          <span
+                            className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
+                            style={{ background: '#fdf8ee', color: '#B8922A' }}
+                          >
+                            Recurring
+                          </span>
+                          {RECURRENCE_LABELS[job.recurrence_pattern] ?? job.recurrence_pattern}
                         </span>
-                        {RECURRENCE_LABELS[job.recurrence_pattern] ?? job.recurrence_pattern}
-                      </span>
-                    )
-                    : <span className="text-gray-300">One-off</span>
-                  }
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Client</dt>
-                <dd className="text-sm text-gray-900">
-                  {job.client_id ? (
-                    <Link
-                      href={`/clients/${job.client_id}`}
-                      className="hover:underline"
-                      style={{ color: '#B8922A' }}
-                    >
-                      {job.clients?.name ?? 'View client'}
-                    </Link>
-                  ) : (
-                    <span className="text-gray-300">—</span>
-                  )}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Assigned To</dt>
-                <dd className="text-sm text-gray-900">
-                  {job.staff?.name ?? <span className="text-gray-300">—</span>}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Location</dt>
-                <dd className="text-sm text-gray-900">
-                  {job.location ?? <span className="text-gray-300">—</span>}
-                </dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Scheduled Date</dt>
-                <dd className="text-sm text-gray-900">{fmtDate(job.scheduled_date)}</dd>
-              </div>
-              <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Created</dt>
-                <dd className="text-sm text-gray-900">{fmtDate(job.created_at)}</dd>
-              </div>
-            </dl>
+                      )
+                      : <span className="text-gray-300">One-off</span>
+                    }
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Client</dt>
+                  <dd className="text-sm text-gray-900">
+                    {job.client_id ? (
+                      <Link
+                        href={`/clients/${job.client_id}`}
+                        className="hover:underline"
+                        style={{ color: '#B8922A' }}
+                      >
+                        {job.clients?.name ?? 'View client'}
+                      </Link>
+                    ) : (
+                      <span className="text-gray-300">—</span>
+                    )}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Assigned To</dt>
+                  <dd className="text-sm text-gray-900">
+                    {job.staff?.name ?? <span className="text-gray-300">—</span>}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Location</dt>
+                  <dd className="text-sm text-gray-900">
+                    {job.location ?? <span className="text-gray-300">—</span>}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Scheduled Date</dt>
+                  <dd className="text-sm text-gray-900">{fmtDate(job.scheduled_date)}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-400 mb-0.5">Created</dt>
+                  <dd className="text-sm text-gray-900">{fmtDate(job.created_at)}</dd>
+                </div>
+              </dl>
+            </div>
+
+            <div className="rounded-lg border border-gray-100 p-5">
+              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+                Description
+              </h2>
+              {job.notes ? (
+                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.notes}</p>
+              ) : (
+                <p className="text-sm text-gray-300 italic">No description added</p>
+              )}
+            </div>
           </div>
 
+          {/* Job Cost Summary */}
           <div className="rounded-lg border border-gray-100 p-5">
             <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
-              Description
+              Job Cost Summary
             </h2>
-            {job.notes ? (
-              <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.notes}</p>
-            ) : (
-              <p className="text-sm text-gray-300 italic">No description added</p>
-            )}
+            <div className="space-y-2.5">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Materials Cost</span>
+                <span className="font-medium text-gray-900">{fmtCurrency(materialsCost)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">
+                  Labour Cost
+                  <span className="text-xs text-gray-400 ml-1.5">
+                    ({job.staff?.pay_rate ? `${fmtCurrency(payRate)}/hr` : 'no rate set'} × 2 hrs est.)
+                  </span>
+                </span>
+                <span className="font-medium text-gray-900">{fmtCurrency(labourCost)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm border-t border-gray-100 pt-2.5 mt-1">
+                <span className="font-semibold text-gray-700">Total Cost</span>
+                <span className="font-semibold text-gray-900">{fmtCurrency(totalCost)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">Quote Total</span>
+                <span className="font-medium text-gray-900">
+                  {quoteTotal !== null ? fmtCurrency(quoteTotal) : <span className="text-gray-300">No quote</span>}
+                </span>
+              </div>
+              {margin !== null && (
+                <div className="flex items-center justify-between text-sm border-t border-gray-100 pt-2.5 mt-1">
+                  <span className="font-semibold text-gray-700">Profit Margin</span>
+                  <span
+                    className="font-semibold text-base"
+                    style={{ color: margin >= 0 ? '#B8922A' : '#dc2626' }}
+                  >
+                    {margin >= 0 ? '+' : ''}{fmtCurrency(margin)}
+                  </span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
@@ -295,7 +363,6 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
               {notes.map(note => (
                 <div key={note.id} className="rounded-lg border border-gray-100 p-4">
                   {editingId === note.id ? (
-                    /* Edit mode */
                     <>
                       <textarea
                         value={editText}
@@ -323,7 +390,6 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
                       </div>
                     </>
                   ) : (
-                    /* View mode */
                     <>
                       <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap mb-2">
                         {note.content}
@@ -360,6 +426,15 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
         <JobPhotos jobId={job.id} initialPhotos={initialPhotos} />
       )}
 
+      {/* Materials */}
+      {activeTab === 'materials' && (
+        <MaterialsSection
+          jobId={job.id}
+          materials={materials}
+          initialJobMaterials={initialJobMaterials}
+        />
+      )}
+
       {/* Activity */}
       {activeTab === 'activity' && (
         <div>
@@ -369,13 +444,10 @@ export default function JobTabs({ job, initialPhotos, initialNotes }: Props) {
             </div>
           ) : (
             <div className="relative pl-6">
-              {/* Vertical line */}
               <div className="absolute left-2 top-2 bottom-2 w-px bg-gray-100" />
-
               <div className="space-y-6">
                 {timeline.map((entry, i) => (
                   <div key={i} className="relative flex items-start gap-4">
-                    {/* Dot */}
                     <span
                       className="absolute -left-4 flex h-4 w-4 items-center justify-center rounded-full ring-2 ring-white"
                       style={{ background: entry.dotColor }}
