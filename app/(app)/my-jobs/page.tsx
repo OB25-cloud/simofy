@@ -54,14 +54,21 @@ export default async function MyJobsPage() {
     .eq('staff_id', staffRecord.id)
     .order('scheduled_date', { ascending: true })
 
+  type MyJob = {
+    id: string
+    title: string | null
+    job_type: string | null
+    status: string | null
+    scheduled_date: string | null
+    location: string | null
+    clients: { name: string } | null
+  }
+
+  const jobList = (jobs as MyJob[] | null) ?? []
   const todayStr = new Date().toISOString().split('T')[0]
 
-  const upcoming = (jobs ?? []).filter(j =>
-    !j.scheduled_date || j.scheduled_date >= todayStr
-  )
-  const past = (jobs ?? []).filter(j =>
-    j.scheduled_date && j.scheduled_date < todayStr
-  )
+  const upcoming = jobList.filter(j => !j.scheduled_date || j.scheduled_date >= todayStr)
+  const past = jobList.filter(j => j.scheduled_date && j.scheduled_date < todayStr)
 
   return (
     <div className="p-4 md:p-8 max-w-2xl">
@@ -70,7 +77,7 @@ export default async function MyJobsPage() {
         <p className="mt-0.5 text-sm text-gray-400">Jobs assigned to {staffRecord.name}</p>
       </div>
 
-      {(jobs ?? []).length === 0 ? (
+      {jobList.length === 0 ? (
         <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
           <p className="text-sm text-gray-400">No jobs assigned to you yet.</p>
         </div>
@@ -91,16 +98,16 @@ export default async function MyJobsPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900 group-hover:text-[#B8922A] transition-colors truncate">
-                        {(job as any).title ?? (job as any).job_type ?? 'Untitled'}
+                        {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        {(job as any).clients?.name ?? '—'}
-                        {(job as any).scheduled_date && (
-                          <span> · {new Date((job as any).scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                        {job.clients?.name ?? '—'}
+                        {job.scheduled_date && (
+                          <span> · {new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
                         )}
                       </p>
                     </div>
-                    <StatusBadge status={(job as any).status} />
+                    <StatusBadge status={job.status} />
                   </Link>
                 ))}
               </div>
@@ -120,16 +127,16 @@ export default async function MyJobsPage() {
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-gray-900 group-hover:text-[#B8922A] transition-colors truncate">
-                        {(job as any).title ?? (job as any).job_type ?? 'Untitled'}
+                        {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
-                        {(job as any).clients?.name ?? '—'}
-                        {(job as any).scheduled_date && (
-                          <span> · {new Date((job as any).scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
+                        {job.clients?.name ?? '—'}
+                        {job.scheduled_date && (
+                          <span> · {new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
                         )}
                       </p>
                     </div>
-                    <StatusBadge status={(job as any).status} />
+                    <StatusBadge status={job.status} />
                   </Link>
                 ))}
               </div>

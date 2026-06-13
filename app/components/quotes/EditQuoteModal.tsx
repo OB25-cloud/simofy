@@ -54,7 +54,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
       .select('*')
       .eq('quote_id', quote.id)
       .order('sort_order')
-      .then(({ data }) => {
+      .then(({ data }: { data: QuoteLineItem[] | null }) => {
         setLineItems(data && data.length > 0 ? data.map(fromDB) : [emptyItem()])
         setLoadingItems(false)
       })

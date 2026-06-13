@@ -89,7 +89,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
     }
 
     // Build upsert rows for every client × every type
-    const rows = clients.flatMap(c =>
+    const rows = clients.flatMap((c: { id: string }) =>
       NOTIFICATION_TYPES.map(t => ({
         client_id: c.id,
         notification_type: t.key,

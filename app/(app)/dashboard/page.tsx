@@ -113,8 +113,8 @@ export default async function DashboardPage() {
   const allJobs        = (rawAllJobs          ?? []) as { status: string | null }[]
   const overdueInvoices = (rawOverdueInvoices ?? []) as unknown as OverdueInvoice[]
 
-  const outstandingVal = (outstandingInvoices ?? []).reduce((sum, inv) => sum + ((inv as { total: number | null }).total ?? 0), 0)
-  const revenueThisMonth = (paidThisMonth ?? []).reduce((sum, inv) => sum + ((inv as { total: number | null }).total ?? 0), 0)
+  const outstandingVal = (outstandingInvoices ?? []).reduce((sum: number, inv: { total: number | null }) => sum + (inv.total ?? 0), 0)
+  const revenueThisMonth = (paidThisMonth ?? []).reduce((sum: number, inv: { total: number | null }) => sum + (inv.total ?? 0), 0)
 
   const jobsByStatus = Object.entries(
     allJobs.reduce((acc: Record<string, number>, j) => {

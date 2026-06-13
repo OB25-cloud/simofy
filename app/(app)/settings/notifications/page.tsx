@@ -9,7 +9,7 @@ export default async function NotificationSettingsPage() {
     supabase.from('clients').select('id', { count: 'exact', head: true }),
   ])
 
-  const reviewRequestRow = defaults?.find(d => d.notification_type === 'review_request')
+  const reviewRequestRow = defaults?.find((d: { notification_type: string }) => d.notification_type === 'review_request')
   const reviewRequestDelayHours: number = (reviewRequestRow as any)?.review_request_delay_hours ?? 24
 
   return (

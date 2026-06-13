@@ -56,7 +56,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
     if (!job.client_id) return
     setLoadingSites(true)
     supabase.from('sites').select('*').eq('client_id', job.client_id).order('address')
-      .then(({ data }) => { setSites(data ?? []); setLoadingSites(false) })
+      .then(({ data }: { data: Site[] | null }) => { setSites(data ?? []); setLoadingSites(false) })
   }, [job.client_id])
 
   function set(field: keyof typeof form) {
