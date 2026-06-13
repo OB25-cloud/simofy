@@ -117,5 +117,6 @@ export type JobPhoto = {
   id: string
   job_id: string
   url: string
+  tag: 'before' | 'after' | null
   created_at: string
 }
