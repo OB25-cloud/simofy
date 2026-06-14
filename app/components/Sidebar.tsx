@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoutButton from './LogoutButton'
+import GlobalSearch from './GlobalSearch'
 
 // ─── icons ──────────────────────────────────────────────────────────────────
 
@@ -82,14 +83,6 @@ function BellIcon() {
     </svg>
   )
 }
-function SearchIcon() {
-  return (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
-    </svg>
-  )
-}
-
 // ─── nav config ─────────────────────────────────────────────────────────────
 
 const ADMIN_SECTIONS = [
@@ -120,12 +113,6 @@ const ADMIN_SECTIONS = [
     label: 'SETTINGS',
     items: [
       { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon },
-    ],
-  },
-  {
-    label: 'AI',
-    items: [
-      { name: 'AI Search', href: '/dashboard', Icon: SearchIcon },
     ],
   },
 ]
@@ -164,15 +151,26 @@ export default function Sidebar({ role, userName, userEmail, onNavigate }: Props
     <aside className="w-64 shrink-0 bg-black h-full flex flex-col">
       {/* Logo */}
       <div className="px-6 pt-7 pb-5">
-        <span className="text-xl font-bold tracking-[0.25em]" style={{ color: '#B8922A' }}>
+        <Link href="/dashboard" className="text-xl font-bold tracking-[0.25em]" style={{ color: '#B8922A' }}>
           SIMOFY
-        </span>
+        </Link>
       </div>
 
       <div className="h-px mx-4 mb-4" style={{ background: 'rgba(255,255,255,0.08)' }} />
 
       {/* Nav sections */}
       <nav className="flex-1 px-3 pb-4 overflow-y-auto scrollbar-hidden">
+        {/* Global search */}
+        <div className="mb-4">
+          <p
+            className="px-3 mb-1.5 text-[10px] font-bold tracking-[0.18em]"
+            style={{ color: 'rgba(184,146,42,0.65)' }}
+          >
+            SEARCH
+          </p>
+          <GlobalSearch onNavigate={onNavigate} />
+        </div>
+
         {sections.map((section, si) => (
           <div key={section.label} className={si > 0 ? 'mt-5' : ''}>
             <p
