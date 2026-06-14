@@ -49,6 +49,10 @@ export default function UsersView({
   const [roleChanging, setRoleChanging] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  // Delete user
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
   // Invite modal
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -64,6 +68,7 @@ export default function UsersView({
     setError(null)
     setIsDirty(false)
     setSaveSuccess(false)
+    setShowDeleteConfirm(false)
     if (user.role === 'admin') {
       setPermMap(null)
     } else if (user.permissions.length > 0) {
@@ -127,6 +132,29 @@ export default function UsersView({
       setError(e instanceof Error ? e.message : 'Failed to save permissions')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleDeleteUser() {
+    if (!selectedUser) return
+    setDeleting(true)
+    setError(null)
+    try {
+      const res = await fetch('/api/admin/delete-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: selectedUser.id }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+      setUsers(prev => prev.filter(u => u.id !== selectedUser.id))
+      setSelectedId(null)
+      setPermMap(null)
+      setShowDeleteConfirm(false)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to delete user')
+      setShowDeleteConfirm(false)
+    } finally {
+      setDeleting(false)
     }
   }
 
@@ -239,6 +267,39 @@ export default function UsersView({
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {showDeleteConfirm && selectedUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center"
+          style={{ background: 'rgba(0,0,0,0.4)' }}
+          onClick={e => { if (e.target === e.currentTarget) setShowDeleteConfirm(false) }}
+        >
+          <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
+            <h2 className="text-base font-semibold text-gray-900 mb-2">Delete user?</h2>
+            <p className="text-sm text-gray-500 mb-1">
+              Are you sure you want to delete <span className="font-medium text-gray-700">{selectedUser.name ?? selectedUser.email}</span>?
+            </p>
+            <p className="text-sm text-red-500 mb-6">This cannot be undone.</p>
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteUser}
+                disabled={deleting}
+                className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                style={{ background: '#dc2626' }}
+              >
+                {deleting ? 'Deleting…' : 'Delete User'}
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -407,6 +468,17 @@ export default function UsersView({
               </>
             )}
           </div>
+          {/* Delete user */}
+          {selectedUser.role !== 'admin' && selectedUser.id !== currentUserId && (
+            <div className="mt-8 pt-6 border-t border-gray-100">
+              <button
+                onClick={() => setShowDeleteConfirm(true)}
+                className="text-sm font-medium text-red-500 hover:text-red-700"
+              >
+                Delete User
+              </button>
+            </div>
+          )}
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center">
