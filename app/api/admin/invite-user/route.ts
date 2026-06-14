@@ -20,6 +20,7 @@ export async function POST(req: Request) {
 
   const { data, error } = await admin.auth.admin.inviteUserByEmail(email, {
     data: { role },
+    redirectTo: 'https://simofy.vercel.app/auth/confirm',
   })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
