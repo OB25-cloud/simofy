@@ -76,13 +76,13 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
 
   const paidThisMonth = invoices
     .filter(inv => inv.status === 'paid' && new Date(inv.created_at) >= startOfMonth)
-    .length
+    .reduce((sum, inv) => sum + (inv.total ?? 0), 0)
 
   const stats = [
     { label: 'Total Invoices',   value: String(invoices.length),                                                         accent: true  },
     { label: 'Outstanding',      value: fmtShort(outstanding),                                                           accent: true  },
     { label: 'Overdue',          value: String(invoices.filter(i => i.status === 'overdue').length),                     danger: true  },
-    { label: 'Paid This Month',  value: String(paidThisMonth),                                                           accent: false },
+    { label: 'Paid This Month',  value: fmtShort(paidThisMonth),                                                         accent: false },
   ]
 
   const filtered = invoices.filter(inv => {
@@ -169,7 +169,9 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Client</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Job</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Total</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Amount</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">GST</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Total</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Due Date</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Created</th>
                 <th className="px-4 py-3 w-8" />
@@ -199,7 +201,13 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
                   <td className="px-4 py-3">
                     <StatusBadge status={inv.status} />
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900 tabular-nums">
+                  <td className="px-4 py-3 text-right text-gray-500 tabular-nums text-xs">
+                    {fmt(inv.amount)}
+                  </td>
+                  <td className="px-4 py-3 text-right text-gray-400 tabular-nums text-xs">
+                    {fmt(inv.tax)}
+                  </td>
+                  <td className="px-4 py-3 text-right font-medium text-gray-900 tabular-nums">
                     {fmt(inv.total)}
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">

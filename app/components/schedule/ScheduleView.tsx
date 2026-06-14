@@ -181,6 +181,23 @@ export default function ScheduleView() {
         </div>
       </div>
 
+      {/* Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-5">
+        {[
+          { label: 'Jobs This Week',  value: String(jobs.length) },
+          { label: 'Jobs Today',      value: String(jobs.filter(j => j.scheduled_date?.split('T')[0] === todayKey).length) },
+          { label: 'Staff Scheduled', value: String(new Set(jobs.filter(j => j.staff?.name).map(j => j.staff!.name)).size) },
+          { label: 'In Progress',     value: String(jobs.filter(j => j.status === 'in_progress').length) },
+        ].map((s, idx) => (
+          <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: idx < 2 ? '#B8922A' : '#111827' }}>
+              {loading ? <span className="text-gray-200">—</span> : s.value}
+            </p>
+          </div>
+        ))}
+      </div>
+
       {/* Legend */}
       <div className="mb-4 flex items-center gap-5 flex-wrap">
         {LEGEND.map(({ key, label }) => {

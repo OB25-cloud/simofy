@@ -72,10 +72,10 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
     .reduce((sum, q) => sum + (q.total ?? 0), 0)
 
   const stats = [
-    { label: 'Total Quotes',   value: String(quotes.length),                                       accent: true  },
-    { label: 'Sent',           value: String(quotes.filter(q => q.status === 'sent').length),      accent: false },
-    { label: 'Accepted',       value: String(quotes.filter(q => q.status === 'accepted').length),  accent: true  },
-    { label: 'Accepted Value', value: fmtShort(acceptedValue),                                     accent: true  },
+    { label: 'Total Quotes',   value: String(quotes.length),                                      accent: true  },
+    { label: 'Draft',          value: String(quotes.filter(q => q.status === 'draft').length),    accent: false },
+    { label: 'Sent',           value: String(quotes.filter(q => q.status === 'sent').length),     accent: false },
+    { label: 'Accepted Value', value: fmtShort(acceptedValue),                                    accent: true  },
   ]
 
   const filtered = quotes.filter(q => {
@@ -161,8 +161,10 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Quote</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Client</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Job</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Type</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Total</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Subtotal</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Total</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Valid Until</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Created</th>
                 <th className="px-4 py-3 w-8" />
@@ -182,17 +184,21 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                   <td className="px-4 py-3 text-gray-700">
                     {quote.clients?.name ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500 max-w-[140px]">
+                  <td className="px-4 py-3 text-gray-500 max-w-[120px]">
                     {quote.jobs?.title
                       ? <span className="block truncate">{quote.jobs.title}</span>
-                      : quote.jobs?.job_type
-                        ? <span className="block truncate text-gray-400">{quote.jobs.job_type}</span>
-                        : <span className="text-gray-300">—</span>}
+                      : <span className="text-gray-300">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-gray-400 text-xs">
+                    {quote.jobs?.job_type ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={quote.status} />
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900 tabular-nums">
+                  <td className="px-4 py-3 text-right text-gray-500 tabular-nums text-xs">
+                    {fmt(quote.subtotal)}
+                  </td>
+                  <td className="px-4 py-3 text-right font-medium text-gray-900 tabular-nums">
                     {fmt(quote.total)}
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">

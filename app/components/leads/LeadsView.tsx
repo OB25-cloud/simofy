@@ -53,11 +53,14 @@ export default function LeadsView({ leads, openModal }: Props) {
   const _now = new Date()
   const startOfMonth = new Date(Date.UTC(_now.getUTCFullYear(), _now.getUTCMonth(), 1))
 
+  const converted = leads.filter(l => l.status === 'converted').length
+  const conversionRate = leads.length ? `${Math.round(converted / leads.length * 100)}%` : '—'
+
   const stats = [
-    { label: 'Total Leads',  value: String(leads.length),                                                                   accent: true  },
-    { label: 'New',          value: String(leads.filter(l => l.status === 'new').length),                                   accent: true  },
-    { label: 'Contacted',    value: String(leads.filter(l => l.status === 'contacted').length),                             accent: false },
-    { label: 'Converted',    value: String(leads.filter(l => l.status === 'converted').length),                             accent: false },
+    { label: 'Total Leads',      value: String(leads.length),                                                              accent: true  },
+    { label: 'New',              value: String(leads.filter(l => l.status === 'new').length),                              accent: true  },
+    { label: 'Contacted',        value: String(leads.filter(l => l.status === 'contacted').length),                        accent: false },
+    { label: 'Conversion Rate',  value: conversionRate,                                                                    accent: false },
   ]
 
   const filtered = leads.filter(l => {
@@ -144,6 +147,7 @@ export default function LeadsView({ leads, openModal }: Props) {
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Email</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Phone</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Message</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Notes</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Source</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Received</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
@@ -167,9 +171,14 @@ export default function LeadsView({ leads, openModal }: Props) {
                   <td className="px-4 py-3 text-gray-500">
                     {lead.phone ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500 max-w-[200px]">
+                  <td className="px-4 py-3 text-gray-500 max-w-[160px]">
                     {lead.message
                       ? <span className="block truncate">{lead.message}</span>
+                      : <span className="text-gray-300">—</span>}
+                  </td>
+                  <td className="px-4 py-3 text-gray-400 max-w-[140px] text-xs">
+                    {lead.notes
+                      ? <span className="block truncate">{lead.notes}</span>
                       : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 text-gray-500">
