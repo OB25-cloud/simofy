@@ -2,6 +2,7 @@ import { createServerSupabase } from '@/lib/supabaseServer'
 import Link from 'next/link'
 import type { Lead } from '@/lib/types'
 import AiSearchBar from '@/app/components/AiSearchBar'
+import AiInsightsCard, { type Insight } from './AiInsightsCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -107,47 +108,6 @@ function StatCard({
       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
       <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: valueColor }}>{value}</p>
       {sub && <p className="mt-1 text-[11px] text-gray-400">{sub}</p>}
-    </div>
-  )
-}
-
-// ─── AI Insights card ────────────────────────────────────────────────────────
-
-type Insight = { icon: React.ReactNode; text: string; positive?: boolean; negative?: boolean }
-
-function InsightIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-md" style={{ background: 'rgba(184,146,42,0.15)' }}>
-      {children}
-    </span>
-  )
-}
-
-function AiInsightsCard({ insights }: { insights: Insight[] }) {
-  return (
-    <div className="rounded-xl overflow-hidden" style={{ background: '#111' }}>
-      <div className="flex items-center gap-2.5 px-5 py-3.5 border-b" style={{ borderColor: 'rgba(184,146,42,0.2)' }}>
-        <span style={{ color: '#B8922A', fontSize: '15px', lineHeight: 1 }}>✦</span>
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#B8922A' }}>AI Insights</span>
-        <span className="ml-auto text-[10px]" style={{ color: 'rgba(184,146,42,0.4)' }}>refreshed now</span>
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {insights.map((insight, i) => (
-          <div
-            key={i}
-            className="flex items-start gap-3 px-5 py-3"
-            style={{ borderLeft: '2px solid rgba(184,146,42,0.35)', borderBottom: 'none' }}
-          >
-            <InsightIcon>{insight.icon}</InsightIcon>
-            <p
-              className="text-xs leading-relaxed pt-0.5"
-              style={{ color: insight.negative ? '#f87171' : insight.positive ? '#86efac' : 'rgba(184,146,42,0.9)' }}
-            >
-              {insight.text}
-            </p>
-          </div>
-        ))}
-      </div>
     </div>
   )
 }
