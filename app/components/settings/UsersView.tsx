@@ -53,6 +53,10 @@ export default function UsersView({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
+  // Resend invite
+  const [resending, setResending] = useState(false)
+  const [resendSuccess, setResendSuccess] = useState(false)
+
   // Invite modal
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -69,6 +73,7 @@ export default function UsersView({
     setIsDirty(false)
     setSaveSuccess(false)
     setShowDeleteConfirm(false)
+    setResendSuccess(false)
     if (user.role === 'admin') {
       setPermMap(null)
     } else if (user.permissions.length > 0) {
@@ -132,6 +137,27 @@ export default function UsersView({
       setError(e instanceof Error ? e.message : 'Failed to save permissions')
     } finally {
       setSaving(false)
+    }
+  }
+
+  async function handleResendInvite() {
+    if (!selectedUser) return
+    setResending(true)
+    setError(null)
+    setResendSuccess(false)
+    try {
+      const res = await fetch('/api/admin/invite-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: selectedUser.email, role: selectedUser.role }),
+      })
+      if (!res.ok) throw new Error(await res.text())
+      setResendSuccess(true)
+      setTimeout(() => setResendSuccess(false), 3000)
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to resend invite')
+    } finally {
+      setResending(false)
     }
   }
 
@@ -468,9 +494,21 @@ export default function UsersView({
               </>
             )}
           </div>
-          {/* Delete user */}
+          {/* Secondary actions */}
           {selectedUser.role !== 'admin' && selectedUser.id !== currentUserId && (
-            <div className="mt-8 pt-6 border-t border-gray-100">
+            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={handleResendInvite}
+                  disabled={resending}
+                  className="text-sm font-medium text-gray-400 hover:text-gray-600 disabled:opacity-50"
+                >
+                  {resending ? 'Sending…' : 'Resend Invite'}
+                </button>
+                {resendSuccess && (
+                  <span className="text-xs" style={{ color: '#16a34a' }}>Invite sent</span>
+                )}
+              </div>
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="text-sm font-medium text-red-500 hover:text-red-700"
