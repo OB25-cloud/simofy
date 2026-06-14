@@ -1,6 +1,7 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
 import Link from 'next/link'
 import type { Lead } from '@/lib/types'
+import AiSearchBar from '@/app/components/AiSearchBar'
 
 export const dynamic = 'force-dynamic'
 
@@ -399,6 +400,9 @@ export default async function DashboardPage() {
         <p className="mt-0.5 text-sm text-gray-400">{dateLabel}</p>
       </div>
 
+      {/* AI Search */}
+      <AiSearchBar />
+
       {/* Top stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
         <StatCard label="Active Clients"   value={String(activeClientsCount ?? 0)} accent />
@@ -409,7 +413,9 @@ export default async function DashboardPage() {
       </div>
 
       {/* AI Insights */}
-      <AiInsightsCard insights={insights} />
+      <div style={{ background: '#111' }}>
+        <AiInsightsCard insights={insights} />
+      </div>
 
       {/* Revenue + Jobs by Status */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5 mb-5">
