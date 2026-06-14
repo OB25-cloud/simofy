@@ -58,13 +58,14 @@ interface Props {
   quotes: Quote[]
   clients: Pick<Client, 'id' | 'name' | 'business_name'>[]
   jobs: Pick<Job, 'id' | 'title' | 'job_type' | 'client_id'>[]
+  openModal?: boolean
 }
 
-export default function QuotesView({ quotes, clients, jobs }: Props) {
+export default function QuotesView({ quotes, clients, jobs, openModal }: Props) {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(openModal ?? false)
 
   const acceptedValue = quotes
     .filter(q => q.status === 'accepted')

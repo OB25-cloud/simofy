@@ -21,11 +21,11 @@ function PlusIcon() {
   )
 }
 
-export default function ClientsView({ clients }: { clients: Client[] }) {
+export default function ClientsView({ clients, openModal }: { clients: Client[]; openModal?: boolean }) {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(openModal ?? false)
 
   const _now = new Date()
   const startOfMonth = new Date(Date.UTC(_now.getUTCFullYear(), _now.getUTCMonth(), 1))

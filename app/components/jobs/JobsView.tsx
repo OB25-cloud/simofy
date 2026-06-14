@@ -194,15 +194,16 @@ interface Props {
   jobs: Job[]
   clients: Pick<Client, 'id' | 'name' | 'business_name'>[]
   staff: Pick<Staff, 'id' | 'name'>[]
+  openModal?: boolean
 }
 
-export default function JobsView({ jobs, clients, staff }: Props) {
+export default function JobsView({ jobs, clients, staff, openModal }: Props) {
   const router = useRouter()
   const [dateRange, setDateRange] = useState<DateRange>('week')
   const [expandedSeries, setExpandedSeries] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(openModal ?? false)
 
   const { start, end } = useMemo(() => getDateBounds(dateRange), [dateRange])
   const allRows = useMemo(() => buildRows(jobs, start, end), [jobs, start, end])

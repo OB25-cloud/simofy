@@ -41,13 +41,14 @@ function PlusIcon() {
 
 interface Props {
   leads: Lead[]
+  openModal?: boolean
 }
 
-export default function LeadsView({ leads }: Props) {
+export default function LeadsView({ leads, openModal }: Props) {
   const router = useRouter()
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
-  const [showModal, setShowModal] = useState(false)
+  const [showModal, setShowModal] = useState(openModal ?? false)
 
   const _now = new Date()
   const startOfMonth = new Date(Date.UTC(_now.getUTCFullYear(), _now.getUTCMonth(), 1))

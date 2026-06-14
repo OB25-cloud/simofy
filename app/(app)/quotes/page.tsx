@@ -4,7 +4,11 @@ import QuotesView from '@/app/components/quotes/QuotesView'
 
 export const dynamic = 'force-dynamic'
 
-export default async function QuotesPage() {
+export default async function QuotesPage({
+  searchParams,
+}: {
+  searchParams?: { action?: string }
+}) {
   const [{ data: quotes }, { data: clients }, { data: jobs }] = await Promise.all([
     supabase
       .from('quotes')
@@ -20,6 +24,7 @@ export default async function QuotesPage() {
         quotes={(quotes ?? []) as unknown as Quote[]}
         clients={(clients ?? []) as unknown as Pick<Client, 'id' | 'name' | 'business_name'>[]}
         jobs={(jobs ?? []) as unknown as Pick<Job, 'id' | 'title' | 'job_type' | 'client_id'>[]}
+        openModal={searchParams?.action === 'new'}
       />
     </div>
   )

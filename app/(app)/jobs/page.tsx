@@ -3,7 +3,11 @@ import JobsView from '@/app/components/jobs/JobsView'
 
 export const dynamic = 'force-dynamic'
 
-export default async function JobsPage() {
+export default async function JobsPage({
+  searchParams,
+}: {
+  searchParams?: { action?: string }
+}) {
   const [{ data: jobs }, { data: clients }, { data: staff }] = await Promise.all([
     supabase.from('jobs').select('*, clients(name, business_name), staff(name)').order('scheduled_date', { ascending: true, nullsFirst: false }),
     supabase.from('clients').select('id, name, business_name').order('name'),
@@ -12,7 +16,12 @@ export default async function JobsPage() {
 
   return (
     <div className="p-4 md:p-8">
-      <JobsView jobs={jobs ?? []} clients={clients ?? []} staff={staff ?? []} />
+      <JobsView
+        jobs={jobs ?? []}
+        clients={clients ?? []}
+        staff={staff ?? []}
+        openModal={searchParams?.action === 'new'}
+      />
     </div>
   )
 }

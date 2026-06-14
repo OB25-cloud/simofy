@@ -3,7 +3,11 @@ import ClientsView from '@/app/components/clients/ClientsView'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ClientsPage() {
+export default async function ClientsPage({
+  searchParams,
+}: {
+  searchParams?: { action?: string }
+}) {
   const { data: clients } = await supabase
     .from('clients')
     .select('*')
@@ -11,7 +15,7 @@ export default async function ClientsPage() {
 
   return (
     <div className="p-4 md:p-8">
-      <ClientsView clients={clients ?? []} />
+      <ClientsView clients={clients ?? []} openModal={searchParams?.action === 'new'} />
     </div>
   )
 }
