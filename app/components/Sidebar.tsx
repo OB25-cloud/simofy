@@ -1,9 +1,11 @@
 'use client'
 
+import React from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import LogoutButton from './LogoutButton'
 import GlobalSearch from './GlobalSearch'
+import type { PermissionMap, Module } from '@/lib/permissions'
 
 // ─── icons ──────────────────────────────────────────────────────────────────
 
@@ -83,9 +85,21 @@ function BellIcon() {
     </svg>
   )
 }
+function UsersIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  )
+}
+
 // ─── nav config ─────────────────────────────────────────────────────────────
 
-const ADMIN_SECTIONS = [
+type NavItem = { name: string; href: string; Icon: () => React.ReactElement }
+type Section = { label: string; items: NavItem[] }
+
+const ADMIN_SECTIONS: Section[] = [
   {
     label: 'OPERATIONS',
     items: [
@@ -112,20 +126,48 @@ const ADMIN_SECTIONS = [
   {
     label: 'SETTINGS',
     items: [
-      { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon },
+      { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon   },
+      { name: 'Users',         href: '/settings/users',         Icon: UsersIcon  },
     ],
   },
 ]
 
-const FIELD_SECTIONS = [
-  {
-    label: 'MY WORK',
-    items: [
-      { name: 'My Jobs',  href: '/my-jobs',  Icon: MyJobsIcon   },
-      { name: 'Schedule', href: '/schedule', Icon: ScheduleIcon },
-    ],
-  },
-]
+function can(permissions: PermissionMap | null | undefined, module: Module): boolean {
+  if (!permissions) return false
+  return permissions[module]?.view ?? false
+}
+
+function buildDynamicSections(role: string, permissions: PermissionMap | null): Section[] {
+  const isField = role === 'field'
+  const sections: Section[] = []
+
+  const opItems: NavItem[] = [
+    can(permissions, 'dashboard') ? { name: 'Dashboard', href: '/dashboard',                       Icon: DashboardIcon } : null,
+    can(permissions, 'jobs')      ? { name: isField ? 'My Jobs' : 'Jobs', href: isField ? '/my-jobs' : '/jobs', Icon: isField ? MyJobsIcon : JobsIcon } : null,
+    can(permissions, 'schedule')  ? { name: 'Schedule',  href: '/schedule',                        Icon: ScheduleIcon  } : null,
+    can(permissions, 'staff')     ? { name: 'Staff',     href: '/staff',                           Icon: StaffIcon     } : null,
+  ].filter(Boolean) as NavItem[]
+  if (opItems.length > 0) sections.push({ label: 'OPERATIONS', items: opItems })
+
+  const finItems: NavItem[] = [
+    can(permissions, 'quotes')   ? { name: 'Quotes',   href: '/quotes',   Icon: QuotesIcon   } : null,
+    can(permissions, 'invoices') ? { name: 'Invoices', href: '/invoices', Icon: InvoicesIcon } : null,
+  ].filter(Boolean) as NavItem[]
+  if (finItems.length > 0) sections.push({ label: 'FINANCE', items: finItems })
+
+  const clientItems: NavItem[] = [
+    can(permissions, 'clients') ? { name: 'Clients', href: '/clients', Icon: ClientsIcon } : null,
+    can(permissions, 'leads')   ? { name: 'Leads',   href: '/leads',   Icon: LeadsIcon   } : null,
+  ].filter(Boolean) as NavItem[]
+  if (clientItems.length > 0) sections.push({ label: 'CLIENTS', items: clientItems })
+
+  const settingsItems: NavItem[] = [
+    can(permissions, 'settings') ? { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon } : null,
+  ].filter(Boolean) as NavItem[]
+  if (settingsItems.length > 0) sections.push({ label: 'SETTINGS', items: settingsItems })
+
+  return sections
+}
 
 // ─── component ───────────────────────────────────────────────────────────────
 
@@ -133,18 +175,25 @@ interface Props {
   role: string
   userName?: string | null
   userEmail?: string | null
+  permissions?: PermissionMap | null
   onNavigate?: () => void
 }
 
-export default function Sidebar({ role, userName, userEmail, onNavigate }: Props) {
+const ROLE_DISPLAY: Record<string, string> = {
+  admin:      'Administrator',
+  supervisor: 'Supervisor',
+  field:      'Field Staff',
+}
+
+export default function Sidebar({ role, userName, userEmail, permissions, onNavigate }: Props) {
   const pathname = usePathname()
-  const sections = role === 'admin' ? ADMIN_SECTIONS : FIELD_SECTIONS
+  const sections = role === 'admin' ? ADMIN_SECTIONS : buildDynamicSections(role, permissions ?? null)
 
   const initials = userName
     ? userName.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2)
     : (userEmail?.charAt(0).toUpperCase() ?? '?')
 
-  const displayRole = role === 'admin' ? 'Administrator' : 'Field Staff'
+  const displayRole = ROLE_DISPLAY[role] ?? 'Field Staff'
   const displayName = userName ?? userEmail ?? 'User'
 
   return (

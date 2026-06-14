@@ -6,12 +6,13 @@ export const dynamic = 'force-dynamic'
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams?: { action?: string }
+  searchParams: Promise<{ action?: string }>
 }) {
-  const [{ data: jobs }, { data: clients }, { data: staff }] = await Promise.all([
+  const [{ data: jobs }, { data: clients }, { data: staff }, params] = await Promise.all([
     supabase.from('jobs').select('*, clients(name, business_name), staff(name)').order('scheduled_date', { ascending: true, nullsFirst: false }),
     supabase.from('clients').select('id, name, business_name').order('name'),
     supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
+    searchParams,
   ])
 
   return (
@@ -20,7 +21,7 @@ export default async function JobsPage({
         jobs={jobs ?? []}
         clients={clients ?? []}
         staff={staff ?? []}
-        openModal={searchParams?.action === 'new'}
+        openModal={params?.action === 'new'}
       />
     </div>
   )

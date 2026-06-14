@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Sidebar from './Sidebar'
+import type { PermissionMap } from '@/lib/permissions'
 
 function HamburgerIcon() {
   return (
@@ -17,10 +18,11 @@ interface Props {
   role: string
   userName?: string | null
   userEmail?: string | null
+  permissions?: PermissionMap | null
   children: React.ReactNode
 }
 
-export default function AppShell({ role, userName, userEmail, children }: Props) {
+export default function AppShell({ role, userName, userEmail, permissions, children }: Props) {
   const [open, setOpen] = useState(false)
 
   return (
@@ -61,6 +63,7 @@ export default function AppShell({ role, userName, userEmail, children }: Props)
             role={role}
             userName={userName}
             userEmail={userEmail}
+            permissions={permissions}
             onNavigate={() => setOpen(false)}
           />
         </div>
