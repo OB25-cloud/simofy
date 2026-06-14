@@ -94,6 +94,7 @@ export type Invoice = {
   total: number | null
   status: string | null
   due_date: string | null
+  paid_date: string | null
   notes: string | null
   created_at: string
   clients: { name: string; email: string | null; phone: string | null } | null
