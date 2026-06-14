@@ -2,7 +2,8 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Lead } from '@/lib/types'
-import LeadActions from '@/app/components/leads/LeadActions'
+import LeadHeaderActions from '@/app/components/leads/LeadHeaderActions'
+import LeadDetailTabs from '@/app/components/leads/LeadDetailTabs'
 
 export const dynamic = 'force-dynamic'
 
@@ -54,63 +55,11 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               <p className="text-sm text-gray-400">via {typedLead.source}</p>
             )}
           </div>
+          <LeadHeaderActions lead={typedLead} />
         </div>
 
-        {/* Status changer + edit/delete */}
-        <div className="mb-6">
-          <LeadActions lead={typedLead} />
-        </div>
-
-        {/* Contact details card */}
-        <div className="rounded-lg border border-gray-100 p-5 mb-4">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Contact Details</p>
-          <dl className="grid grid-cols-2 gap-4">
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Email</dt>
-              <dd className="text-sm text-gray-900">
-                {typedLead.email
-                  ? <a href={`mailto:${typedLead.email}`} className="hover:underline" style={{ color: '#B8922A' }}>{typedLead.email}</a>
-                  : <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Phone</dt>
-              <dd className="text-sm text-gray-900">
-                {typedLead.phone
-                  ? <a href={`tel:${typedLead.phone}`} className="hover:underline" style={{ color: '#B8922A' }}>{typedLead.phone}</a>
-                  : <span className="text-gray-300">—</span>}
-              </dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Source</dt>
-              <dd className="text-sm text-gray-900">{typedLead.source ?? <span className="text-gray-300">—</span>}</dd>
-            </div>
-            <div>
-              <dt className="text-xs text-gray-400 mb-0.5">Received</dt>
-              <dd className="text-sm text-gray-900">
-                {new Date(typedLead.created_at).toLocaleDateString('en-NZ', {
-                  day: 'numeric', month: 'long', year: 'numeric',
-                })}
-              </dd>
-            </div>
-          </dl>
-        </div>
-
-        {/* Message */}
-        {typedLead.message && (
-          <div className="rounded-lg border border-gray-100 p-5 mb-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Message</p>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{typedLead.message}</p>
-          </div>
-        )}
-
-        {/* Notes */}
-        {typedLead.notes && (
-          <div className="rounded-lg border border-gray-100 p-5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Notes</p>
-            <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{typedLead.notes}</p>
-          </div>
-        )}
+        {/* Tabbed content */}
+        <LeadDetailTabs lead={typedLead} />
       </div>
     </div>
   )
