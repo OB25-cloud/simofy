@@ -5,10 +5,11 @@ import type { EmailOtpType } from '@supabase/supabase-js'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = request.nextUrl
+  const code       = searchParams.get('code')
   const token_hash = searchParams.get('token_hash')
-  const type = searchParams.get('type') as EmailOtpType | null
+  const type       = searchParams.get('type') as EmailOtpType | null
 
-  if (token_hash && type) {
+  if (code || (token_hash && type)) {
     const cookieStore = await cookies()
 
     const supabase = createServerClient(
@@ -28,7 +29,16 @@ export async function GET(request: NextRequest) {
       },
     )
 
-    const { error } = await supabase.auth.verifyOtp({ token_hash, type })
+    let error: { message: string } | null = null
+
+    if (code) {
+      // PKCE flow — Supabase exchanges the code for a session
+      ;({ error } = await supabase.auth.exchangeCodeForSession(code))
+    } else if (token_hash && type) {
+      // Token-hash flow (older email OTP format)
+      ;({ error } = await supabase.auth.verifyOtp({ token_hash, type }))
+    }
+
     if (!error) {
       return NextResponse.redirect(new URL('/dashboard', origin))
     }
