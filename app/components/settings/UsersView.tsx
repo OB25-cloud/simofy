@@ -53,18 +53,6 @@ export default function UsersView({
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
-  // Resend invite
-  const [resending, setResending] = useState(false)
-  const [resendSuccess, setResendSuccess] = useState(false)
-
-  // Invite modal
-  const [showInvite, setShowInvite] = useState(false)
-  const [inviteEmail, setInviteEmail] = useState('')
-  const [inviteRole, setInviteRole] = useState<'supervisor' | 'field'>('supervisor')
-  const [inviting, setInviting] = useState(false)
-  const [inviteError, setInviteError] = useState<string | null>(null)
-  const [inviteSuccess, setInviteSuccess] = useState(false)
-
   const selectedUser = users.find(u => u.id === selectedId) ?? null
 
   function selectUser(user: UserRow) {
@@ -73,7 +61,6 @@ export default function UsersView({
     setIsDirty(false)
     setSaveSuccess(false)
     setShowDeleteConfirm(false)
-    setResendSuccess(false)
     if (user.role === 'admin') {
       setPermMap(null)
     } else if (user.permissions.length > 0) {
@@ -140,27 +127,6 @@ export default function UsersView({
     }
   }
 
-  async function handleResendInvite() {
-    if (!selectedUser) return
-    setResending(true)
-    setError(null)
-    setResendSuccess(false)
-    try {
-      const res = await fetch('/api/admin/invite-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: selectedUser.email, role: selectedUser.role }),
-      })
-      if (!res.ok) throw new Error(await res.text())
-      setResendSuccess(true)
-      setTimeout(() => setResendSuccess(false), 3000)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to resend invite')
-    } finally {
-      setResending(false)
-    }
-  }
-
   async function handleDeleteUser() {
     if (!selectedUser) return
     setDeleting(true)
@@ -184,119 +150,8 @@ export default function UsersView({
     }
   }
 
-  function closeInviteModal() {
-    setShowInvite(false)
-    setInviteError(null)
-    setInviteSuccess(false)
-    setInviteEmail('')
-    setInviteRole('supervisor')
-  }
-
-  async function handleInvite(e: React.FormEvent) {
-    e.preventDefault()
-    setInviting(true)
-    setInviteError(null)
-    try {
-      const res = await fetch('/api/admin/invite-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: inviteEmail, role: inviteRole }),
-      })
-      if (!res.ok) throw new Error(await res.text())
-      setInviteSuccess(true)
-      setTimeout(closeInviteModal, 2500)
-    } catch (e) {
-      setInviteError(e instanceof Error ? e.message : 'Failed to send invite')
-    } finally {
-      setInviting(false)
-    }
-  }
-
   return (
     <div className="flex h-full">
-      {/* Invite modal */}
-      {showInvite && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
-          style={{ background: 'rgba(0,0,0,0.4)' }}
-          onClick={e => { if (e.target === e.currentTarget) closeInviteModal() }}
-        >
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-base font-semibold text-gray-900">Invite User</h2>
-              <button
-                onClick={closeInviteModal}
-                className="text-gray-400 hover:text-gray-600 text-xl leading-none"
-                aria-label="Close"
-              >
-                ×
-              </button>
-            </div>
-
-            {inviteSuccess ? (
-              <div className="py-6 text-center">
-                <p className="text-2xl mb-2" style={{ color: '#16a34a' }}>✓</p>
-                <p className="text-sm font-medium text-gray-700">Invite sent to {inviteEmail}</p>
-                <p className="text-xs text-gray-400 mt-1">They will receive a link to set their password.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleInvite} className="space-y-4">
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    required
-                    value={inviteEmail}
-                    onChange={e => setInviteEmail(e.target.value)}
-                    placeholder="name@example.com"
-                    className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#B8922A]"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">
-                    Role
-                  </label>
-                  <select
-                    value={inviteRole}
-                    onChange={e => setInviteRole(e.target.value as 'supervisor' | 'field')}
-                    className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm text-gray-900 bg-white focus:outline-none focus:border-[#B8922A]"
-                  >
-                    <option value="supervisor">Supervisor</option>
-                    <option value="field">Field Staff</option>
-                  </select>
-                </div>
-
-                {inviteError && (
-                  <div className="px-3 py-2 rounded-md text-sm" style={{ background: '#fef2f2', color: '#dc2626' }}>
-                    {inviteError}
-                  </div>
-                )}
-
-                <div className="flex justify-end gap-2 pt-1">
-                  <button
-                    type="button"
-                    onClick={closeInviteModal}
-                    className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={inviting}
-                    className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
-                    style={{ background: '#B8922A' }}
-                  >
-                    {inviting ? 'Sending…' : 'Send Invite'}
-                  </button>
-                </div>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Delete confirmation modal */}
       {showDeleteConfirm && selectedUser && (
         <div
@@ -332,17 +187,6 @@ export default function UsersView({
 
       {/* User list */}
       <div className="w-72 shrink-0 border-r border-gray-100 flex flex-col">
-        <div className="px-4 py-3 border-b border-gray-100 shrink-0">
-          <button
-            onClick={() => setShowInvite(true)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-white rounded-md"
-            style={{ background: '#B8922A' }}
-          >
-            <span className="text-base leading-none font-bold">+</span>
-            Invite User
-          </button>
-        </div>
-
         <div className="flex-1 overflow-y-auto">
           {users.map(user => {
             const initials = (user.name ?? user.email).slice(0, 2).toUpperCase()
@@ -496,19 +340,7 @@ export default function UsersView({
           </div>
           {/* Secondary actions */}
           {selectedUser.role !== 'admin' && selectedUser.id !== currentUserId && (
-            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={handleResendInvite}
-                  disabled={resending}
-                  className="text-sm font-medium text-gray-400 hover:text-gray-600 disabled:opacity-50"
-                >
-                  {resending ? 'Sending…' : 'Resend Invite'}
-                </button>
-                {resendSuccess && (
-                  <span className="text-xs" style={{ color: '#16a34a' }}>Invite sent</span>
-                )}
-              </div>
+            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="text-sm font-medium text-red-500 hover:text-red-700"
