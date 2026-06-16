@@ -68,7 +68,7 @@ export default function AppShell({ role, userName, userEmail, permissions, child
           />
         </div>
 
-        <main className="flex-1 bg-white overflow-y-auto min-w-0">
+        <main className="flex-1 overflow-y-auto min-w-0" style={{ background: '#fafafa' }}>
           {children}
         </main>
       </div>

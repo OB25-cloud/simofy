@@ -2,9 +2,10 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import type { Client, Job, Quote, Invoice, Site } from '@/lib/types'
+import type { Client, Job, Quote, Invoice, Site, Notification } from '@/lib/types'
 import SitesSection from './SitesSection'
 import NotificationsSection from './NotificationsSection'
+import CommunicationsSection from './CommunicationsSection'
 
 type NotifSetting = { notification_type: string; enabled: boolean }
 
@@ -85,6 +86,7 @@ const TABS = [
   { key: 'invoices',      label: 'Invoices'       },
   { key: 'sites',         label: 'Sites'          },
   { key: 'notifications', label: 'Notifications'  },
+  { key: 'communications',label: 'Communications' },
 ]
 
 interface Props {
@@ -94,9 +96,10 @@ interface Props {
   invoices: Invoice[]
   sites: Site[]
   notifSettings: NotifSetting[]
+  notifications: Notification[]
 }
 
-export default function ClientTabs({ client, jobs, quotes, invoices, sites, notifSettings }: Props) {
+export default function ClientTabs({ client, jobs, quotes, invoices, sites, notifSettings, notifications }: Props) {
   const [activeTab, setActiveTab] = useState('overview')
 
   const totalInvoiced = invoices.reduce((s: number, inv) => s + (inv.total ?? 0), 0)
@@ -362,6 +365,11 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Notifications */}
       {activeTab === 'notifications' && (
         <NotificationsSection clientId={client.id} initialSettings={notifSettings} />
+      )}
+
+      {/* Communications */}
+      {activeTab === 'communications' && (
+        <CommunicationsSection notifications={notifications} />
       )}
     </>
   )

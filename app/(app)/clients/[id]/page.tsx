@@ -1,7 +1,7 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import type { Client, Job, Quote, Invoice, Site } from '@/lib/types'
+import type { Client, Job, Quote, Invoice, Site, Notification } from '@/lib/types'
 import ClientTabs from '@/app/components/clients/ClientTabs'
 
 export const dynamic = 'force-dynamic'
@@ -21,6 +21,7 @@ export default async function ClientDetailPage({
     { data: invoices },
     { data: sites },
     { data: notifSettings },
+    { data: notifications },
   ] = await Promise.all([
     supabase.from('clients').select('*').eq('id', id).single(),
     supabase.from('jobs').select('*').eq('client_id', id).order('created_at', { ascending: false }),
@@ -28,6 +29,8 @@ export default async function ClientDetailPage({
     supabase.from('invoices').select('*').eq('client_id', id).order('created_at', { ascending: false }),
     supabase.from('sites').select('*').eq('client_id', id).order('created_at', { ascending: true }),
     supabase.from('client_notification_settings').select('notification_type, enabled').eq('client_id', id),
+    supabase.from('notifications').select('id, client_id, job_id, type, status, sent_at, scheduled_for, created_at, review_link')
+      .eq('client_id', id).order('created_at', { ascending: false }),
   ])
 
   if (!client) notFound()
@@ -75,6 +78,7 @@ export default async function ClientDetailPage({
         invoices={(invoices ?? []) as unknown as Invoice[]}
         sites={(sites ?? []) as unknown as Site[]}
         notifSettings={notifSettings ?? []}
+        notifications={(notifications ?? []) as unknown as Notification[]}
       />
     </div>
   )

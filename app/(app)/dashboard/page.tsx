@@ -3,6 +3,7 @@ import Link from 'next/link'
 import type { Lead } from '@/lib/types'
 import AiSearchBar from '@/app/components/AiSearchBar'
 import AiInsightsCard, { type Insight } from './AiInsightsCard'
+import RevenueTrendChart from './RevenueTrendChart'
 
 export const dynamic = 'force-dynamic'
 
@@ -70,6 +71,44 @@ function IconOutstanding() {
 function IconAlert() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
 }
+function IconJobValue() {
+  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.8 9a2.5 2.5 0 00-2.3-1.5h-1a2.5 2.5 0 000 5h1a2.5 2.5 0 010 5h-1A2.5 2.5 0 019.2 15"/><line x1="12" y1="6" x2="12" y2="18"/></svg>
+}
+function IconConversion() {
+  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M21 16v5h-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
+}
+function IconQuotesPipe() {
+  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+}
+
+// ─── pipeline ───────────────────────────────────────────────────────────────
+
+function PipelineStage({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
+  return (
+    <div
+      className="flex-1 min-w-[140px] rounded-xl px-5 py-4"
+      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(184,146,42,0.15)' }}
+    >
+      <div className="flex items-center justify-between mb-3">
+        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(184,146,42,0.7)' }}>
+          {label}
+        </span>
+        <span style={{ color: 'rgba(184,146,42,0.5)' }}>{icon}</span>
+      </div>
+      <p className="text-3xl font-bold tabular-nums leading-none" style={{ color: '#B8922A' }}>{value}</p>
+    </div>
+  )
+}
+
+function PipelineArrow() {
+  return (
+    <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(184,146,42,0.35)' }}>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
+      </svg>
+    </div>
+  )
+}
 
 // ─── stat card ───────────────────────────────────────────────────────────────
 
@@ -114,6 +153,27 @@ function StatCard({
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
+// PostgREST caps unbounded selects at 1000 rows. Paid invoices alone
+// already exceed that, which was silently truncating the Revenue Trend
+// chart and the Avg Job Value stat — page through all of them.
+async function fetchAllPaidInvoices(
+  supabase: Awaited<ReturnType<typeof createServerSupabase>>,
+): Promise<{ total: number | null; paid_date: string | null }[]> {
+  const PAGE_SIZE = 1000
+  const rows: { total: number | null; paid_date: string | null }[] = []
+  for (let from = 0; ; from += PAGE_SIZE) {
+    const { data, error } = await supabase
+      .from('invoices')
+      .select('total, paid_date')
+      .eq('status', 'paid')
+      .range(from, from + PAGE_SIZE - 1)
+    if (error) throw error
+    rows.push(...(data ?? []))
+    if (!data || data.length < PAGE_SIZE) break
+  }
+  return rows
+}
+
 export default async function DashboardPage() {
   const supabase = await createServerSupabase()
 
@@ -148,6 +208,10 @@ export default async function DashboardPage() {
     { data: staffJobsThisWeek },
     { data: quotesThisMonth },
     { data: completedJobsThisMonth },
+    { count: quotesPipelineCount },
+    { count: activeJobsPipelineCount },
+    { data: allQuoteStatuses },
+    paidInvoicesAll,
   ] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('jobs')
@@ -172,6 +236,10 @@ export default async function DashboardPage() {
       .not('total', 'is', null),
     supabase.from('jobs').select('id, staff(pay_rate)').eq('status', 'complete')
       .gte('completed_date', startOfMonthDate),
+    supabase.from('quotes').select('*', { count: 'exact', head: true }).in('status', ['draft', 'sent']),
+    supabase.from('jobs').select('*', { count: 'exact', head: true }).in('status', ['scheduled', 'in_progress']),
+    supabase.from('quotes').select('status'),
+    fetchAllPaidInvoices(supabase),
   ])
 
   // ── Wave 2: margin sub-queries ───────────────────────────────────────────────
@@ -196,10 +264,15 @@ export default async function DashboardPage() {
   const revenueThisMonth = (paidThisMonth       ?? []).reduce((s, inv: { total: number | null }) => s + (inv.total ?? 0), 0)
   const revenueLastMonth = (paidLastMonth       ?? []).reduce((s, inv: { total: number | null }) => s + (inv.total ?? 0), 0)
 
+  const moneyFormatter = new Intl.NumberFormat('en-NZ', {
+    style: 'currency',
+    currency: 'NZD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })
+
   function fmtMoney(n: number) {
-    if (n >= 100_000) return `$${(n / 1000).toFixed(0)}k`
-    if (n >= 10_000)  return `$${(n / 1000).toFixed(1)}k`
-    return `$${n.toFixed(0)}`
+    return moneyFormatter.format(n)
   }
 
   const dateLabel = today.toLocaleDateString('en-NZ', {
@@ -247,6 +320,33 @@ export default async function DashboardPage() {
   const avgMargin = margins.length > 0
     ? Math.round(margins.reduce((a, b) => a + b, 0) / margins.length)
     : null
+
+  // ── Pipeline + chart derived values ────────────────────────────────────────────
+
+  const paidInvoicesArr = (paidInvoicesAll ?? []) as { total: number | null; paid_date: string | null }[]
+  const avgJobValue = paidInvoicesArr.length > 0
+    ? paidInvoicesArr.reduce((s, inv) => s + (inv.total ?? 0), 0) / paidInvoicesArr.length
+    : null
+
+  const quoteStatusArr = (allQuoteStatuses ?? []) as { status: string | null }[]
+  const decidedQuotes = quoteStatusArr.filter(q => ['accepted', 'declined', 'expired'].includes(q.status ?? ''))
+  const acceptedQuotes = decidedQuotes.filter(q => q.status === 'accepted').length
+  const conversionRate = decidedQuotes.length > 0
+    ? Math.round((acceptedQuotes / decidedQuotes.length) * 100)
+    : null
+
+  const monthBuckets = Array.from({ length: 6 }, (_, i) => {
+    const d = new Date(today.getFullYear(), today.getMonth() - (5 - i), 1)
+    return { key: `${d.getFullYear()}-${d.getMonth()}`, month: d.toLocaleDateString('en-NZ', { month: 'short' }), revenue: 0 }
+  })
+  for (const inv of paidInvoicesArr) {
+    if (!inv.paid_date) continue
+    const d = new Date(inv.paid_date)
+    const key = `${d.getFullYear()}-${d.getMonth()}`
+    const bucket = monthBuckets.find(b => b.key === key)
+    if (bucket) bucket.revenue += inv.total ?? 0
+  }
+  const revenueTrendData = monthBuckets.map(b => ({ month: b.month, revenue: Math.round(b.revenue) }))
 
   // ── Insight icons ─────────────────────────────────────────────────────────────
 
@@ -362,7 +462,7 @@ export default async function DashboardPage() {
       <AiSearchBar />
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 mb-3">
         <StatCard
           label="Revenue This Month"
           value={fmtMoney(revenueThisMonth)}
@@ -400,6 +500,38 @@ export default async function DashboardPage() {
           icon={<IconAlert />}
           danger={(overdueCount ?? 0) > 0}
         />
+        <StatCard
+          label="Avg Job Value"
+          value={avgJobValue != null ? fmtMoney(avgJobValue) : '—'}
+          sub={avgJobValue != null ? 'per paid invoice' : undefined}
+          icon={<IconJobValue />}
+        />
+        <StatCard
+          label="Quote Conversion"
+          value={conversionRate != null ? `${conversionRate}%` : '—'}
+          sub={conversionRate != null ? 'accepted vs decided' : undefined}
+          icon={<IconConversion />}
+          accentValue
+        />
+      </div>
+
+      {/* Business Pipeline */}
+      <div className="mb-5">
+        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Business Pipeline</p>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <PipelineStage label="Leads" value={leads.length} icon={<IconClients />} />
+          <PipelineArrow />
+          <PipelineStage label="Quotes" value={quotesPipelineCount ?? 0} icon={<IconQuotesPipe />} />
+          <PipelineArrow />
+          <PipelineStage label="Active Jobs" value={activeJobsPipelineCount ?? 0} icon={<IconJobs />} />
+          <PipelineArrow />
+          <PipelineStage label="Invoices" value={(outstandingInvoices ?? []).length} icon={<IconOutstanding />} />
+        </div>
+      </div>
+
+      {/* Revenue Trend */}
+      <div className="mb-5">
+        <RevenueTrendChart data={revenueTrendData} />
       </div>
 
       {/* Quick Actions */}
@@ -628,7 +760,7 @@ export default async function DashboardPage() {
                     {inv.clients?.name ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-2.5 text-sm font-semibold tabular-nums" style={{ color: '#dc2626' }}>
-                    {inv.total != null ? `$${inv.total.toFixed(2)}` : '—'}
+                    {inv.total != null ? fmtMoney(inv.total) : '—'}
                   </td>
                   <td className="px-4 py-2.5 text-xs text-gray-500">
                     {inv.due_date

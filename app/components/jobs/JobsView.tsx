@@ -23,6 +23,14 @@ const RECURRENCE_LABELS: Record<string, string> = {
   monthly: 'Monthly',
 }
 
+const BOARD_COLUMNS: { key: string; label: string }[] = [
+  { key: 'pending',     label: 'Pending'     },
+  { key: 'scheduled',   label: 'Scheduled'   },
+  { key: 'in_progress', label: 'In Progress' },
+  { key: 'complete',    label: 'Complete'    },
+  { key: 'invoiced',    label: 'Invoiced'    },
+]
+
 // ── date helpers ──────────────────────────────────────────────────────────────
 
 type DateRange = 'today' | 'week' | 'month' | 'all'
@@ -34,28 +42,34 @@ const DATE_RANGE_LABELS: Record<DateRange, string> = {
   all:   'All',
 }
 
+// `scheduled_date` comes back from Supabase as a date-only string
+// (e.g. "2026-06-17"), which Date parses as UTC midnight. All boundary
+// dates below are built with Date.UTC so comparisons line up regardless
+// of the server's or browser's local timezone.
 function getDateBounds(range: DateRange): { start: Date | null; end: Date | null } {
   const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const y = now.getUTCFullYear()
+  const m = now.getUTCMonth()
+  const d = now.getUTCDate()
 
   if (range === 'today') {
     return {
-      start: today,
-      end: new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999),
+      start: new Date(Date.UTC(y, m, d)),
+      end: new Date(Date.UTC(y, m, d, 23, 59, 59, 999)),
     }
   }
   if (range === 'week') {
-    const day = today.getDay() // 0 = Sunday
-    const daysToSunday = day === 0 ? 0 : 7 - day
-    const end = new Date(today)
-    end.setDate(today.getDate() + daysToSunday)
-    end.setHours(23, 59, 59, 999)
-    return { start: today, end }
+    const dayOfWeek = new Date(Date.UTC(y, m, d)).getUTCDay() // 0 = Sunday
+    const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+    return {
+      start: new Date(Date.UTC(y, m, d - daysToMonday)),
+      end: new Date(Date.UTC(y, m, d - daysToMonday + 6, 23, 59, 59, 999)),
+    }
   }
   if (range === 'month') {
     return {
-      start: new Date(now.getFullYear(), now.getMonth(), 1),
-      end: new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999),
+      start: new Date(Date.UTC(y, m, 1)),
+      end: new Date(Date.UTC(y, m + 1, 0, 23, 59, 59, 999)),
     }
   }
   return { start: null, end: null }
@@ -64,7 +78,7 @@ function getDateBounds(range: DateRange): { start: Date | null; end: Date | null
 function jobInRange(job: Job, start: Date | null, end: Date | null): boolean {
   if (!start && !end) return true
   if (!job.scheduled_date) return false
-  const d = new Date(job.scheduled_date)
+  const d = new Date(job.scheduled_date) // date-only string -> UTC midnight
   if (start && d < start) return false
   if (end && d > end) return false
   return true
@@ -97,7 +111,7 @@ type TableRow = SingleRow | SeriesRow
 
 function buildRows(allJobs: Job[], start: Date | null, end: Date | null): TableRow[] {
   const now = new Date()
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+  const today = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
 
   const inRangeJobs = allJobs.filter(j => jobInRange(j, start, end))
 
@@ -199,6 +213,7 @@ interface Props {
 
 export default function JobsView({ jobs, clients, staff, openModal }: Props) {
   const router = useRouter()
+  const [view, setView] = useState<'table' | 'board'>('table')
   const [dateRange, setDateRange] = useState<DateRange>('week')
   const [expandedSeries, setExpandedSeries] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
@@ -235,6 +250,18 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
 
   // Stats counted from date-range jobs before grouping
   const rangeJobs = useMemo(() => jobs.filter(j => jobInRange(j, start, end)), [jobs, start, end])
+
+  const boardJobs = useMemo(() => {
+    const q = search.toLowerCase()
+    return rangeJobs.filter(j =>
+      !q ||
+      (j.title?.toLowerCase().includes(q) ?? false) ||
+      (j.clients?.name?.toLowerCase().includes(q) ?? false) ||
+      (j.job_type?.toLowerCase().includes(q) ?? false) ||
+      (j.location?.toLowerCase().includes(q) ?? false) ||
+      (j.staff?.name?.toLowerCase().includes(q) ?? false)
+    )
+  }, [rangeJobs, search])
   const stats = [
     { label: 'Jobs',        value: String(rangeJobs.length),                                                         accent: true  },
     { label: 'In Progress', value: String(rangeJobs.filter(j => j.status === 'in_progress').length),                 accent: true  },
@@ -380,16 +407,34 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
             {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} total
           </p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#B8922A' }}
-        >
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          Add Job
-        </button>
+        <div className="flex items-center gap-2">
+          <div className="inline-flex rounded-md border border-gray-200 overflow-hidden shrink-0">
+            {(['table', 'board'] as const).map(v => (
+              <button
+                key={v}
+                onClick={() => setView(v)}
+                className="px-3.5 py-2 text-sm font-medium transition-colors"
+                style={
+                  view === v
+                    ? { background: '#B8922A', color: '#fff' }
+                    : { background: '#fff', color: '#6b7280' }
+                }
+              >
+                {v === 'table' ? 'Table View' : 'Board View'}
+              </button>
+            ))}
+          </div>
+          <button
+            onClick={() => setShowModal(true)}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 shrink-0"
+            style={{ background: '#B8922A' }}
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            Add Job
+          </button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -443,50 +488,99 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
             className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A]"
           />
         </div>
-        <select
-          value={statusFilter}
-          onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A] text-gray-600"
-          style={{ minWidth: 150 }}
-        >
-          <option value="all">All Statuses</option>
-          <option value="pending">Pending</option>
-          <option value="scheduled">Scheduled</option>
-          <option value="in_progress">In Progress</option>
-          <option value="complete">Complete</option>
-          <option value="invoiced">Invoiced</option>
-          <option value="cancelled">Cancelled</option>
-        </select>
+        {view === 'table' && (
+          <select
+            value={statusFilter}
+            onChange={e => setStatusFilter(e.target.value)}
+            className="px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A] text-gray-600"
+            style={{ minWidth: 150 }}
+          >
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="scheduled">Scheduled</option>
+            <option value="in_progress">In Progress</option>
+            <option value="complete">Complete</option>
+            <option value="invoiced">Invoiced</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        )}
       </div>
 
-      {/* Table */}
-      {tableRows.length === 0 ? (
-        <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
-          <p className="text-sm text-gray-400">
-            {search || statusFilter !== 'all'
-              ? 'No jobs match the current filters.'
-              : dateRange === 'all'
-              ? 'No jobs yet. Add your first job above.'
-              : `No jobs scheduled for ${DATE_RANGE_LABELS[dateRange].toLowerCase()}.`}
-          </p>
-        </div>
+      {/* Table / Board */}
+      {view === 'table' ? (
+        tableRows.length === 0 ? (
+          <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
+            <p className="text-sm text-gray-400">
+              {search || statusFilter !== 'all'
+                ? 'No jobs match the current filters.'
+                : dateRange === 'all'
+                ? 'No jobs yet. Add your first job above.'
+                : `No jobs scheduled for ${DATE_RANGE_LABELS[dateRange].toLowerCase()}.`}
+            </p>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-gray-100 overflow-x-auto">
+            <table className="w-full min-w-[640px] text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-100">
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Title</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Client</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Type</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Staff</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Location</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Scheduled</th>
+                  <th className="px-4 py-3 w-8" />
+                </tr>
+              </thead>
+              <tbody>{tableRows}</tbody>
+            </table>
+          </div>
+        )
       ) : (
-        <div className="rounded-lg border border-gray-100 overflow-x-auto">
-          <table className="w-full min-w-[640px] text-sm">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Title</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Client</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Type</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Staff</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Location</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Scheduled</th>
-                <th className="px-4 py-3 w-8" />
-              </tr>
-            </thead>
-            <tbody>{tableRows}</tbody>
-          </table>
+        <div className="flex gap-4 overflow-x-auto pb-2">
+          {BOARD_COLUMNS.map(col => {
+            const cfg = STATUS_CONFIG[col.key]
+            const colJobs = boardJobs
+              .filter(j => j.status === col.key)
+              .sort((a, b) => new Date(a.scheduled_date ?? '').getTime() - new Date(b.scheduled_date ?? '').getTime())
+            return (
+              <div key={col.key} className="shrink-0 w-[260px] flex flex-col">
+                <div className="flex items-center gap-2 mb-3 px-1">
+                  <span className="w-2 h-2 rounded-full shrink-0" style={{ background: cfg.dot }} />
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">{col.label}</p>
+                  <span className="ml-auto text-[11px] font-semibold text-gray-400">{colJobs.length}</span>
+                </div>
+                <div className="flex flex-col gap-2.5">
+                  {colJobs.length === 0 ? (
+                    <div className="rounded-lg border border-dashed border-gray-200 py-8 text-center">
+                      <p className="text-xs text-gray-300">No jobs</p>
+                    </div>
+                  ) : (
+                    colJobs.map(job => (
+                      <div
+                        key={job.id}
+                        onClick={() => router.push(`/jobs/${job.id}`)}
+                        className="cursor-pointer rounded-lg bg-white p-3.5 hover:shadow-sm transition-shadow"
+                        style={{ borderLeft: `3px solid ${cfg.dot}`, boxShadow: '0 0 0 1px #f3f4f6' }}
+                      >
+                        <p className="text-sm font-semibold text-gray-900 truncate mb-1">
+                          {job.title ?? job.job_type ?? 'Untitled'}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate mb-2.5">
+                          {job.clients?.name ?? <span className="text-gray-300">—</span>}
+                        </p>
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-[11px] text-gray-400 tabular-nums">{fmtDate(job.scheduled_date)}</span>
+                          <StatusBadge status={job.status} />
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )
+          })}
         </div>
       )}
 

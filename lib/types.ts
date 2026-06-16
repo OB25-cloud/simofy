@@ -131,6 +131,18 @@ export type Material = {
   created_at: string
 }
 
+export type Notification = {
+  id: string
+  client_id: string
+  job_id: string | null
+  type: string
+  status: string
+  sent_at: string | null
+  scheduled_for: string | null
+  created_at: string
+  review_link: string | null
+}
+
 export type JobMaterial = {
   id: string
   job_id: string
