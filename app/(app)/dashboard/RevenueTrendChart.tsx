@@ -13,7 +13,13 @@ const tooltipFormatter = new Intl.NumberFormat('en-NZ', {
   style: 'currency', currency: 'NZD', maximumFractionDigits: 0,
 })
 
-export default function RevenueTrendChart({ data }: { data: Point[] }) {
+interface Props {
+  data: Point[]
+  title?: string
+  periodLabel?: string
+}
+
+export default function RevenueTrendChart({ data, title = 'Revenue Trend', periodLabel = 'last 6 months' }: Props) {
   const maxRevenue = data.length > 0 ? Math.max(...data.map(p => p.revenue)) : null
 
   function renderDot(props: DotRenderProps) {
@@ -45,8 +51,8 @@ export default function RevenueTrendChart({ data }: { data: Point[] }) {
       style={{ background: '#111', boxShadow: '0 0 0 1px rgba(184,146,42,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}
     >
       <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(184,146,42,0.2)' }}>
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#B8922A' }}>Revenue Trend</span>
-        <span className="ml-auto text-[10px]" style={{ color: 'rgba(184,146,42,0.4)' }}>last 6 months</span>
+        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#B8922A' }}>{title}</span>
+        <span className="ml-auto text-[10px]" style={{ color: 'rgba(184,146,42,0.4)' }}>{periodLabel}</span>
       </div>
       <div className="px-4 py-4" style={{ height: 260 }}>
         <ResponsiveContainer width="100%" height="100%">

@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
 import type { Job } from '@/lib/types'
+import { TOWN_COORDS } from '@/lib/townMatch'
 
 // jobs.location is rarely filled in by staff — the address that's actually
 // populated lives on the job's linked site instead. Fall back to it so the
@@ -13,12 +14,6 @@ export type ScheduleJob = Job & { sites?: { address: string | null } | null }
 // which requires an access token even for the CDN build.
 const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-
-const TOWN_COORDS = [
-  { name: 'Queenstown', lat: -45.0312, lng: 168.6626 },
-  { name: 'Wanaka', lat: -44.7, lng: 169.15 },
-  { name: 'Cromwell', lat: -45.05, lng: 169.2 },
-]
 
 const STATUS_COLOR: Record<string, string> = {
   pending: '#9ca3af',

@@ -102,6 +102,14 @@ function ChecklistIcon() {
     </svg>
   )
 }
+function ReportsIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 3v18h18" />
+      <rect x="7" y="13" width="3" height="5" /><rect x="12" y="9" width="3" height="9" /><rect x="17" y="6" width="3" height="12" />
+    </svg>
+  )
+}
 
 // ─── nav config ─────────────────────────────────────────────────────────────
 
@@ -123,6 +131,7 @@ const ADMIN_SECTIONS: Section[] = [
     items: [
       { name: 'Quotes',   href: '/quotes',   Icon: QuotesIcon   },
       { name: 'Invoices', href: '/invoices', Icon: InvoicesIcon },
+      { name: 'Reports',  href: '/reports',  Icon: ReportsIcon  },
     ],
   },
   {

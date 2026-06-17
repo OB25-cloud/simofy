@@ -1,4 +1,5 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
+import { paginateAll } from '@/lib/supabasePaginate'
 import Link from 'next/link'
 import type { Lead } from '@/lib/types'
 import AiSearchBar from '@/app/components/AiSearchBar'
@@ -153,25 +154,25 @@ function StatCard({
 
 // ─── page ────────────────────────────────────────────────────────────────────
 
-// PostgREST caps unbounded selects at 1000 rows. Paid invoices alone
-// already exceed that, which was silently truncating the Revenue Trend
-// chart and the Avg Job Value stat — page through all of them.
-async function fetchAllPaidInvoices(
+type PaidInvoiceRow = { total: number | null; paid_date: string | null }
+
+// PostgREST caps unbounded selects at 1000 rows, and paid invoices alone
+// already exceed that. The Revenue Trend chart only ever shows 6 months, so
+// rather than paging through (and re-summing) every paid invoice the
+// business has ever raised, bound the fetch to the same 6-month window the
+// chart actually displays — same fix, far less data to move on every load.
+async function fetchPaidInvoicesSince(
   supabase: Awaited<ReturnType<typeof createServerSupabase>>,
-): Promise<{ total: number | null; paid_date: string | null }[]> {
-  const PAGE_SIZE = 1000
-  const rows: { total: number | null; paid_date: string | null }[] = []
-  for (let from = 0; ; from += PAGE_SIZE) {
-    const { data, error } = await supabase
+  sinceISO: string,
+): Promise<PaidInvoiceRow[]> {
+  return paginateAll<PaidInvoiceRow>((from, to) =>
+    supabase
       .from('invoices')
       .select('total, paid_date')
       .eq('status', 'paid')
-      .range(from, from + PAGE_SIZE - 1)
-    if (error) throw error
-    rows.push(...(data ?? []))
-    if (!data || data.length < PAGE_SIZE) break
-  }
-  return rows
+      .gte('paid_date', sinceISO)
+      .range(from, to)
+  )
 }
 
 export default async function DashboardPage() {
@@ -193,12 +194,17 @@ export default async function DashboardPage() {
   weekStart.setDate(today.getDate() - daysToMonday)
   const startOfWeekStr = weekStart.toISOString().split('T')[0]
 
+  // Matches the Revenue Trend chart's own 6-month window (see monthBuckets
+  // below) — bounding the paid-invoices fetch to it keeps both the chart
+  // and the Avg Job Value stat in sync with what's actually displayed.
+  const sixMonthsAgoStart = new Date(today.getFullYear(), today.getMonth() - 5, 1).toISOString()
+
   // ── Wave 1 ───────────────────────────────────────────────────────────────────
   const [
     { count: activeClientsCount },
     { data: rawJobsToday },
     { count: inProgressCount },
-    { data: outstandingInvoices },
+    outstandingInvoices,
     { count: overdueCount },
     { data: rawRecentJobs },
     { data: rawLeads },
@@ -210,7 +216,7 @@ export default async function DashboardPage() {
     { data: completedJobsThisMonth },
     { count: quotesPipelineCount },
     { count: activeJobsPipelineCount },
-    { data: allQuoteStatuses },
+    allQuoteStatuses,
     paidInvoicesAll,
   ] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('is_active', true),
@@ -218,12 +224,18 @@ export default async function DashboardPage() {
       .select('id, title, job_type, status, created_at, clients(name), staff(name)')
       .gte('scheduled_date', todayStr).lt('scheduled_date', tomorrowStr).order('scheduled_date'),
     supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
-    supabase.from('invoices').select('total').in('status', ['sent', 'overdue']),
+    // 739+ rows and growing — was an unbounded single fetch close to the
+    // 1000-row PostgREST cap; paginated defensively even though it's a
+    // count-only sum, since the actual dollar total requires every row.
+    paginateAll<{ total: number | null }>((from, to) =>
+      supabase.from('invoices').select('total').in('status', ['sent', 'overdue']).range(from, to)
+    ),
     supabase.from('invoices').select('*', { count: 'exact', head: true }).eq('status', 'overdue'),
     supabase.from('jobs')
       .select('id, title, job_type, status, created_at, clients(name)')
       .order('created_at', { ascending: false }).limit(6),
-    supabase.from('leads').select('*').eq('status', 'new').order('created_at', { ascending: false }),
+    // Only the columns the "New Leads" card actually renders.
+    supabase.from('leads').select('id, name, email, phone, source').eq('status', 'new').order('created_at', { ascending: false }),
     supabase.from('invoices')
       .select('id, total, due_date, clients(name)')
       .eq('status', 'overdue').order('due_date', { ascending: true }).limit(8),
@@ -238,8 +250,11 @@ export default async function DashboardPage() {
       .gte('completed_date', startOfMonthDate),
     supabase.from('quotes').select('*', { count: 'exact', head: true }).in('status', ['draft', 'sent']),
     supabase.from('jobs').select('*', { count: 'exact', head: true }).in('status', ['scheduled', 'in_progress']),
-    supabase.from('quotes').select('status'),
-    fetchAllPaidInvoices(supabase),
+    // 955+ rows, no date bound, right at the 1000-row cap — paginate it.
+    paginateAll<{ status: string | null }>((from, to) =>
+      supabase.from('quotes').select('status').range(from, to)
+    ),
+    fetchPaidInvoicesSince(supabase, sixMonthsAgoStart),
   ])
 
   // ── Wave 2: margin sub-queries ───────────────────────────────────────────────
@@ -503,7 +518,7 @@ export default async function DashboardPage() {
         <StatCard
           label="Avg Job Value"
           value={avgJobValue != null ? fmtMoney(avgJobValue) : '—'}
-          sub={avgJobValue != null ? 'per paid invoice' : undefined}
+          sub={avgJobValue != null ? 'per paid invoice, last 6 months' : undefined}
           icon={<IconJobValue />}
         />
         <StatCard
