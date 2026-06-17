@@ -73,6 +73,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
         subtotal: calc.subtotal,
         gst: calc.gst,
         total: calc.total,
+        sent_at: form.status === 'sent' ? new Date().toISOString() : null,
       })
       .select()
       .single()

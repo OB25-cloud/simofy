@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Quote, QuoteLineItem } from '@/lib/types'
+import { isOverdueForFollowUp, daysSinceLastContact } from '@/lib/quoteFollowUp'
 
 const TABS = ['Overview', 'Line Items', 'Activity'] as const
 type Tab = typeof TABS[number]
@@ -31,6 +32,11 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
   const [declining, setDeclining] = useState(false)
   const [converting, setConverting] = useState(false)
   const [convertError, setConvertError] = useState('')
+  const [loggingFollowUp, setLoggingFollowUp] = useState(false)
+  const [followUpError, setFollowUpError] = useState('')
+
+  const overdue = isOverdueForFollowUp(quote)
+  const daysSince = daysSinceLastContact(quote)
 
   async function handleAccept() {
     setAccepting(true)
@@ -44,6 +50,32 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
     await supabase.from('quotes').update({ status: 'declined' }).eq('id', quote.id)
     router.refresh()
     setDeclining(false)
+  }
+
+  async function handleFollowUp() {
+    setLoggingFollowUp(true)
+    setFollowUpError('')
+
+    const now = new Date()
+    const stamp = now.toLocaleString('en-NZ', {
+      day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
+    })
+    const noteLine = `[Follow-up sent — ${stamp}]`
+    const newNotes = quote.notes ? `${quote.notes}\n\n${noteLine}` : noteLine
+
+    const { error } = await supabase
+      .from('quotes')
+      .update({ notes: newNotes, last_followed_up_at: now.toISOString() })
+      .eq('id', quote.id)
+
+    if (error) {
+      setFollowUpError(error.message)
+      setLoggingFollowUp(false)
+      return
+    }
+
+    router.refresh()
+    setLoggingFollowUp(false)
   }
 
   async function handleConvertToInvoice() {
@@ -104,6 +136,38 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
       {/* Overview */}
       {activeTab === 'Overview' && (
         <div className="space-y-4">
+          {/* Follow-up banner */}
+          {overdue && (
+            <div
+              className="rounded-lg px-5 py-4 flex items-start justify-between gap-4 flex-wrap"
+              style={{ background: '#fffbeb', border: '1px solid #fde68a' }}
+            >
+              <div className="flex items-start gap-3">
+                <span className="mt-0.5 shrink-0" style={{ color: '#b45309' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+                  </svg>
+                </span>
+                <p className="text-sm" style={{ color: '#92400e' }}>
+                  This quote was sent {daysSince} day{daysSince === 1 ? '' : 's'} ago and hasn&apos;t been responded to.
+                  Consider following up with the client.
+                </p>
+              </div>
+              <div className="shrink-0">
+                <button
+                  onClick={handleFollowUp}
+                  disabled={loggingFollowUp}
+                  className="px-3.5 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                  style={{ background: '#b45309' }}
+                >
+                  {loggingFollowUp ? 'Logging…' : 'Follow Up Sent'}
+                </button>
+                {followUpError && <p className="text-xs text-red-600 mt-1.5">{followUpError}</p>}
+              </div>
+            </div>
+          )}
+
           {/* Client + Details cards */}
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-lg border border-gray-100 p-5">
@@ -264,7 +328,20 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   style={{ background: '#3b82f6' }}
                 />
                 <p className="text-xs font-medium text-gray-700">Quote sent to client</p>
-                <p className="text-xs text-gray-400 mt-0.5">Date not recorded</p>
+                <p className="text-xs text-gray-400 mt-0.5">
+                  {quote.sent_at ? fmtDate(quote.sent_at) : 'Date not recorded'}
+                </p>
+              </li>
+            )}
+
+            {quote.last_followed_up_at && (
+              <li className="pl-5 relative">
+                <span
+                  className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
+                  style={{ background: '#b45309' }}
+                />
+                <p className="text-xs font-medium text-gray-700">Follow-up sent</p>
+                <p className="text-xs text-gray-400 mt-0.5">{fmtDate(quote.last_followed_up_at)}</p>
               </li>
             )}
 

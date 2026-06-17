@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Quote, Client, Job } from '@/lib/types'
 import AddQuoteModal from './AddQuoteModal'
+import { isOverdueForFollowUp } from '@/lib/quoteFollowUp'
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   draft:    { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Draft'    },
@@ -20,6 +21,22 @@ function StatusBadge({ status }: { status: string | null }) {
     <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: c.bg, color: c.text }}>
       <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
       {c.label}
+    </span>
+  )
+}
+
+function FollowUpBadge() {
+  return (
+    <span
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
+      style={{ background: '#fffbeb', color: '#b45309' }}
+      title="Sent more than 7 days ago with no response"
+    >
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+        <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+      </svg>
+      Follow up
     </span>
   )
 }
@@ -193,7 +210,10 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                     {quote.jobs?.job_type ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3">
-                    <StatusBadge status={quote.status} />
+                    <div className="flex items-center gap-1.5">
+                      <StatusBadge status={quote.status} />
+                      {isOverdueForFollowUp(quote) && <FollowUpBadge />}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right text-gray-500 tabular-nums text-xs">
                     {fmt(quote.subtotal)}

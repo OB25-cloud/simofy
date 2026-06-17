@@ -71,6 +71,8 @@ export type Quote = {
   gst: number | null
   total: number | null
   created_at: string
+  sent_at: string | null
+  last_followed_up_at: string | null
   clients: { name: string; email: string | null; phone: string | null } | null
   jobs: { title: string | null; job_type: string | null } | null
 }

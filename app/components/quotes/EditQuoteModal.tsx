@@ -90,6 +90,11 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
     setLoading(true)
     setError('')
 
+    // sent_at is set the first time a quote transitions into 'sent' status —
+    // not re-stamped on every later edit while it's already sent — so the
+    // follow-up flag measures from when it actually went out.
+    const sentAt = form.status === 'sent' && !quote.sent_at ? new Date().toISOString() : undefined
+
     const { error: qErr } = await supabase
       .from('quotes')
       .update({
@@ -101,6 +106,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
         subtotal: calc.subtotal,
         gst: calc.gst,
         total: calc.total,
+        ...(sentAt ? { sent_at: sentAt } : {}),
       })
       .eq('id', quote.id)
 
