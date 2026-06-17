@@ -133,7 +133,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
 
       {/* Overview */}
       {activeTab === 'overview' && (
-        <div>
+        <div className="tab-fade-in">
           <div className="grid grid-cols-3 gap-4 mb-6">
             {[
               { label: 'Total Jobs',     value: String(jobs.length) },
@@ -208,7 +208,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
 
       {/* Jobs */}
       {activeTab === 'jobs' && (
-        <div>
+        <div className="tab-fade-in">
           <p className="text-xs text-gray-400 mb-4">
             {jobs.length} job{jobs.length !== 1 ? 's' : ''}
           </p>
@@ -257,7 +257,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
 
       {/* Quotes */}
       {activeTab === 'quotes' && (
-        <div>
+        <div className="tab-fade-in">
           <p className="text-xs text-gray-400 mb-4">
             {quotes.length} quote{quotes.length !== 1 ? 's' : ''}
           </p>
@@ -308,7 +308,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
 
       {/* Invoices */}
       {activeTab === 'invoices' && (
-        <div>
+        <div className="tab-fade-in">
           <p className="text-xs text-gray-400 mb-4">
             {invoices.length} invoice{invoices.length !== 1 ? 's' : ''}
           </p>
@@ -359,17 +359,23 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
 
       {/* Sites */}
       {activeTab === 'sites' && (
-        <SitesSection clientId={client.id} sites={sites} />
+        <div className="tab-fade-in">
+          <SitesSection clientId={client.id} sites={sites} />
+        </div>
       )}
 
       {/* Notifications */}
       {activeTab === 'notifications' && (
-        <NotificationsSection clientId={client.id} initialSettings={notifSettings} />
+        <div className="tab-fade-in">
+          <NotificationsSection clientId={client.id} initialSettings={notifSettings} />
+        </div>
       )}
 
       {/* Communications */}
       {activeTab === 'communications' && (
-        <CommunicationsSection notifications={notifications} />
+        <div className="tab-fade-in">
+          <CommunicationsSection notifications={notifications} />
+        </div>
       )}
     </>
   )

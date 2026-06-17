@@ -96,7 +96,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
 
       {/* Overview */}
       {activeTab === 'Overview' && (
-        <div className="space-y-4">
+        <div className="space-y-4 tab-fade-in">
           <div className="grid grid-cols-2 gap-4">
             {/* Client */}
             <div className="rounded-lg border border-gray-100 p-5">
@@ -165,7 +165,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
 
       {/* Payment */}
       {activeTab === 'Payment' && (
-        <div className="space-y-4">
+        <div className="space-y-4 tab-fade-in">
           {/* Prominent amount */}
           <div className="rounded-lg border border-gray-100 p-6 text-center">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
@@ -236,7 +236,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
 
       {/* Activity */}
       {activeTab === 'Activity' && (
-        <div className="rounded-lg border border-gray-100 p-5">
+        <div className="rounded-lg border border-gray-100 p-5 tab-fade-in">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Activity</p>
           <ol className="relative border-l border-gray-200 ml-2 space-y-6">
             <li className="pl-5">

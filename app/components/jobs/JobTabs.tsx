@@ -209,7 +209,7 @@ export default function JobTabs({
 
       {/* Overview */}
       {activeTab === 'overview' && (
-        <div className="space-y-5">
+        <div className="space-y-5 tab-fade-in">
           <div className="grid grid-cols-2 gap-5">
             <div className="rounded-lg border border-gray-100 p-5">
               <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
@@ -343,7 +343,7 @@ export default function JobTabs({
 
       {/* Notes */}
       {activeTab === 'notes' && (
-        <div>
+        <div className="tab-fade-in">
           {/* Add note form */}
           <div className="rounded-lg border border-gray-100 p-4 mb-5">
             <textarea
@@ -440,35 +440,41 @@ export default function JobTabs({
 
       {/* Photos */}
       {activeTab === 'photos' && (
-        <JobPhotos jobId={job.id} initialPhotos={initialPhotos} />
+        <div className="tab-fade-in">
+          <JobPhotos jobId={job.id} initialPhotos={initialPhotos} />
+        </div>
       )}
 
       {/* Materials */}
       {activeTab === 'materials' && (
-        <MaterialsSection
-          jobId={job.id}
-          materials={materials}
-          initialJobMaterials={initialJobMaterials}
-        />
+        <div className="tab-fade-in">
+          <MaterialsSection
+            jobId={job.id}
+            materials={materials}
+            initialJobMaterials={initialJobMaterials}
+          />
+        </div>
       )}
 
       {/* Checklist */}
       {activeTab === 'checklist' && (
-        <ChecklistSection
-          jobId={job.id}
-          templateId={checklistTemplateId}
-          setTemplateId={setChecklistTemplateId}
-          items={checklistItems}
-          setItems={setChecklistItems}
-          templates={checklistTemplates}
-          isAdmin={isAdmin}
-          currentUserDisplayName={currentUserDisplayName}
-        />
+        <div className="tab-fade-in">
+          <ChecklistSection
+            jobId={job.id}
+            templateId={checklistTemplateId}
+            setTemplateId={setChecklistTemplateId}
+            items={checklistItems}
+            setItems={setChecklistItems}
+            templates={checklistTemplates}
+            isAdmin={isAdmin}
+            currentUserDisplayName={currentUserDisplayName}
+          />
+        </div>
       )}
 
       {/* Activity */}
       {activeTab === 'activity' && (
-        <div>
+        <div className="tab-fade-in">
           {timeline.length === 0 ? (
             <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
               <p className="text-sm text-gray-400">No activity recorded</p>

@@ -135,7 +135,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
 
       {/* Overview */}
       {activeTab === 'Overview' && (
-        <div className="space-y-4">
+        <div className="space-y-4 tab-fade-in">
           {/* Follow-up banner */}
           {overdue && (
             <div
@@ -256,7 +256,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
 
       {/* Line Items */}
       {activeTab === 'Line Items' && (
-        <div>
+        <div className="tab-fade-in">
           <div className="rounded-lg border border-gray-100 overflow-hidden mb-4">
             <div className="px-5 py-3 border-b border-gray-100 bg-gray-50">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">Line Items</p>
@@ -309,7 +309,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
 
       {/* Activity */}
       {activeTab === 'Activity' && (
-        <div className="rounded-lg border border-gray-100 p-5">
+        <div className="rounded-lg border border-gray-100 p-5 tab-fade-in">
           <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Activity</p>
           <ol className="relative border-l border-gray-200 ml-2 space-y-6">
             <li className="pl-5">
