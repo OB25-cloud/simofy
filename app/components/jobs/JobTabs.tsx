@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import type { Job, JobPhoto, JobNote, Material, JobMaterial } from '@/lib/types'
+import type { Job, JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem } from '@/lib/types'
 import JobPhotos from './JobPhotos'
 import MaterialsSection from './MaterialsSection'
+import ChecklistSection from './ChecklistSection'
 
 const RECURRENCE_LABELS: Record<string, string> = {
   weekly:      'Weekly',
@@ -56,6 +57,7 @@ const TABS = [
   { key: 'notes',      label: 'Notes'      },
   { key: 'photos',     label: 'Photos'     },
   { key: 'materials',  label: 'Materials'  },
+  { key: 'checklist',  label: 'Checklist'  },
   { key: 'activity',   label: 'Activity'   },
 ]
 
@@ -66,6 +68,10 @@ interface Props {
   materials: Material[]
   initialJobMaterials: JobMaterial[]
   quoteTotal: number | null
+  checklistTemplates: Pick<ChecklistTemplate, 'id' | 'name'>[]
+  initialChecklistItems: JobChecklistItem[]
+  isAdmin: boolean
+  currentUserDisplayName: string
 }
 
 export default function JobTabs({
@@ -75,9 +81,20 @@ export default function JobTabs({
   materials,
   initialJobMaterials,
   quoteTotal,
+  checklistTemplates,
+  initialChecklistItems,
+  isAdmin,
+  currentUserDisplayName,
 }: Props) {
   const [activeTab, setActiveTab] = useState('overview')
   const [notes, setNotes] = useState<JobNote[]>(initialNotes)
+  // Lifted up to JobTabs (rather than owned inside ChecklistSection) because
+  // tab content is conditionally rendered — switching tabs unmounts
+  // ChecklistSection entirely, which would otherwise reset its state back to
+  // initialChecklistItems (the page-load snapshot) every time you tab away
+  // and back, making freshly-saved ticks look like they "didn't persist".
+  const [checklistTemplateId, setChecklistTemplateId] = useState<string | null>(job.checklist_template_id)
+  const [checklistItems, setChecklistItems] = useState<JobChecklistItem[]>(initialChecklistItems)
   const [noteText, setNoteText] = useState('')
   const [saving, setSaving] = useState(false)
   const [noteError, setNoteError] = useState('')
@@ -432,6 +449,20 @@ export default function JobTabs({
           jobId={job.id}
           materials={materials}
           initialJobMaterials={initialJobMaterials}
+        />
+      )}
+
+      {/* Checklist */}
+      {activeTab === 'checklist' && (
+        <ChecklistSection
+          jobId={job.id}
+          templateId={checklistTemplateId}
+          setTemplateId={setChecklistTemplateId}
+          items={checklistItems}
+          setItems={setChecklistItems}
+          templates={checklistTemplates}
+          isAdmin={isAdmin}
+          currentUserDisplayName={currentUserDisplayName}
         />
       )}
 

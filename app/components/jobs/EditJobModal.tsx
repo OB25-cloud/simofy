@@ -91,6 +91,24 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
       setError('Title is required.')
       return
     }
+
+    if (form.status === 'complete') {
+      const { count, error: checklistErr } = await supabase
+        .from('job_checklist_items')
+        .select('*', { count: 'exact', head: true })
+        .eq('job_id', job.id)
+        .eq('required', true)
+        .eq('completed', false)
+      if (checklistErr) {
+        setError(checklistErr.message)
+        return
+      }
+      if ((count ?? 0) > 0) {
+        setError(`Cannot mark complete — ${count} required checklist item${count === 1 ? '' : 's'} still unchecked.`)
+        return
+      }
+    }
+
     setLoading(true)
     setError('')
 

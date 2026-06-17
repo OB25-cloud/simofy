@@ -1,7 +1,7 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import type { JobPhoto, JobNote, Material, JobMaterial } from '@/lib/types'
+import type { JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem } from '@/lib/types'
 import JobTabs from '@/app/components/jobs/JobTabs'
 import JobActions from '@/app/components/jobs/JobActions'
 
@@ -36,6 +36,8 @@ export default async function JobDetailPage({
   const { id } = await params
   const supabase = await createServerSupabase()
 
+  const { data: { user } } = await supabase.auth.getUser()
+
   const [
     { data: job },
     { data: photos },
@@ -45,6 +47,9 @@ export default async function JobDetailPage({
     { data: materials },
     { data: jobMaterials },
     { data: quotes },
+    { data: checklistTemplates },
+    { data: jobChecklistItems },
+    { data: myProfile },
   ] = await Promise.all([
     supabase.from('jobs').select('*, clients(name, business_name), staff(name, pay_rate)').eq('id', id).single(),
     supabase.from('job_photos').select('*').eq('job_id', id).order('taken_at', { ascending: true }),
@@ -54,11 +59,16 @@ export default async function JobDetailPage({
     supabase.from('materials').select('*').order('category').order('name'),
     supabase.from('job_materials').select('*, materials(name, unit)').eq('job_id', id).order('created_at'),
     supabase.from('quotes').select('total').eq('job_id', id).order('created_at', { ascending: false }).limit(1),
+    supabase.from('checklist_templates').select('id, name').order('name'),
+    supabase.from('job_checklist_items').select('*').eq('job_id', id).order('sort_order', { ascending: true }),
+    user ? supabase.from('profiles').select('role, name').eq('id', user.id).single() : Promise.resolve({ data: null }),
   ])
 
   if (!job) notFound()
 
   const quoteTotal: number | null = quotes?.[0]?.total ?? null
+  const isAdmin = myProfile?.role === 'admin'
+  const currentUserDisplayName = myProfile?.name ?? user?.email ?? 'Someone'
 
   return (
     <div className="p-4 md:p-8 max-w-4xl">
@@ -95,6 +105,10 @@ export default async function JobDetailPage({
         materials={(materials ?? []) as Material[]}
         initialJobMaterials={(jobMaterials ?? []) as JobMaterial[]}
         quoteTotal={quoteTotal}
+        checklistTemplates={(checklistTemplates ?? []) as Pick<ChecklistTemplate, 'id' | 'name'>[]}
+        initialChecklistItems={(jobChecklistItems ?? []) as JobChecklistItem[]}
+        isAdmin={isAdmin}
+        currentUserDisplayName={currentUserDisplayName}
       />
     </div>
   )

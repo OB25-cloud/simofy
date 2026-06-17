@@ -93,6 +93,15 @@ function UsersIcon() {
     </svg>
   )
 }
+function ChecklistIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M7 9l1.5 1.5L11 8" /><path d="M7 16l1.5 1.5L11 15" />
+      <line x1="13.5" y1="9" x2="17" y2="9" /><line x1="13.5" y1="16" x2="17" y2="16" />
+    </svg>
+  )
+}
 
 // ─── nav config ─────────────────────────────────────────────────────────────
 
@@ -126,8 +135,9 @@ const ADMIN_SECTIONS: Section[] = [
   {
     label: 'SETTINGS',
     items: [
-      { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon   },
-      { name: 'Users',         href: '/settings/users',         Icon: UsersIcon  },
+      { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon      },
+      { name: 'Users',         href: '/settings/users',         Icon: UsersIcon     },
+      { name: 'Checklists',    href: '/settings/checklists',    Icon: ChecklistIcon },
     ],
   },
 ]

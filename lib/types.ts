@@ -34,6 +34,7 @@ export type Job = {
   is_recurring: boolean | null
   recurrence_pattern: string | null
   recurring_series_id: string | null
+  checklist_template_id: string | null
   notes: string | null
   created_at: string | null
   clients: { name: string; business_name: string | null } | null
@@ -141,6 +142,33 @@ export type Notification = {
   scheduled_for: string | null
   created_at: string
   review_link: string | null
+}
+
+export type ChecklistTemplate = {
+  id: string
+  name: string
+  created_at: string
+}
+
+export type ChecklistTemplateItem = {
+  id: string
+  template_id: string
+  item_text: string
+  sort_order: number
+  required: boolean
+}
+
+export type JobChecklistItem = {
+  id: string
+  job_id: string
+  template_item_id: string | null
+  item_text: string
+  required: boolean
+  completed: boolean
+  completed_by: string | null
+  completed_at: string | null
+  sort_order: number
+  created_at: string
 }
 
 export type JobMaterial = {
