@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Job } from '@/lib/types'
+import MapView, { type ScheduleJob } from './MapView'
 
 // ─── status colours ────────────────────────────────────────────────────────────
 
@@ -88,8 +89,16 @@ function JobBlock({ job }: { job: Job }) {
 // ─── main view ──────────────────────────────────────────────────────────────────
 
 export default function ScheduleView() {
+  const [view, setView] = useState<'calendar' | 'map'>('calendar')
+  // MapView is mounted the first time Map View is opened and then never
+  // unmounted again — only hidden via CSS when switching back to Calendar.
+  // Conditionally unmounting/remounting it broke Leaflet's CDN script
+  // loading: next/script's onLoad doesn't reliably re-fire for a script
+  // that's already loaded elsewhere in the document, so a remounted
+  // MapView would wait forever for a load event that never comes.
+  const [mapEverShown, setMapEverShown] = useState(false)
   const [weekStart, setWeekStart] = useState<Date>(() => getMonday(new Date()))
-  const [jobs, setJobs] = useState<Job[]>([])
+  const [jobs, setJobs] = useState<ScheduleJob[]>([])
   const [loading, setLoading] = useState(true)
   // Empty string on server/hydration; set client-side to avoid timezone mismatch
   const [todayKey, setTodayKey] = useState('')
@@ -106,13 +115,13 @@ export default function ScheduleView() {
 
       const { data } = await supabase
         .from('jobs')
-        .select('id, title, job_type, status, scheduled_date, staff(name)')
+        .select('id, title, job_type, status, scheduled_date, location, staff(name), clients(name), sites(address)')
         .gte('scheduled_date', weekKey)
         .lt('scheduled_date', toDateKey(nextMonday))
         .order('scheduled_date')
 
       if (!cancelled) {
-        setJobs((data as unknown as Job[]) ?? [])
+        setJobs((data as unknown as ScheduleJob[]) ?? [])
         setLoading(false)
       }
     }
@@ -178,6 +187,22 @@ export default function ScheduleView() {
               </svg>
             </button>
           </div>
+          <div className="inline-flex rounded-md border border-gray-200 overflow-hidden shrink-0">
+            {(['calendar', 'map'] as const).map(v => (
+              <button
+                key={v}
+                onClick={() => { setView(v); if (v === 'map') setMapEverShown(true) }}
+                className="px-3.5 py-2 text-sm font-medium transition-colors"
+                style={
+                  view === v
+                    ? { background: '#B8922A', color: '#fff' }
+                    : { background: '#fff', color: '#6b7280' }
+                }
+              >
+                {v === 'calendar' ? 'Calendar View' : 'Map View'}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -212,58 +237,68 @@ export default function ScheduleView() {
       </div>
 
       {/* Calendar */}
-      <div className="overflow-x-auto">
-      <div className="rounded-lg border border-gray-100 overflow-hidden min-w-[640px]">
-        {/* Day headers */}
-        <div className="grid grid-cols-7 border-b border-gray-100">
-          {days.map((day, i) => {
-            const isToday = toDateKey(day) === todayKey
-            return (
-              <div
-                key={i}
-                className={`px-3 py-3 text-center ${i < 6 ? 'border-r border-gray-100' : ''} ${isToday ? 'bg-[#fdf8ee]' : 'bg-gray-50'}`}
-              >
-                <p className={`text-[11px] font-semibold uppercase tracking-widest ${isToday ? 'text-[#B8922A]' : 'text-gray-400'}`}>
-                  {DAY_NAMES[i]}
-                </p>
-                <p className={`text-2xl font-semibold leading-tight mt-0.5 ${isToday ? 'text-[#B8922A]' : 'text-gray-900'}`}>
-                  {day.getDate()}
-                </p>
-                <p className="text-[10px] text-gray-300 mt-0.5 uppercase tracking-wide">
-                  {day.toLocaleDateString('en-NZ', { month: 'short' })}
-                </p>
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Body */}
-        {loading ? (
-          <div className="py-20 text-center bg-white">
-            <p className="text-sm text-gray-400">Loading schedule…</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-7 divide-x divide-gray-100 bg-white">
+      <div style={{ display: view === 'calendar' ? 'block' : 'none' }}>
+        <div className="overflow-x-auto">
+        <div className="rounded-lg border border-gray-100 overflow-hidden min-w-[640px]">
+          {/* Day headers */}
+          <div className="grid grid-cols-7 border-b border-gray-100">
             {days.map((day, i) => {
-              const key = toDateKey(day)
-              const dayJobs = jobsByDate[key] ?? []
-              const isToday = key === todayKey
+              const isToday = toDateKey(day) === todayKey
               return (
                 <div
                   key={i}
-                  className={`p-2 space-y-1.5 min-h-[200px] ${isToday ? 'bg-[#fefdf9]' : ''}`}
+                  className={`px-3 py-3 text-center ${i < 6 ? 'border-r border-gray-100' : ''} ${isToday ? 'bg-[#fdf8ee]' : 'bg-gray-50'}`}
                 >
-                  {dayJobs.map(job => (
-                    <JobBlock key={job.id} job={job} />
-                  ))}
+                  <p className={`text-[11px] font-semibold uppercase tracking-widest ${isToday ? 'text-[#B8922A]' : 'text-gray-400'}`}>
+                    {DAY_NAMES[i]}
+                  </p>
+                  <p className={`text-2xl font-semibold leading-tight mt-0.5 ${isToday ? 'text-[#B8922A]' : 'text-gray-900'}`}>
+                    {day.getDate()}
+                  </p>
+                  <p className="text-[10px] text-gray-300 mt-0.5 uppercase tracking-wide">
+                    {day.toLocaleDateString('en-NZ', { month: 'short' })}
+                  </p>
                 </div>
               )
             })}
           </div>
-        )}
+
+          {/* Body */}
+          {loading ? (
+            <div className="py-20 text-center bg-white">
+              <p className="text-sm text-gray-400">Loading schedule…</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-7 divide-x divide-gray-100 bg-white">
+              {days.map((day, i) => {
+                const key = toDateKey(day)
+                const dayJobs = jobsByDate[key] ?? []
+                const isToday = key === todayKey
+                return (
+                  <div
+                    key={i}
+                    className={`p-2 space-y-1.5 min-h-[200px] ${isToday ? 'bg-[#fefdf9]' : ''}`}
+                  >
+                    {dayJobs.map(job => (
+                      <JobBlock key={job.id} job={job} />
+                    ))}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+        </div>
       </div>
 
-      </div>
+      {/* Map — stays mounted once opened (and across week changes) so
+          Leaflet's CDN script and the map instance are never torn down and
+          reinitialized; markers just update via the jobs prop instead */}
+      {mapEverShown && (
+        <div style={{ display: view === 'map' ? 'block' : 'none' }}>
+          <MapView jobs={jobs} />
+        </div>
+      )}
       {!loading && jobs.length === 0 && (
         <p className="mt-6 text-center text-sm text-gray-400">
           No jobs scheduled for this week
