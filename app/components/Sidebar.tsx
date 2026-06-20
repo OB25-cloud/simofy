@@ -110,6 +110,14 @@ function ReportsIcon() {
     </svg>
   )
 }
+function PurchaseOrderIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 2h6a2 2 0 0 1 2 2v18l-5-3-5 3V4a2 2 0 0 1 2-2Z" />
+      <line x1="9" y1="8" x2="15" y2="8" /><line x1="9" y1="12" x2="15" y2="12" />
+    </svg>
+  )
+}
 
 // ─── nav config ─────────────────────────────────────────────────────────────
 
@@ -129,9 +137,10 @@ const ADMIN_SECTIONS: Section[] = [
   {
     label: 'FINANCE',
     items: [
-      { name: 'Quotes',   href: '/quotes',   Icon: QuotesIcon   },
-      { name: 'Invoices', href: '/invoices', Icon: InvoicesIcon },
-      { name: 'Reports',  href: '/reports',  Icon: ReportsIcon  },
+      { name: 'Quotes',          href: '/quotes',          Icon: QuotesIcon       },
+      { name: 'Invoices',       href: '/invoices',         Icon: InvoicesIcon     },
+      { name: 'Purchase Orders', href: '/purchase-orders', Icon: PurchaseOrderIcon },
+      { name: 'Reports',        href: '/reports',          Icon: ReportsIcon      },
     ],
   },
   {

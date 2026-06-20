@@ -3,10 +3,11 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
-import type { Job, JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem } from '@/lib/types'
+import type { Job, JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem, PurchaseOrder } from '@/lib/types'
 import JobPhotos from './JobPhotos'
 import MaterialsSection from './MaterialsSection'
 import ChecklistSection from './ChecklistSection'
+import PurchaseOrdersSection from './PurchaseOrdersSection'
 
 const RECURRENCE_LABELS: Record<string, string> = {
   weekly:      'Weekly',
@@ -53,12 +54,13 @@ function fmtCurrency(n: number) {
 }
 
 const TABS = [
-  { key: 'overview',   label: 'Overview'   },
-  { key: 'notes',      label: 'Notes'      },
-  { key: 'photos',     label: 'Photos'     },
-  { key: 'materials',  label: 'Materials'  },
-  { key: 'checklist',  label: 'Checklist'  },
-  { key: 'activity',   label: 'Activity'   },
+  { key: 'overview',        label: 'Overview'        },
+  { key: 'notes',           label: 'Notes'            },
+  { key: 'photos',          label: 'Photos'           },
+  { key: 'materials',       label: 'Materials'        },
+  { key: 'purchase_orders', label: 'Purchase Orders'  },
+  { key: 'checklist',       label: 'Checklist'        },
+  { key: 'activity',        label: 'Activity'         },
 ]
 
 interface Props {
@@ -67,6 +69,7 @@ interface Props {
   initialNotes: JobNote[]
   materials: Material[]
   initialJobMaterials: JobMaterial[]
+  initialPurchaseOrders: PurchaseOrder[]
   quoteTotal: number | null
   checklistTemplates: Pick<ChecklistTemplate, 'id' | 'name'>[]
   initialChecklistItems: JobChecklistItem[]
@@ -80,6 +83,7 @@ export default function JobTabs({
   initialNotes,
   materials,
   initialJobMaterials,
+  initialPurchaseOrders,
   quoteTotal,
   checklistTemplates,
   initialChecklistItems,
@@ -95,6 +99,9 @@ export default function JobTabs({
   // and back, making freshly-saved ticks look like they "didn't persist".
   const [checklistTemplateId, setChecklistTemplateId] = useState<string | null>(job.checklist_template_id)
   const [checklistItems, setChecklistItems] = useState<JobChecklistItem[]>(initialChecklistItems)
+  // Same reason as checklistItems above — lifted so adding/updating a PO
+  // survives switching away from the Purchase Orders tab and back.
+  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>(initialPurchaseOrders)
   const [noteText, setNoteText] = useState('')
   const [saving, setSaving] = useState(false)
   const [noteError, setNoteError] = useState('')
@@ -105,9 +112,12 @@ export default function JobTabs({
 
   // Cost summary calculations
   const materialsCost = initialJobMaterials.reduce((sum, m) => sum + m.quantity * m.unit_cost, 0)
+  const purchaseOrdersCost = purchaseOrders
+    .filter(po => po.status === 'received')
+    .reduce((sum, po) => sum + po.amount, 0)
   const payRate = job.staff?.pay_rate ?? 0
   const labourCost = payRate * 2
-  const totalCost = materialsCost + labourCost
+  const totalCost = materialsCost + purchaseOrdersCost + labourCost
   const margin = quoteTotal !== null ? quoteTotal - totalCost : null
 
   async function handleAddNote() {
@@ -308,6 +318,13 @@ export default function JobTabs({
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">
+                  Purchase Orders
+                  <span className="text-xs text-gray-400 ml-1.5">(received only)</span>
+                </span>
+                <span className="font-medium text-gray-900">{fmtCurrency(purchaseOrdersCost)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-500">
                   Labour Cost
                   <span className="text-xs text-gray-400 ml-1.5">
                     ({job.staff?.pay_rate ? `${fmtCurrency(payRate)}/hr` : 'no rate set'} × 2 hrs est.)
@@ -452,6 +469,18 @@ export default function JobTabs({
             jobId={job.id}
             materials={materials}
             initialJobMaterials={initialJobMaterials}
+          />
+        </div>
+      )}
+
+      {/* Purchase Orders */}
+      {activeTab === 'purchase_orders' && (
+        <div className="tab-fade-in">
+          <PurchaseOrdersSection
+            jobId={job.id}
+            purchaseOrders={purchaseOrders}
+            setPurchaseOrders={setPurchaseOrders}
+            isAdmin={isAdmin}
           />
         </div>
       )}

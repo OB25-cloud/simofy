@@ -1,7 +1,7 @@
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import type { JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem } from '@/lib/types'
+import type { JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem, PurchaseOrder } from '@/lib/types'
 import JobTabs from '@/app/components/jobs/JobTabs'
 import JobActions from '@/app/components/jobs/JobActions'
 
@@ -46,6 +46,7 @@ export default async function JobDetailPage({
     { data: staff },
     { data: materials },
     { data: jobMaterials },
+    { data: purchaseOrders },
     { data: quotes },
     { data: checklistTemplates },
     { data: jobChecklistItems },
@@ -58,6 +59,7 @@ export default async function JobDetailPage({
     supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
     supabase.from('materials').select('*').order('category').order('name'),
     supabase.from('job_materials').select('*, materials(name, unit)').eq('job_id', id).order('created_at'),
+    supabase.from('purchase_orders').select('*').eq('job_id', id).order('created_at', { ascending: false }),
     supabase.from('quotes').select('total').eq('job_id', id).order('created_at', { ascending: false }).limit(1),
     supabase.from('checklist_templates').select('id, name').order('name'),
     supabase.from('job_checklist_items').select('*').eq('job_id', id).order('sort_order', { ascending: true }),
@@ -104,6 +106,7 @@ export default async function JobDetailPage({
         initialNotes={(notes ?? []) as JobNote[]}
         materials={(materials ?? []) as Material[]}
         initialJobMaterials={(jobMaterials ?? []) as JobMaterial[]}
+        initialPurchaseOrders={(purchaseOrders ?? []) as PurchaseOrder[]}
         quoteTotal={quoteTotal}
         checklistTemplates={(checklistTemplates ?? []) as Pick<ChecklistTemplate, 'id' | 'name'>[]}
         initialChecklistItems={(jobChecklistItems ?? []) as JobChecklistItem[]}

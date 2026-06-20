@@ -182,3 +182,18 @@ export type JobMaterial = {
   created_at: string
   materials: { name: string; unit: string } | null
 }
+
+export type PurchaseOrderStatus = 'pending' | 'approved' | 'received' | 'cancelled'
+
+export type PurchaseOrder = {
+  id: string
+  job_id: string | null
+  supplier: string
+  description: string | null
+  amount: number
+  status: PurchaseOrderStatus
+  receipt_url: string | null
+  xero_expense_id: string | null
+  created_at: string
+  jobs?: { title: string | null; job_type: string | null } | null
+}
