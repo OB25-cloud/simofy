@@ -182,7 +182,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
           <button
             onClick={applyToAllClients}
             disabled={applying}
-            className="shrink-0 px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="shrink-0 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
             style={{ background: '#111111' }}
           >
             {applying ? 'Applying…' : applyDone ? '✓ Applied' : 'Apply to All'}

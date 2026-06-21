@@ -25,7 +25,7 @@ export default function LeadHeaderActions({ lead }: Props) {
       <div className="flex items-center gap-2">
         <button
           onClick={() => setShowEdit(true)}
-          className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
+          className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
           style={{ background: '#B8922A' }}
         >
           Edit Lead
@@ -37,13 +37,13 @@ export default function LeadHeaderActions({ lead }: Props) {
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-3 py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-60"
+              className="px-3 py-3 sm:py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-60"
             >
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="px-3 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-3 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
             >
               Cancel
             </button>
@@ -51,7 +51,7 @@ export default function LeadHeaderActions({ lead }: Props) {
         ) : (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           >
             Delete
           </button>

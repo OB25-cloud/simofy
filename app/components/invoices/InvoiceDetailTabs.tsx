@@ -75,12 +75,12 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className="px-4 py-2.5 text-sm font-medium transition-colors relative"
+            className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
             style={{ color: activeTab === tab ? '#111827' : '#6b7280' }}
           >
             {tab}
@@ -211,7 +211,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <button
                 onClick={handleMarkPaid}
                 disabled={markingPaid || isPaid}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
                 style={{ background: '#15803d' }}
               >
                 {markingPaid ? 'Updating…' : isPaid ? 'Already Paid' : 'Mark as Paid'}
@@ -219,7 +219,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <button
                 onClick={handleSendReminder}
                 disabled={sendingReminder || isPaid || reminderSent}
-                className="px-4 py-2 text-sm font-medium rounded-md border transition-colors disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium rounded-md border transition-colors disabled:opacity-50"
                 style={
                   reminderSent
                     ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }

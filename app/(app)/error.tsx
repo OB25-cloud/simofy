@@ -17,14 +17,14 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
         <div className="mt-6 flex items-center justify-center gap-3">
           <button
             onClick={reset}
-            className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
+            className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
             style={{ background: '#B8922A' }}
           >
             Try again
           </button>
           <a
             href="/dashboard"
-            className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           >
             Back to dashboard
           </a>

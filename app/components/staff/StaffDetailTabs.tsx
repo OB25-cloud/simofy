@@ -83,12 +83,12 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className="px-4 py-2.5 text-sm font-medium transition-colors relative"
+            className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
             style={{ color: activeTab === tab ? '#111827' : '#6b7280' }}
           >
             {tab}
@@ -206,8 +206,8 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
               <p className="text-sm text-gray-400">No jobs assigned to this staff member</p>
             </div>
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <th className="text-left px-5 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Title</th>

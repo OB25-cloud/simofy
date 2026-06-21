@@ -19,14 +19,14 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
             <div className="mt-6 flex items-center justify-center gap-3">
               <button
                 onClick={reset}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
                 style={{ background: '#B8922A' }}
               >
                 Try again
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
               >
                 Reload page
               </button>

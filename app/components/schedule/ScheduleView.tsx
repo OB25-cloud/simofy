@@ -8,7 +8,8 @@ import {
   closestCenter,
   useDraggable,
   useDroppable,
-  PointerSensor,
+  MouseSensor,
+  TouchSensor,
   useSensor,
   useSensors,
   type DragEndEvent,
@@ -177,12 +178,12 @@ function RescheduleModal({
       style={{ background: 'rgba(0,0,0,0.45)' }}
       onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
     >
-      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100" style={{ background: '#fdf8ee' }}>
+      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+        <div className="px-6 py-4 border-b border-gray-100 shrink-0" style={{ background: '#fdf8ee' }}>
           <h2 className="text-sm font-semibold text-gray-900">Confirm Reschedule</h2>
         </div>
 
-        <div className="px-6 py-5 space-y-4">
+        <div className="px-6 py-5 space-y-4 overflow-y-auto">
           <div>
             <p className="text-sm font-medium text-gray-900">{job.title ?? job.job_type ?? 'Untitled job'}</p>
             <p className="mt-1.5 text-sm text-gray-500">
@@ -192,26 +193,26 @@ function RescheduleModal({
           </div>
 
           {(hasClient || hasStaff) && (
-            <div className="space-y-2.5 pt-1">
+            <div className="space-y-1 pt-1">
               {hasClient && (
-                <label className="flex items-center gap-2.5 cursor-pointer">
+                <label className="flex items-center gap-2.5 py-2 md:py-0 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={notifyClient}
                     onChange={(e) => onToggleClient(e.target.checked)}
-                    className="w-4 h-4 rounded cursor-pointer"
+                    className="w-4 h-4 rounded cursor-pointer shrink-0"
                     style={{ accentColor: '#B8922A' }}
                   />
                   <span className="text-sm text-gray-700">Notify client of this schedule change?</span>
                 </label>
               )}
               {hasStaff && (
-                <label className="flex items-center gap-2.5 cursor-pointer">
+                <label className="flex items-center gap-2.5 py-2 md:py-0 cursor-pointer">
                   <input
                     type="checkbox"
                     checked={notifyStaff}
                     onChange={(e) => onToggleStaff(e.target.checked)}
-                    className="w-4 h-4 rounded cursor-pointer"
+                    className="w-4 h-4 rounded cursor-pointer shrink-0"
                     style={{ accentColor: '#B8922A' }}
                   />
                   <span className="text-sm text-gray-700">Notify {job.staff?.name} of this schedule change?</span>
@@ -221,12 +222,12 @@ function RescheduleModal({
           )}
         </div>
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 shrink-0">
           <button
             type="button"
             onClick={onCancel}
             disabled={saving}
-            className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-60"
+            className="px-4 py-3 md:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-60"
           >
             Cancel
           </button>
@@ -234,7 +235,7 @@ function RescheduleModal({
             type="button"
             onClick={onConfirm}
             disabled={saving}
-            className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="px-4 py-3 md:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
             style={{ background: '#B8922A' }}
           >
             {saving ? 'Rescheduling…' : 'Confirm'}
@@ -287,7 +288,15 @@ export default function ScheduleView() {
   const [notifyStaff, setNotifyStaff] = useState(true)
   const [savingReschedule, setSavingReschedule] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
-  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
+  // MouseSensor (not PointerSensor, which also listens to touch and would
+  // race the TouchSensor below) starts a drag after a small mouse movement.
+  // TouchSensor needs a brief press-and-hold with a movement tolerance, so a
+  // quick tap on a job block still opens it instead of being swallowed as an
+  // accidental drag.
+  const sensors = useSensors(
+    useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
+  )
 
   useEffect(() => {
     if (!toast) return
@@ -411,22 +420,22 @@ export default function ScheduleView() {
   return (
     <>
       {/* Page header */}
-      <div className="mb-5 flex items-center justify-between">
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold text-gray-900">Schedule</h1>
           <p className="mt-0.5 text-sm text-gray-500">{formatWeekRange(weekStart)}</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={() => setWeekStart(getMonday(new Date()))}
-            className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-3 py-3 sm:py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           >
             Today
           </button>
           <div className="flex items-center rounded-md border border-gray-200 overflow-hidden">
             <button
               onClick={() => shiftWeek(-7)}
-              className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors border-r border-gray-200"
+              className="p-3.5 sm:p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors border-r border-gray-200"
               aria-label="Previous week"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -435,7 +444,7 @@ export default function ScheduleView() {
             </button>
             <button
               onClick={() => shiftWeek(7)}
-              className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors"
+              className="p-3.5 sm:p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-colors"
               aria-label="Next week"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -448,7 +457,7 @@ export default function ScheduleView() {
               <button
                 key={v}
                 onClick={() => { setView(v); if (v === 'map') setMapEverShown(true) }}
-                className="px-3.5 py-2 text-sm font-medium transition-colors"
+                className="px-3.5 py-3 sm:py-2 text-sm font-medium transition-colors"
                 style={
                   view === v
                     ? { background: '#B8922A', color: '#fff' }

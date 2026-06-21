@@ -166,7 +166,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-5">
               <h2 className="text-base font-semibold text-gray-900">New Checklist Template</h2>
-              <button onClick={() => setShowNew(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none" aria-label="Close">×</button>
+              <button onClick={() => setShowNew(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">×</button>
             </div>
             <form onSubmit={handleCreateTemplate} className="space-y-4">
               <div>
@@ -185,11 +185,11 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 <div className="px-3 py-2 rounded-md text-sm" style={{ background: '#fef2f2', color: '#dc2626' }}>{newError}</div>
               )}
               <div className="flex justify-end gap-2 pt-1">
-                <button type="button" onClick={() => setShowNew(false)} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">Cancel</button>
+                <button type="button" onClick={() => setShowNew(false)} className="px-4 py-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900">Cancel</button>
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                  className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
                   style={{ background: '#B8922A' }}
                 >
                   {creating ? 'Creating…' : 'Create Template'}
@@ -216,11 +216,11 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
               This deletes all {selected.items.length} item{selected.items.length !== 1 ? 's' : ''}. Jobs that already have this checklist assigned keep their checked-off progress.
             </p>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setConfirmDeleteTemplate(false)} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900">Cancel</button>
+              <button onClick={() => setConfirmDeleteTemplate(false)} className="px-4 py-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900">Cancel</button>
               <button
                 onClick={handleDeleteTemplate}
                 disabled={deletingTemplate}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
                 style={{ background: '#dc2626' }}
               >
                 {deletingTemplate ? 'Deleting…' : 'Delete Template'}
@@ -230,12 +230,14 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
         </div>
       )}
 
-      {/* Template list */}
-      <div className="w-72 shrink-0 border-r border-gray-100 flex flex-col">
+      {/* Template list — hidden on mobile once a template is selected, so the
+          detail panel gets the full screen instead of being squeezed beside a
+          fixed-width list */}
+      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-gray-100 flex-col`}>
         <div className="px-4 py-3 border-b border-gray-100 shrink-0">
           <button
             onClick={() => setShowNew(true)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-white rounded-md"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-3 sm:py-2 text-sm font-medium text-white rounded-md"
             style={{ background: '#B8922A' }}
           >
             <span className="text-base leading-none font-bold">+</span>
@@ -274,6 +276,12 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
       {/* Detail panel */}
       {selected ? (
         <div className="flex-1 overflow-y-auto p-6">
+          <button
+            onClick={() => setSelectedId(null)}
+            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-900"
+          >
+            ← Back to templates
+          </button>
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             {editingName ? (
@@ -288,7 +296,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 <button
                   onClick={handleSaveName}
                   disabled={savingName || !nameValue.trim()}
-                  className="px-3 py-1.5 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                  className="px-3 py-3 sm:py-1.5 text-sm font-medium text-white rounded-md disabled:opacity-50"
                   style={{ background: '#B8922A' }}
                 >
                   {savingName ? 'Saving…' : 'Save'}
@@ -401,7 +409,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
             <button
               type="submit"
               disabled={addingItem || !newItemText.trim()}
-              className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50 shrink-0"
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50 shrink-0"
               style={{ background: '#B8922A' }}
             >
               {addingItem ? 'Adding…' : 'Add Item'}
@@ -409,7 +417,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
           </form>
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="hidden md:flex flex-1 items-center justify-center">
           <p className="text-sm text-gray-300">Select a template, or create a new one</p>
         </div>
       )}

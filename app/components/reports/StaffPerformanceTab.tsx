@@ -37,8 +37,8 @@ export default function StaffPerformanceTab({ data }: { data: StaffPerfRow[] }) 
         </ResponsiveContainer>
       </ChartCard>
 
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
-        <table className="w-full text-sm">
+      <div className="rounded-lg border border-gray-100 overflow-x-auto">
+        <table className="w-full min-w-[560px] text-sm">
           <thead>
             <tr className="bg-gray-50 border-b border-gray-100">
               <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Staff</th>

@@ -112,12 +112,12 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6">
+      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
-            className="px-4 py-2.5 text-sm font-medium transition-colors relative"
+            className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
             style={{
               color: activeTab === tab ? '#111827' : '#6b7280',
             }}
@@ -227,7 +227,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               <button
                 onClick={handleAccept}
                 disabled={accepting || quote.status === 'accepted'}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
                 style={{ background: '#15803d' }}
               >
                 {accepting ? 'Updating…' : 'Accept'}
@@ -235,7 +235,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               <button
                 onClick={handleDecline}
                 disabled={declining || quote.status === 'declined'}
-                className="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white bg-red-500 rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
               >
                 {declining ? 'Updating…' : 'Decline'}
               </button>
@@ -243,7 +243,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               <button
                 onClick={handleConvertToInvoice}
                 disabled={converting}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
                 style={{ background: GOLD }}
               >
                 {converting ? 'Creating…' : 'Convert to Invoice'}
@@ -264,7 +264,8 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
             {lineItems.length === 0 ? (
               <p className="px-5 py-6 text-sm text-gray-300">No line items</p>
             ) : (
-              <table className="w-full text-sm">
+              <div className="overflow-x-auto">
+              <table className="w-full min-w-[480px] text-sm">
                 <thead>
                   <tr className="border-b border-gray-100">
                     <th className="text-left px-5 py-2.5 text-xs font-medium text-gray-400">Description</th>
@@ -284,6 +285,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   ))}
                 </tbody>
               </table>
+              </div>
             )}
           </div>
 

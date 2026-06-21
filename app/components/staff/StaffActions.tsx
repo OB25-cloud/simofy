@@ -21,7 +21,7 @@ export default function StaffActions({ staff }: { staff: Staff }) {
       <div className="flex items-center gap-2 shrink-0">
         <button
           onClick={() => setShowEdit(true)}
-          className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+          className="px-3 py-3 sm:py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
         >
           Edit
         </button>
@@ -32,13 +32,13 @@ export default function StaffActions({ staff }: { staff: Staff }) {
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-3 py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-60"
+              className="px-3 py-3 sm:py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-60"
             >
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-3 py-3 sm:py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
             >
               Cancel
             </button>
@@ -46,7 +46,7 @@ export default function StaffActions({ staff }: { staff: Staff }) {
         ) : (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="px-3 py-1.5 text-sm font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
+            className="px-3 py-3 sm:py-1.5 text-sm font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
           >
             Delete
           </button>

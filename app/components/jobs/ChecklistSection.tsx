@@ -155,7 +155,7 @@ export default function ChecklistSection({
               <button
                 onClick={handleAssign}
                 disabled={!selectedTemplate || assigning}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
                 style={{ background: '#B8922A' }}
               >
                 {assigning ? 'Assigning…' : 'Assign Checklist'}

@@ -202,7 +202,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
       {/* Sidebar trigger button */}
       <button
         onClick={openModal}
-        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
+        className="w-full flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
         style={{ color: 'rgba(255,255,255,0.45)', background: 'transparent', borderLeft: '2px solid transparent' }}
         onMouseEnter={e => {
           e.currentTarget.style.color      = 'rgba(255,255,255,0.9)'
@@ -249,7 +249,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
               )}
               <button
                 onClick={close}
-                className="shrink-0 text-[10px] px-2 py-1 rounded"
+                className="shrink-0 text-[10px] px-3 py-2.5 sm:px-2 sm:py-1 rounded"
                 style={{ background: 'rgba(255,255,255,0.06)', color: 'rgba(255,255,255,0.3)' }}
               >
                 ESC
@@ -271,7 +271,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
                       <button
                         key={result.id}
                         onClick={() => navigate(result.href)}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-left transition-colors"
+                        className="w-full flex items-center gap-3 px-4 py-3 sm:py-2.5 text-left transition-colors"
                         style={{ borderLeft: '3px solid transparent' }}
                         onMouseEnter={e => {
                           e.currentTarget.style.background      = 'rgba(255,255,255,0.04)'

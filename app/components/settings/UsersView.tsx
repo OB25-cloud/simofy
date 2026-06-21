@@ -168,14 +168,14 @@ export default function UsersView({
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
+                className="px-4 py-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900"
               >
                 Cancel
               </button>
               <button
                 onClick={handleDeleteUser}
                 disabled={deleting}
-                className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
                 style={{ background: '#dc2626' }}
               >
                 {deleting ? 'Deleting…' : 'Delete User'}
@@ -185,8 +185,10 @@ export default function UsersView({
         </div>
       )}
 
-      {/* User list */}
-      <div className="w-72 shrink-0 border-r border-gray-100 flex flex-col">
+      {/* User list — hidden on mobile once a user is selected, so the detail
+          panel gets the full screen instead of being squeezed beside a
+          fixed-width list */}
+      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-gray-100 flex-col`}>
         <div className="flex-1 overflow-y-auto">
           {users.map(user => {
             const initials = (user.name ?? user.email).slice(0, 2).toUpperCase()
@@ -223,6 +225,12 @@ export default function UsersView({
       {/* Detail panel */}
       {selectedUser ? (
         <div className="flex-1 overflow-y-auto p-6">
+          <button
+            onClick={() => { setSelectedId(null); setPermMap(null) }}
+            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-900"
+          >
+            ← Back to users
+          </button>
           {/* User header */}
           <div className="flex items-center gap-3 mb-6">
             <div
@@ -283,8 +291,8 @@ export default function UsersView({
               </div>
             ) : (
               <>
-                <div className="rounded-lg border border-gray-100 overflow-hidden">
-                  <table className="w-full text-sm">
+                <div className="rounded-lg border border-gray-100 overflow-x-auto">
+                  <table className="w-full min-w-[560px] text-sm">
                     <thead>
                       <tr style={{ background: '#fafafa', borderBottom: '1px solid #f3f4f6' }}>
                         <th className="text-left px-4 py-2.5 text-xs font-bold text-gray-400 uppercase tracking-wider w-32">
@@ -329,7 +337,7 @@ export default function UsersView({
                   <button
                     onClick={handleSavePermissions}
                     disabled={!isDirty || saving}
-                    className="px-4 py-2 text-sm font-medium text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ background: '#B8922A' }}
                   >
                     {saving ? 'Saving…' : 'Save Changes'}
@@ -351,7 +359,7 @@ export default function UsersView({
           )}
         </div>
       ) : (
-        <div className="flex-1 flex items-center justify-center">
+        <div className="hidden md:flex flex-1 items-center justify-center">
           <p className="text-sm text-gray-300">Select a user to manage their permissions</p>
         </div>
       )}

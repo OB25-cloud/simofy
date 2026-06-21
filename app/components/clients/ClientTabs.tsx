@@ -110,15 +110,15 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
   return (
     <>
       {/* Tab bar */}
-      <div className="border-b border-gray-100 mb-6">
-        <nav className="-mb-px flex gap-1">
+      <div className="border-b border-gray-100 mb-6 overflow-x-auto scrollbar-hidden">
+        <nav className="-mb-px flex gap-1 min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key
             return (
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className="px-4 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
+                className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
                   color: active ? '#B8922A' : '#9ca3af',
                   borderBottom: active ? '2px solid #B8922A' : '2px solid transparent',
@@ -215,8 +215,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
           {jobs.length === 0 ? (
             <EmptyState message="No jobs linked to this client yet" />
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+              <table className="w-full min-w-[480px] text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <Th>Job</Th>
@@ -264,8 +264,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
           {quotes.length === 0 ? (
             <EmptyState message="No quotes for this client yet" />
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <Th>Quote #</Th>
@@ -315,8 +315,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
           {invoices.length === 0 ? (
             <EmptyState message="No invoices for this client yet" />
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-hidden">
-              <table className="w-full text-sm">
+            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+              <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100">
                     <Th>Invoice #</Th>

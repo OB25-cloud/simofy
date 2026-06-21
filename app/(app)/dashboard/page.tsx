@@ -560,7 +560,7 @@ export default async function DashboardPage() {
           <Link
             key={href}
             href={href}
-            className="px-3.5 py-1.5 rounded-md text-xs font-semibold transition-colors hover:bg-amber-50"
+            className="px-3.5 py-3.5 sm:py-1.5 rounded-md text-xs font-semibold transition-colors hover:bg-amber-50"
             style={{ border: '1px solid rgba(184,146,42,0.45)', color: '#B8922A' }}
           >
             {label}
@@ -751,6 +751,7 @@ export default async function DashboardPage() {
               View all →
             </Link>
           </div>
+          <div className="overflow-x-auto">
           <table className="w-full min-w-[480px] text-sm">
             <thead>
               <tr style={{ borderBottom: '1px solid #f3f4f6' }}>
@@ -789,6 +790,7 @@ export default async function DashboardPage() {
               ))}
             </tbody>
           </table>
+          </div>
         </div>
       )}
 

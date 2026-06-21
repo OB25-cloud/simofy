@@ -31,7 +31,7 @@ export default function AppShell({ role, userName, userEmail, permissions, child
       <div className="md:hidden shrink-0 h-14 bg-black flex items-center px-4 gap-4">
         <button
           onClick={() => setOpen(true)}
-          className="p-1 text-white/60 hover:text-white transition-colors"
+          className="flex items-center justify-center w-11 h-11 -ml-2.5 text-white/60 hover:text-white transition-colors"
           aria-label="Open menu"
         >
           <HamburgerIcon />

@@ -15,7 +15,7 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       disabled={pending}
-      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-sm font-medium transition-colors duration-150 disabled:opacity-50"
+      className="flex items-center gap-3 w-full px-3 py-3 md:py-2.5 rounded-md text-sm font-medium transition-colors duration-150 disabled:opacity-50"
       style={{ color: 'rgba(255,255,255,0.35)' }}
       onMouseEnter={e => { if (!pending) e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
       onMouseLeave={e => { if (!pending) e.currentTarget.style.color = 'rgba(255,255,255,0.35)' }}

@@ -263,7 +263,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
                   key={href}
                   href={href}
                   onClick={onNavigate}
-                  className="flex items-center gap-3 px-3 py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
+                  className="flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
                   style={{
                     color:      isActive ? '#B8922A'                : 'rgba(255,255,255,0.45)',
                     background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
