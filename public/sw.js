@@ -1,4 +1,4 @@
-const CACHE = 'simofy-v1'
+const CACHE = 'simofy-v2'
 
 self.addEventListener('install', event => {
   self.skipWaiting()
@@ -38,14 +38,11 @@ self.addEventListener('fetch', event => {
     return
   }
 
-  // Navigation: network-first, fall back to cache
-  event.respondWith(
-    fetch(request)
-      .then(response => {
-        const clone = response.clone()
-        caches.open(CACHE).then(c => c.put(request, clone))
-        return response
-      })
-      .catch(() => caches.match(request))
-  )
+  // Pages and RSC/data requests for client-side navigation: always go to the
+  // network. These responses can reference hashed JS chunk filenames that are
+  // only valid for the build that's currently live — caching them and serving
+  // them back after a new deploy ships (network hiccup, or just an old tab
+  // left open) makes the page request chunks the server no longer has,
+  // crashing the React tree with no way to recover short of a hard refresh.
+  event.respondWith(fetch(request))
 })
