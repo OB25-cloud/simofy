@@ -2,6 +2,18 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import {
+  DndContext,
+  DragOverlay,
+  closestCenter,
+  useDraggable,
+  useDroppable,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
 import { supabase } from '@/lib/supabase'
 import type { Job } from '@/lib/types'
 import MapView, { type ScheduleJob } from './MapView'
@@ -59,18 +71,17 @@ function formatWeekRange(start: Date): string {
 
 const DAY_NAMES = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+function formatModalDate(dateKey: string): string {
+  return new Date(`${dateKey}T00:00:00`).toLocaleDateString('en-NZ', {
+    weekday: 'short', day: 'numeric', month: 'short',
+  })
+}
+
 // ─── job block ──────────────────────────────────────────────────────────────────
 
-function JobBlock({ job }: { job: Job }) {
-  const router = useRouter()
-  const c = STATUS_BLOCK[job.status ?? ''] ?? BLOCK_FALLBACK
-
+function JobBlockContent({ job, c }: { job: Job; c: typeof BLOCK_FALLBACK }) {
   return (
-    <div
-      onClick={(e) => { e.stopPropagation(); router.push(`/jobs/${job.id}`) }}
-      className="cursor-pointer rounded-md px-2 py-1.5 border-l-[3px] hover:opacity-75 transition-opacity select-none"
-      style={{ background: c.bg, borderLeftColor: c.border }}
-    >
+    <>
       <p
         className="text-xs font-semibold leading-snug overflow-hidden"
         style={{ color: c.title, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}
@@ -82,6 +93,172 @@ function JobBlock({ job }: { job: Job }) {
           {job.staff.name}
         </p>
       )}
+    </>
+  )
+}
+
+function JobBlock({ job }: { job: Job }) {
+  const router = useRouter()
+  const c = STATUS_BLOCK[job.status ?? ''] ?? BLOCK_FALLBACK
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+    id: job.id,
+    data: { job },
+  })
+
+  return (
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      onClick={(e) => { e.stopPropagation(); router.push(`/jobs/${job.id}`) }}
+      className="cursor-pointer rounded-md px-2 py-1.5 border-l-[3px] hover:opacity-75 transition-opacity select-none"
+      style={{ background: c.bg, borderLeftColor: c.border, touchAction: 'none', opacity: isDragging ? 0.3 : 1 }}
+    >
+      <JobBlockContent job={job} c={c} />
+    </div>
+  )
+}
+
+// ─── day column (drop target) ────────────────────────────────────────────────
+
+function DayColumn({ id, isToday, children }: { id: string; isToday: boolean; children: React.ReactNode }) {
+  const { setNodeRef, isOver } = useDroppable({ id })
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`p-2 space-y-1.5 min-h-[200px] transition-colors ${isToday ? 'bg-[#fefdf9]' : ''}`}
+      style={isOver ? { background: '#fdf8ee' } : undefined}
+    >
+      {children}
+    </div>
+  )
+}
+
+// ─── reschedule confirmation modal ───────────────────────────────────────────
+
+type PendingReschedule = { job: Job; fromKey: string; toKey: string }
+
+function RescheduleModal({
+  pending,
+  notifyClient,
+  notifyStaff,
+  onToggleClient,
+  onToggleStaff,
+  saving,
+  onConfirm,
+  onCancel,
+}: {
+  pending: PendingReschedule
+  notifyClient: boolean
+  notifyStaff: boolean
+  onToggleClient: (v: boolean) => void
+  onToggleStaff: (v: boolean) => void
+  saving: boolean
+  onConfirm: () => void
+  onCancel: () => void
+}) {
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Escape') onCancel()
+    }
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const { job, fromKey, toKey } = pending
+  const hasClient = !!job.client_id && !!job.clients?.name
+  const hasStaff = !!job.staff_id && !!job.staff?.name
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ background: 'rgba(0,0,0,0.45)' }}
+      onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
+    >
+      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100" style={{ background: '#fdf8ee' }}>
+          <h2 className="text-sm font-semibold text-gray-900">Confirm Reschedule</h2>
+        </div>
+
+        <div className="px-6 py-5 space-y-4">
+          <div>
+            <p className="text-sm font-medium text-gray-900">{job.title ?? job.job_type ?? 'Untitled job'}</p>
+            <p className="mt-1.5 text-sm text-gray-500">
+              Move from <span className="font-semibold text-gray-700">{formatModalDate(fromKey)}</span> to{' '}
+              <span className="font-semibold" style={{ color: '#B8922A' }}>{formatModalDate(toKey)}</span>
+            </p>
+          </div>
+
+          {(hasClient || hasStaff) && (
+            <div className="space-y-2.5 pt-1">
+              {hasClient && (
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={notifyClient}
+                    onChange={(e) => onToggleClient(e.target.checked)}
+                    className="w-4 h-4 rounded cursor-pointer"
+                    style={{ accentColor: '#B8922A' }}
+                  />
+                  <span className="text-sm text-gray-700">Notify client of this schedule change?</span>
+                </label>
+              )}
+              {hasStaff && (
+                <label className="flex items-center gap-2.5 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={notifyStaff}
+                    onChange={(e) => onToggleStaff(e.target.checked)}
+                    className="w-4 h-4 rounded cursor-pointer"
+                    style={{ accentColor: '#B8922A' }}
+                  />
+                  <span className="text-sm text-gray-700">Notify {job.staff?.name} of this schedule change?</span>
+                </label>
+              )}
+            </div>
+          )}
+        </div>
+
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100">
+          <button
+            type="button"
+            onClick={onCancel}
+            disabled={saving}
+            className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors disabled:opacity-60"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            onClick={onConfirm}
+            disabled={saving}
+            className="px-4 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
+            style={{ background: '#B8922A' }}
+          >
+            {saving ? 'Rescheduling…' : 'Confirm'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─── toast ────────────────────────────────────────────────────────────────────
+
+function Toast({ message }: { message: string }) {
+  return (
+    <div className="fixed bottom-6 right-6 z-50">
+      <div
+        className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
+        style={{ background: '#111827' }}
+      >
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="20 6 9 17 4 12" />
+        </svg>
+        {message}
+      </div>
     </div>
   )
 }
@@ -104,6 +281,20 @@ export default function ScheduleView() {
   const [todayKey, setTodayKey] = useState('')
   useEffect(() => { setTodayKey(toDateKey(new Date())) }, [])
 
+  const [activeJob, setActiveJob] = useState<Job | null>(null)
+  const [pendingReschedule, setPendingReschedule] = useState<PendingReschedule | null>(null)
+  const [notifyClient, setNotifyClient] = useState(true)
+  const [notifyStaff, setNotifyStaff] = useState(true)
+  const [savingReschedule, setSavingReschedule] = useState(false)
+  const [toast, setToast] = useState<string | null>(null)
+  const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 6 } }))
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3000)
+    return () => clearTimeout(t)
+  }, [toast])
+
   const weekKey = toDateKey(weekStart)
 
   useEffect(() => {
@@ -115,7 +306,7 @@ export default function ScheduleView() {
 
       const { data } = await supabase
         .from('jobs')
-        .select('id, title, job_type, status, scheduled_date, location, staff(name), clients(name), sites(address)')
+        .select('id, title, job_type, status, scheduled_date, location, client_id, staff_id, staff(name), clients(name), sites(address)')
         .gte('scheduled_date', weekKey)
         .lt('scheduled_date', toDateKey(nextMonday))
         .order('scheduled_date')
@@ -150,6 +341,71 @@ export default function ScheduleView() {
       next.setDate(next.getDate() + delta)
       return next
     })
+  }
+
+  function handleDragStart(event: DragStartEvent) {
+    setActiveJob((event.active.data.current?.job as Job | undefined) ?? null)
+  }
+
+  function handleDragEnd(event: DragEndEvent) {
+    setActiveJob(null)
+    const { active, over } = event
+    if (!over) return
+    const job = active.data.current?.job as Job | undefined
+    if (!job) return
+    const fromKey = job.scheduled_date?.split('T')[0]
+    const toKey = String(over.id)
+    if (!fromKey || fromKey === toKey) return
+    setNotifyClient(true)
+    setNotifyStaff(true)
+    setPendingReschedule({ job, fromKey, toKey })
+  }
+
+  async function handleConfirmReschedule() {
+    if (!pendingReschedule) return
+    const { job, toKey } = pendingReschedule
+    setSavingReschedule(true)
+
+    const { error } = await supabase
+      .from('jobs')
+      .update({ scheduled_date: toKey })
+      .eq('id', job.id)
+
+    if (error) {
+      console.error('[Reschedule] update failed:', error)
+      setSavingReschedule(false)
+      return
+    }
+
+    setJobs(prev => prev.map(j => (j.id === job.id ? { ...j, scheduled_date: toKey } : j)))
+
+    const nowIso = new Date().toISOString()
+    const rows: { client_id: string | null; job_id: string; type: string; recipient: string; status: string; scheduled_for: string }[] = []
+    if (notifyClient && job.client_id) {
+      rows.push({ client_id: job.client_id, job_id: job.id, type: 'reschedule', recipient: 'client', status: 'pending', scheduled_for: nowIso })
+    }
+    if (notifyStaff && job.staff_id) {
+      rows.push({ client_id: null, job_id: job.id, type: 'reschedule', recipient: 'staff', status: 'pending', scheduled_for: nowIso })
+    }
+    if (rows.length > 0) {
+      const { error: notifErr } = await supabase.from('notifications').insert(rows)
+      if (notifErr) {
+        console.error(
+          '[Reschedule] notification insert failed — code:', notifErr.code,
+          '| message:', notifErr.message,
+          '| details:', notifErr.details,
+          '| hint:', notifErr.hint
+        )
+      }
+    }
+
+    setSavingReschedule(false)
+    setPendingReschedule(null)
+    setToast(`Job rescheduled to ${formatModalDate(toKey)}`)
+  }
+
+  function handleCancelReschedule() {
+    setPendingReschedule(null)
   }
 
   return (
@@ -269,23 +525,35 @@ export default function ScheduleView() {
               <p className="text-sm text-gray-400">Loading schedule…</p>
             </div>
           ) : (
-            <div className="grid grid-cols-7 divide-x divide-gray-100 bg-white">
-              {days.map((day, i) => {
-                const key = toDateKey(day)
-                const dayJobs = jobsByDate[key] ?? []
-                const isToday = key === todayKey
-                return (
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+              <div className="grid grid-cols-7 divide-x divide-gray-100 bg-white">
+                {days.map((day, i) => {
+                  const key = toDateKey(day)
+                  const dayJobs = jobsByDate[key] ?? []
+                  const isToday = key === todayKey
+                  return (
+                    <DayColumn key={i} id={key} isToday={isToday}>
+                      {dayJobs.map(job => (
+                        <JobBlock key={job.id} job={job} />
+                      ))}
+                    </DayColumn>
+                  )
+                })}
+              </div>
+              <DragOverlay>
+                {activeJob && (
                   <div
-                    key={i}
-                    className={`p-2 space-y-1.5 min-h-[200px] ${isToday ? 'bg-[#fefdf9]' : ''}`}
+                    className="rounded-md px-2 py-1.5 border-l-[3px] shadow-lg cursor-grabbing"
+                    style={{
+                      background: (STATUS_BLOCK[activeJob.status ?? ''] ?? BLOCK_FALLBACK).bg,
+                      borderLeftColor: (STATUS_BLOCK[activeJob.status ?? ''] ?? BLOCK_FALLBACK).border,
+                    }}
                   >
-                    {dayJobs.map(job => (
-                      <JobBlock key={job.id} job={job} />
-                    ))}
+                    <JobBlockContent job={activeJob} c={STATUS_BLOCK[activeJob.status ?? ''] ?? BLOCK_FALLBACK} />
                   </div>
-                )
-              })}
-            </div>
+                )}
+              </DragOverlay>
+            </DndContext>
           )}
         </div>
         </div>
@@ -304,6 +572,21 @@ export default function ScheduleView() {
           No jobs scheduled for this week
         </p>
       )}
+
+      {pendingReschedule && (
+        <RescheduleModal
+          pending={pendingReschedule}
+          notifyClient={notifyClient}
+          notifyStaff={notifyStaff}
+          onToggleClient={setNotifyClient}
+          onToggleStaff={setNotifyStaff}
+          saving={savingReschedule}
+          onConfirm={handleConfirmReschedule}
+          onCancel={handleCancelReschedule}
+        />
+      )}
+
+      {toast && <Toast message={toast} />}
     </>
   )
 }

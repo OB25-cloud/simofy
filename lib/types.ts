@@ -136,10 +136,11 @@ export type Material = {
 
 export type Notification = {
   id: string
-  client_id: string
+  client_id: string | null
   job_id: string | null
   type: string
   status: string
+  recipient: string
   sent_at: string | null
   scheduled_for: string | null
   created_at: string
