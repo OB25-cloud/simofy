@@ -5,6 +5,8 @@ import type { Lead } from '@/lib/types'
 import AiSearchBar from '@/app/components/AiSearchBar'
 import AiInsightsCard, { type Insight } from './AiInsightsCard'
 import RevenueTrendChart from './RevenueTrendChart'
+import { StatusBadge } from '@/app/components/ui/Badge'
+import { StatCard as UiStatCard, DarkStatCard } from '@/app/components/ui/StatCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,31 +27,6 @@ type OverdueInvoice = {
   total: number | null
   due_date: string | null
   clients: { name: string } | null
-}
-
-// ─── status helpers ──────────────────────────────────────────────────────────
-
-const JOB_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
-}
-
-function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return null
-  const c = JOB_STATUS[status] ?? JOB_STATUS.pending
-  return (
-    <span
-      className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold"
-      style={{ background: c.bg, color: c.text }}
-    >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
 }
 
 // ─── stat card icons ─────────────────────────────────────────────────────────
@@ -84,70 +61,12 @@ function IconQuotesPipe() {
 
 // ─── pipeline ───────────────────────────────────────────────────────────────
 
-function PipelineStage({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
-  return (
-    <div
-      className="flex-1 min-w-[140px] rounded-xl px-5 py-4"
-      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15)' }}
-    >
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(201, 168, 76,0.7)' }}>
-          {label}
-        </span>
-        <span style={{ color: 'rgba(201, 168, 76,0.5)' }}>{icon}</span>
-      </div>
-      <p className="text-3xl font-bold tabular-nums leading-none" style={{ color: '#C9A84C' }}>{value}</p>
-    </div>
-  )
-}
-
 function PipelineArrow() {
   return (
     <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(201, 168, 76,0.35)' }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
       </svg>
-    </div>
-  )
-}
-
-// ─── stat card ───────────────────────────────────────────────────────────────
-
-function StatCard({
-  label, value, sub, icon, trend, accentValue, danger,
-}: {
-  label: string
-  value: string
-  sub?: string
-  icon: React.ReactNode
-  trend?: number | null
-  accentValue?: boolean
-  danger?: boolean
-}) {
-  const valueColor = danger ? '#dc2626' : accentValue ? '#C9A84C' : '#111827'
-  const iconBg     = danger ? '#fef2f2' : 'rgba(201, 168, 76,0.08)'
-  const iconColor  = danger ? '#dc2626' : '#C9A84C'
-  return (
-    <div className="rounded-lg border border-gray-100 bg-white p-4">
-      <div className="flex items-start justify-between mb-3">
-        <div
-          className="w-7 h-7 rounded-md flex items-center justify-center shrink-0"
-          style={{ background: iconBg, color: iconColor }}
-        >
-          {icon}
-        </div>
-        {trend != null && (
-          <span
-            className="text-[10px] font-bold leading-none flex items-center gap-0.5"
-            style={{ color: trend >= 0 ? '#16a34a' : '#dc2626' }}
-          >
-            {trend >= 0 ? '↑' : '↓'}{Math.abs(trend)}%
-          </span>
-        )}
-      </div>
-      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: valueColor }}>{value}</p>
-      {sub && <p className="mt-1 text-[11px] text-gray-400">{sub}</p>}
     </div>
   )
 }
@@ -465,92 +384,90 @@ export default async function DashboardPage() {
   // ─── render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-4 md:p-6">
+    <div className="p-4 md:p-8 page-fade-in">
 
       {/* Header */}
-      <div className="mb-5">
-        <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-xs text-gray-400 mt-0.5">{dateLabel}</p>
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[#1A1A2E]">Dashboard</h1>
+        <p className="text-xs text-[#6B7280] mt-1">{dateLabel}</p>
       </div>
 
       {/* AI Search */}
       <AiSearchBar />
 
       {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3 mb-3">
-        <StatCard
+      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 mb-6">
+        <UiStatCard
           label="Revenue This Month"
           value={fmtMoney(revenueThisMonth)}
           sub={revPct !== null ? `vs last month` : undefined}
           trend={revPct}
           icon={<IconRevenue />}
-          accentValue
         />
-        <StatCard
+        <UiStatCard
           label="Active Clients"
           value={String(activeClientsCount ?? 0)}
           icon={<IconClients />}
         />
-        <StatCard
+        <UiStatCard
           label="Jobs Today"
           value={String(jobsToday.length)}
           sub="scheduled"
           icon={<IconJobs />}
         />
-        <StatCard
+        <UiStatCard
           label="In Progress"
           value={String(inProgressCount ?? 0)}
           icon={<IconProgress />}
         />
-        <StatCard
+        <UiStatCard
           label="Outstanding"
           value={fmtMoney(outstandingVal)}
           sub="sent + overdue"
           icon={<IconOutstanding />}
         />
-        <StatCard
+        <UiStatCard
           label="Overdue"
           value={String(overdueCount ?? 0)}
           sub={(overdueCount ?? 0) > 0 ? 'requires attention' : 'all clear'}
           icon={<IconAlert />}
           danger={(overdueCount ?? 0) > 0}
         />
-        <StatCard
+        <UiStatCard
           label="Avg Job Value"
           value={avgJobValue != null ? fmtMoney(avgJobValue) : '—'}
           sub={avgJobValue != null ? 'per paid invoice, last 6 months' : undefined}
           icon={<IconJobValue />}
         />
-        <StatCard
+        <UiStatCard
           label="Quote Conversion"
           value={conversionRate != null ? `${conversionRate}%` : '—'}
           sub={conversionRate != null ? 'accepted vs decided' : undefined}
           icon={<IconConversion />}
-          accentValue
         />
       </div>
 
       {/* Business Pipeline */}
-      <div className="mb-5">
-        <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Business Pipeline</p>
+      <div className="mb-6">
+        <p className="text-sm font-semibold text-[#1A1A2E] mb-3">Business Pipeline</p>
         <div className="flex flex-col sm:flex-row gap-3">
-          <PipelineStage label="Leads" value={leads.length} icon={<IconClients />} />
+          <DarkStatCard label="Leads" value={leads.length} icon={<IconClients />} className="flex-1" />
           <PipelineArrow />
-          <PipelineStage label="Quotes" value={quotesPipelineCount ?? 0} icon={<IconQuotesPipe />} />
+          <DarkStatCard label="Quotes" value={quotesPipelineCount ?? 0} icon={<IconQuotesPipe />} className="flex-1" />
           <PipelineArrow />
-          <PipelineStage label="Active Jobs" value={activeJobsPipelineCount ?? 0} icon={<IconJobs />} />
+          <DarkStatCard label="Active Jobs" value={activeJobsPipelineCount ?? 0} icon={<IconJobs />} className="flex-1" />
           <PipelineArrow />
-          <PipelineStage label="Invoices" value={(outstandingInvoices ?? []).length} icon={<IconOutstanding />} />
+          <DarkStatCard label="Invoices" value={(outstandingInvoices ?? []).length} icon={<IconOutstanding />} className="flex-1" />
         </div>
       </div>
 
       {/* Revenue Trend */}
-      <div className="mb-5">
+      <div className="mb-6">
         <RevenueTrendChart data={revenueTrendData} />
       </div>
 
       {/* Quick Actions */}
-      <div className="flex flex-wrap gap-2 mb-5">
+      <div className="flex flex-wrap gap-2 mb-6">
         {([
           { label: '+ New Job',    href: '/jobs?action=new'    },
           { label: '+ New Quote',  href: '/quotes?action=new'  },
@@ -560,8 +477,7 @@ export default async function DashboardPage() {
           <Link
             key={href}
             href={href}
-            className="px-3.5 py-3.5 sm:py-1.5 rounded-md text-xs font-semibold transition-colors hover:bg-amber-50"
-            style={{ border: '1px solid rgba(201, 168, 76,0.45)', color: '#C9A84C' }}
+            className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs bg-white border border-[#E5E7EB] text-[#1A1A2E] hover:bg-[#F4F5F7] transition-colors"
           >
             {label}
           </Link>
@@ -569,66 +485,62 @@ export default async function DashboardPage() {
       </div>
 
       {/* AI Insights — full width */}
-      <div className="mb-5">
+      <div className="mb-6">
         <AiInsightsCard insights={insights} />
       </div>
 
       {/* Main two-column section */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-5">
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
 
         {/* Jobs Today — 3/5 */}
-        <div className="lg:col-span-3 rounded-lg border border-gray-100 bg-white overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100" style={{ background: '#fafafa' }}>
+        <div className="lg:col-span-3 bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
             <div className="flex items-center gap-2">
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Jobs Today</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Jobs Today</p>
               <span
                 className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold"
-                style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}
+                style={{ background: 'rgba(201, 168, 76,0.15)', color: '#C9A84C' }}
               >
                 {jobsToday.length}
               </span>
             </div>
-            <Link href="/jobs" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#C9A84C' }}>
+            <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#C9A84C]">
               View all →
             </Link>
           </div>
 
           {jobsToday.length === 0 ? (
             <div className="px-4 py-12 text-center">
-              <p className="text-sm text-gray-300">No jobs scheduled for today</p>
+              <p className="text-sm text-[#9CA3AF]">No jobs scheduled for today</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] text-sm">
                 <thead>
-                  <tr style={{ borderBottom: '1px solid #f3f4f6' }}>
-                    <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Job</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Client</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Type</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Staff</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Status</th>
+                  <tr>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Job</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Client</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Type</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Staff</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Status</th>
                     <th className="px-4 py-2 w-6" />
                   </tr>
                 </thead>
                 <tbody>
-                  {jobsToday.map((job, i) => (
-                    <tr
-                      key={job.id}
-                      className="hover:bg-gray-50 transition-colors"
-                      style={{ borderTop: i === 0 ? undefined : '1px solid #f9fafb' }}
-                    >
+                  {jobsToday.map(job => (
+                    <tr key={job.id} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
                       <td className="px-4 py-2.5">
-                        <p className="font-semibold text-gray-900 truncate max-w-[130px] text-xs">
+                        <p className="font-medium text-[#1A1A2E] truncate max-w-[130px] text-xs">
                           {job.title ?? job.job_type ?? 'Untitled'}
                         </p>
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500 truncate max-w-[110px]">
+                      <td className="px-4 py-2.5 text-xs text-[#6B7280] truncate max-w-[110px]">
                         {job.clients?.name ?? <span className="text-gray-300">—</span>}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500">
+                      <td className="px-4 py-2.5 text-xs text-[#6B7280]">
                         {job.job_type ?? <span className="text-gray-300">—</span>}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-gray-500">
+                      <td className="px-4 py-2.5 text-xs text-[#6B7280]">
                         {job.staff?.name ?? <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-4 py-2.5">
@@ -646,33 +558,33 @@ export default async function DashboardPage() {
         </div>
 
         {/* Right column: Recent Activity + New Leads stacked — 2/5 */}
-        <div className="lg:col-span-2 flex flex-col gap-4">
+        <div className="lg:col-span-2 flex flex-col gap-6">
 
           {/* Recent Activity */}
-          <div className="rounded-lg border border-gray-100 bg-white overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100" style={{ background: '#fafafa' }}>
-              <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Recent Activity</p>
-              <Link href="/jobs" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#C9A84C' }}>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Recent Activity</p>
+              <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#C9A84C]">
                 View all →
               </Link>
             </div>
             {recentJobs.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-gray-300">No jobs yet</p>
+                <p className="text-sm text-[#9CA3AF]">No jobs yet</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-[#F4F5F7]">
                 {recentJobs.slice(0, 5).map(job => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors group"
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#F9FAFB] transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#C9A84C] transition-colors">
+                      <p className="text-xs font-semibold text-[#1A1A2E] truncate group-hover:text-[#C9A84C] transition-colors">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
-                      <p className="text-[11px] text-gray-400 truncate mt-0.5">
+                      <p className="text-[11px] text-[#6B7280] truncate mt-0.5">
                         {job.clients?.name ?? '—'}
                         {job.created_at && (
                           <span> · {new Date(job.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' })}</span>
@@ -687,40 +599,40 @@ export default async function DashboardPage() {
           </div>
 
           {/* New Leads */}
-          <div className="rounded-lg border border-gray-100 bg-white overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100" style={{ background: '#fafafa' }}>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
               <div className="flex items-center gap-2">
-                <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">New Leads</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">New Leads</p>
                 {leads.length > 0 && (
                   <span
-                    className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
+                    className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-[#1A1A2E]"
                     style={{ background: '#C9A84C' }}
                   >
                     {leads.length}
                   </span>
                 )}
               </div>
-              <Link href="/leads" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#C9A84C' }}>
+              <Link href="/leads" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#C9A84C]">
                 View all →
               </Link>
             </div>
             {leads.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-gray-300">No new leads</p>
+                <p className="text-sm text-[#9CA3AF]">No new leads</p>
               </div>
             ) : (
-              <div className="divide-y divide-gray-50">
+              <div className="divide-y divide-[#F4F5F7]">
                 {leads.slice(0, 5).map(lead => (
                   <Link
                     key={lead.id}
                     href={`/leads/${lead.id}`}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors group"
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#F9FAFB] transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#C9A84C] transition-colors">
+                      <p className="text-xs font-semibold text-[#1A1A2E] truncate group-hover:text-[#C9A84C] transition-colors">
                         {lead.name ?? 'Unnamed Lead'}
                       </p>
-                      <p className="text-[11px] text-gray-400 truncate mt-0.5">
+                      <p className="text-[11px] text-[#6B7280] truncate mt-0.5">
                         {lead.email ?? lead.phone ?? (lead as unknown as { source?: string }).source ?? '—'}
                       </p>
                     </div>
@@ -736,55 +648,51 @@ export default async function DashboardPage() {
 
       {/* Overdue Invoices */}
       {overdueInvoices.length > 0 && (
-        <div className="rounded-lg border border-red-100 overflow-x-auto">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-red-100" style={{ background: '#fef2f2' }}>
+        <div className="bg-white rounded-xl border border-red-200 shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-red-200 bg-red-50">
             <div className="flex items-center gap-2">
-              <p className="text-xs font-bold uppercase tracking-wider" style={{ color: '#dc2626' }}>Overdue Invoices</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-[#EF4444]">Overdue Invoices</p>
               <span
                 className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
-                style={{ background: '#dc2626' }}
+                style={{ background: '#EF4444' }}
               >
                 {overdueCount}
               </span>
             </div>
-            <Link href="/invoices" className="text-xs font-medium hover:opacity-70 transition-opacity" style={{ color: '#dc2626' }}>
+            <Link href="/invoices" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#EF4444]">
               View all →
             </Link>
           </div>
           <div className="overflow-x-auto">
           <table className="w-full min-w-[480px] text-sm">
             <thead>
-              <tr style={{ borderBottom: '1px solid #f3f4f6' }}>
-                <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Invoice</th>
-                <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Client</th>
-                <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Amount</th>
-                <th className="text-left px-4 py-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Due Date</th>
+              <tr>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Invoice</th>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Client</th>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Amount</th>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Due Date</th>
                 <th className="px-4 py-2 w-6" />
               </tr>
             </thead>
             <tbody>
-              {overdueInvoices.map((inv, i) => (
-                <tr
-                  key={inv.id}
-                  className="hover:bg-gray-50 transition-colors"
-                  style={{ borderTop: i === 0 ? undefined : '1px solid #f9fafb' }}
-                >
-                  <td className="px-4 py-2.5 font-mono text-xs font-semibold text-gray-700">
+              {overdueInvoices.map(inv => (
+                <tr key={inv.id} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
+                  <td className="px-4 py-2.5 font-mono text-xs font-semibold text-[#1A1A2E]">
                     INV-{inv.id.slice(0, 6).toUpperCase()}
                   </td>
-                  <td className="px-4 py-2.5 text-sm font-medium text-gray-900">
+                  <td className="px-4 py-2.5 text-sm font-medium text-[#1A1A2E]">
                     {inv.clients?.name ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-2.5 text-sm font-semibold tabular-nums" style={{ color: '#dc2626' }}>
+                  <td className="px-4 py-2.5 text-sm font-semibold tabular-nums" style={{ color: '#EF4444' }}>
                     {inv.total != null ? fmtMoney(inv.total) : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-gray-500">
+                  <td className="px-4 py-2.5 text-xs text-[#6B7280]">
                     {inv.due_date
                       ? new Date(inv.due_date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
                       : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-2.5 text-right">
-                    <Link href={`/invoices/${inv.id}`} className="text-gray-300 hover:text-[#dc2626] transition-colors">→</Link>
+                    <Link href={`/invoices/${inv.id}`} className="text-gray-300 hover:text-[#EF4444] transition-colors">→</Link>
                   </td>
                 </tr>
               ))}

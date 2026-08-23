@@ -40,7 +40,7 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
         >
           PEAK
         </text>
-        <circle cx={cx} cy={cy} r={6} fill="#C9A84C" stroke="#1a1a1a" strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={6} fill="#C9A84C" stroke="#1A1A2E" strokeWidth={2} />
       </g>
     )
   }
@@ -48,7 +48,7 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}
+      style={{ background: '#1A1A2E', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}
     >
       <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(201, 168, 76,0.2)' }}>
         <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#C9A84C' }}>{title}</span>
@@ -79,7 +79,7 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
             />
             <Tooltip
               contentStyle={{
-                background: '#1a1a1a',
+                background: '#1A1A2E',
                 border: '1px solid rgba(201, 168, 76,0.3)',
                 borderRadius: 8,
                 boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
@@ -95,7 +95,7 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
               strokeWidth={2.5}
               fill="url(#revenueGradient)"
               dot={renderDot}
-              activeDot={{ r: 6, fill: '#C9A84C', stroke: '#1a1a1a', strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: '#C9A84C', stroke: '#1A1A2E', strokeWidth: 2 }}
               style={{ filter: 'drop-shadow(0 0 6px rgba(201, 168, 76,0.5))' }}
             />
           </AreaChart>

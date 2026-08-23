@@ -14,7 +14,7 @@ function InsightIcon({ children }: { children: React.ReactNode }) {
 
 export default function AiInsightsCard({ insights }: { insights: Insight[] }) {
   return (
-    <div className="rounded-xl overflow-hidden" style={{ background: '#111', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}>
+    <div className="rounded-xl overflow-hidden" style={{ background: '#1A1A2E', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}>
       <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(201, 168, 76,0.2)' }}>
         <span style={{ color: '#C9A84C', fontSize: '15px', lineHeight: 1 }}>✦</span>
         <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#C9A84C' }}>AI Insights</span>

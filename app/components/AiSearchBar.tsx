@@ -39,7 +39,7 @@ export default function AiSearchBar() {
       <form onSubmit={handleSubmit} className="relative">
         <div
           className="flex items-center rounded-lg overflow-hidden"
-          style={{ background: '#111', border: '1px solid rgba(201, 168, 76,0.3)' }}
+          style={{ background: '#1A1A2E', border: '1px solid rgba(201, 168, 76,0.3)' }}
         >
           <div className="pl-4 pr-2 shrink-0" style={{ color: 'rgba(201, 168, 76,0.7)' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
@@ -75,7 +75,7 @@ export default function AiSearchBar() {
       {(answer || error) && (
         <div
           className="mt-3 rounded-lg p-4"
-          style={{ background: '#111', border: '1px solid rgba(201, 168, 76,0.25)' }}
+          style={{ background: '#1A1A2E', border: '1px solid rgba(201, 168, 76,0.25)' }}
         >
           <div className="flex items-center gap-2 mb-2.5">
             <span
@@ -89,7 +89,7 @@ export default function AiSearchBar() {
             </span>
           </div>
           {error ? (
-            <p className="text-sm" style={{ color: '#dc2626' }}>{error}</p>
+            <p className="text-sm" style={{ color: '#EF4444' }}>{error}</p>
           ) : (
             <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'rgba(255,255,255,0.8)' }}>
               {answer}
