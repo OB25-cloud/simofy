@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
@@ -185,17 +185,17 @@ export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
       <Script src={LEAFLET_JS} strategy="afterInteractive" onLoad={() => setLeafletReady(true)} />
       <div
         ref={containerRef}
-        className="rounded-lg border border-gray-100 overflow-hidden bg-gray-50"
+        className="rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden bg-[#F4F5F7]"
         style={{ height: 560 }}
       >
         {!leafletReady && (
           <div className="h-full flex items-center justify-center">
-            <p className="text-sm text-gray-400">Loading map…</p>
+            <p className="text-sm text-[#6B7280]">Loading map…</p>
           </div>
         )}
       </div>
       {unlocatedCount > 0 && (
-        <p className="mt-3 text-xs text-gray-400">
+        <p className="mt-3 text-xs text-[#6B7280]">
           {unlocatedCount} job{unlocatedCount !== 1 ? 's' : ''} not shown — location doesn&apos;t mention Queenstown, Wanaka or Cromwell.
         </p>
       )}

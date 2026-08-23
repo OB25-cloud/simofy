@@ -30,6 +30,8 @@ export type Job = {
   status: string | null
   location: string | null
   scheduled_date: string | null
+  start_time: string | null
+  end_time: string | null
   completed_date: string | null
   is_recurring: boolean | null
   recurrence_pattern: string | null

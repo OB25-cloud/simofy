@@ -6,6 +6,8 @@ export type RecurringTemplate = {
   staff_id: string | null
   location: string | null
   notes: string | null
+  start_time?: string | null
+  end_time?: string | null
 }
 
 export function computeNextDate(dateStr: string, pattern: string): string {
