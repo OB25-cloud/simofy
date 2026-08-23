@@ -126,8 +126,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
           return (
             <div
               key={type.key}
-              className="flex items-center justify-between px-5 py-4"
-              style={{ borderTop: i > 0 ? '1px solid #f3f4f6' : undefined }}
+              className={`flex items-center justify-between px-5 py-4 ${i > 0 ? 'border-t border-[#F4F5F7]' : ''}`}
             >
               <div className="min-w-0 flex-1 pr-6">
                 <p className="text-sm font-medium text-[#1A1A2E]">{type.label}</p>
@@ -156,7 +155,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                 onClick={() => toggleDefault(type.key)}
                 disabled={isSaving}
                 className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 disabled:opacity-50 focus:outline-none"
-                style={{ background: enabled ? '#C9A84C' : '#e5e7eb' }}
+                style={{ background: enabled ? '#C9A84C' : '#E5E7EB' }}
               >
                 <span
                   className="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200"
@@ -183,7 +182,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
             onClick={applyToAllClients}
             disabled={applying}
             className="shrink-0 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-            style={{ background: '#111111' }}
+            style={{ background: '#1A1A2E' }}
           >
             {applying ? 'Applying…' : applyDone ? '✓ Applied' : 'Apply to All'}
           </button>

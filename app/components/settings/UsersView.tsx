@@ -29,7 +29,7 @@ const ROLES = ['admin', 'supervisor', 'field'] as const
 
 function roleBadgeStyle(role: string) {
   if (role === 'admin')      return { background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }
-  if (role === 'supervisor') return { background: '#eff6ff', color: '#1d4ed8' }
+  if (role === 'supervisor') return { background: '#DBEAFE', color: '#1D4ED8' }
   return { background: '#F4F5F7', color: '#6B7280' }
 }
 
@@ -161,7 +161,7 @@ export default function UsersView({
         >
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
             <h2 className="text-base font-semibold text-[#1A1A2E] mb-2">Delete user?</h2>
-            <p className="text-sm text-gray-500 mb-1">
+            <p className="text-sm text-[#6B7280] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#6B7280]">{selectedUser.name ?? selectedUser.email}</span>?
             </p>
             <p className="text-sm text-[#EF4444] mb-6">This cannot be undone.</p>
@@ -175,8 +175,7 @@ export default function UsersView({
               <button
                 onClick={handleDeleteUser}
                 disabled={deleting}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
-                style={{ background: '#dc2626' }}
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white bg-[#EF4444] hover:bg-[#DC2626] rounded-md transition-colors disabled:opacity-50"
               >
                 {deleting ? 'Deleting…' : 'Delete User'}
               </button>
@@ -197,7 +196,7 @@ export default function UsersView({
               <button
                 key={user.id}
                 onClick={() => selectUser(user)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-gray-50"
+                className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-[#F4F5F7]"
                 style={{
                   background:  isSelected ? 'rgba(201, 168, 76,0.04)' : 'transparent',
                   borderLeft:  isSelected ? '3px solid #C9A84C'     : '3px solid transparent',
@@ -227,7 +226,7 @@ export default function UsersView({
         <div className="flex-1 overflow-y-auto p-6">
           <button
             onClick={() => { setSelectedId(null); setPermMap(null) }}
-            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-[#1A1A2E]"
+            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-[#6B7280] hover:text-[#1A1A2E]"
           >
             ← Back to users
           </button>
@@ -246,7 +245,7 @@ export default function UsersView({
           </div>
 
           {error && (
-            <div className="mb-4 px-3 py-2 rounded-md text-sm" style={{ background: '#fef2f2', color: '#dc2626' }}>
+            <div className="mb-4 px-3 py-2 rounded-md text-sm bg-red-50 text-[#EF4444]">
               {error}
             </div>
           )}
@@ -294,20 +293,20 @@ export default function UsersView({
                 <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
                   <table className="w-full min-w-[560px] text-sm">
                     <thead>
-                      <tr style={{ background: '#fafafa', borderBottom: '1px solid #f3f4f6' }}>
-                        <th className="text-left px-4 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider w-32">
+                      <tr>
+                        <th className="text-left px-4 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider w-32 bg-[#F4F5F7]">
                           Module
                         </th>
                         {ACTIONS.map(a => (
-                          <th key={a} className="text-center px-2 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider">
+                          <th key={a} className="text-center px-2 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider bg-[#F4F5F7]">
                             {ACTION_LABELS[a]}
                           </th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {MODULES.map((module, i) => (
-                        <tr key={module} style={{ borderTop: i === 0 ? undefined : '1px solid #f9fafb' }}>
+                      {MODULES.map(module => (
+                        <tr key={module} className="border-t border-[#F4F5F7]">
                           <td className="px-4 py-3 text-sm font-medium text-[#6B7280]">
                             {MODULE_LABELS[module]}
                           </td>
@@ -330,7 +329,7 @@ export default function UsersView({
 
                 <div className="flex items-center justify-end gap-3 mt-4">
                   {saveSuccess && (
-                    <span className="text-sm font-medium" style={{ color: '#16a34a' }}>
+                    <span className="text-sm font-medium" style={{ color: '#22C55E' }}>
                       Permissions saved
                     </span>
                   )}

@@ -182,7 +182,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 />
               </div>
               {newError && (
-                <div className="px-3 py-2 rounded-md text-sm" style={{ background: '#fef2f2', color: '#dc2626' }}>{newError}</div>
+                <div className="px-3 py-2 rounded-md text-sm bg-red-50 text-[#EF4444]">{newError}</div>
               )}
               <div className="flex justify-end gap-2 pt-1">
                 <button type="button" onClick={() => setShowNew(false)} className="px-4 py-3 sm:py-2 text-sm text-[#6B7280] hover:text-[#1A1A2E]">Cancel</button>
@@ -209,7 +209,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
         >
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
             <h2 className="text-base font-semibold text-[#1A1A2E] mb-2">Delete template?</h2>
-            <p className="text-sm text-gray-500 mb-1">
+            <p className="text-sm text-[#6B7280] mb-1">
               Are you sure you want to delete <span className="font-medium text-[#6B7280]">{selected.name}</span>?
             </p>
             <p className="text-sm text-[#EF4444] mb-6">
@@ -220,8 +220,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
               <button
                 onClick={handleDeleteTemplate}
                 disabled={deletingTemplate}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
-                style={{ background: '#dc2626' }}
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white bg-[#EF4444] hover:bg-[#DC2626] rounded-md transition-colors disabled:opacity-50"
               >
                 {deletingTemplate ? 'Deleting…' : 'Delete Template'}
               </button>
@@ -256,7 +255,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 <button
                   key={t.id}
                   onClick={() => selectTemplate(t)}
-                  className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-gray-50"
+                  className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-[#F4F5F7]"
                   style={{
                     background: isSelected ? 'rgba(201, 168, 76,0.04)' : 'transparent',
                     borderLeft: isSelected ? '3px solid #C9A84C' : '3px solid transparent',
@@ -327,7 +326,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
               </div>
             ) : (
               selected.items.map((item, i) => (
-                <div key={item.id} className="px-5 py-3.5" style={{ borderTop: i > 0 ? '1px solid #f3f4f6' : undefined }}>
+                <div key={item.id} className={`px-5 py-3.5 ${i > 0 ? 'border-t border-[#F4F5F7]' : ''}`}>
                   {editingItemId === item.id ? (
                     <div className="flex items-center gap-3">
                       <input

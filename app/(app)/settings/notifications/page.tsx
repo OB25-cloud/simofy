@@ -20,7 +20,7 @@ export default async function NotificationSettingsPage() {
           Settings
         </p>
         <h1 className="text-2xl font-bold text-[#1A1A2E]">Notification Defaults</h1>
-        <p className="text-sm text-gray-500 mt-1">
+        <p className="text-xs text-[#6B7280] mt-1">
           Set the default notification preferences for new clients. You can override these per client from their profile page.
         </p>
       </div>
