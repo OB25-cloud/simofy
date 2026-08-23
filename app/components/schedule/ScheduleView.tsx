@@ -117,118 +117,6 @@ function NotifyCheckboxes({
 
 // ─── reschedule confirmation modal (drag & drop result) ──────────────────────
 
-type PendingReschedule = {
-  job: Job
-  fromDateKey: string
-  toDateKey: string
-  fromStaffId: string | null
-  toStaffId: string | null
-  fromStaffName: string
-  toStaffName: string
-  fromStartTime: string
-  toStartTime: string
-  fromEndTime: string
-  toEndTime: string
-}
-
-function RescheduleModal({
-  pending, notifyClient, notifyStaff, onToggleClient, onToggleStaff, saving, onConfirm, onCancel,
-}: {
-  pending: PendingReschedule
-  notifyClient: boolean
-  notifyStaff: boolean
-  onToggleClient: (v: boolean) => void
-  onToggleStaff: (v: boolean) => void
-  saving: boolean
-  onConfirm: () => void
-  onCancel: () => void
-}) {
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') onCancel()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const {
-    job, fromDateKey, toDateKey, fromStaffId, toStaffId, fromStaffName, toStaffName,
-    fromStartTime, toStartTime, fromEndTime, toEndTime,
-  } = pending
-  const dateChanged = fromDateKey !== toDateKey
-  const staffChanged = fromStaffId !== toStaffId
-  const timeChanged = fromStartTime !== toStartTime || fromEndTime !== toEndTime
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
-    >
-      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        <div className="px-6 py-4 border-b border-[#E5E7EB] shrink-0" style={{ background: 'rgba(201, 168, 76,0.12)' }}>
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Confirm Reschedule</h2>
-        </div>
-
-        <div className="px-6 py-5 space-y-4 overflow-y-auto">
-          <div className="space-y-1.5">
-            <p className="text-sm font-medium text-[#1A1A2E]">{job.title ?? job.job_type ?? 'Untitled job'}</p>
-            {dateChanged && (
-              <p className="text-sm text-[#6B7280]">
-                Move from <span className="font-semibold text-[#6B7280]">{formatModalDate(fromDateKey)}</span> to{' '}
-                <span className="font-semibold" style={{ color: '#C9A84C' }}>{formatModalDate(toDateKey)}</span>
-              </p>
-            )}
-            {timeChanged && (
-              <p className="text-sm text-[#6B7280]">
-                Change time from{' '}
-                <span className="font-semibold text-[#6B7280]">{formatTime(fromStartTime)} – {formatTime(fromEndTime)}</span> to{' '}
-                <span className="font-semibold" style={{ color: '#C9A84C' }}>{formatTime(toStartTime)} – {formatTime(toEndTime)}</span>
-              </p>
-            )}
-            {staffChanged && (
-              <p className="text-sm text-[#6B7280]">
-                Reassign from <span className="font-semibold text-[#6B7280]">{fromStaffName}</span> to{' '}
-                <span className="font-semibold" style={{ color: '#C9A84C' }}>{toStaffName}</span>
-              </p>
-            )}
-          </div>
-
-          <NotifyCheckboxes
-            clientName={job.client_id && job.clients?.name ? job.clients.name : null}
-            staffName={toStaffId && toStaffName ? toStaffName : null}
-            notifyClient={notifyClient}
-            notifyStaff={notifyStaff}
-            onToggleClient={onToggleClient}
-            onToggleStaff={onToggleStaff}
-          />
-        </div>
-
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] shrink-0">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={saving}
-            className="px-4 py-3 md:py-2 text-sm bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F4F5F7] transition-colors disabled:opacity-60"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            disabled={saving}
-            className="px-4 py-3 md:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-lg transition-opacity hover:opacity-90 disabled:opacity-60"
-            style={{ background: '#C9A84C' }}
-          >
-            {saving ? 'Rescheduling…' : 'Confirm'}
-          </button>
-        </div>
-      </div>
-    </div>
-  )
-}
-
 // ─── reschedule picker modal (right-click / long-press) ──────────────────────
 
 function ReschedulePickerModal({
@@ -351,17 +239,26 @@ function ReschedulePickerModal({
 
 // ─── toast ────────────────────────────────────────────────────────────────────
 
-function Toast({ message }: { message: string }) {
+function Toast({ message, onUndo }: { message: string; onUndo?: () => void }) {
   return (
     <div className="fixed bottom-6 right-6 z-50">
       <div
-        className="flex items-center gap-2 px-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
+        className="flex items-center gap-3 pl-4 pr-2 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
         style={{ background: '#1A1A2E' }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
           <polyline points="20 6 9 17 4 12" />
         </svg>
-        {message}
+        <span>{message}</span>
+        {onUndo && (
+          <button
+            onClick={onUndo}
+            className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-md hover:bg-white/10 transition-colors"
+            style={{ color: '#C9A84C' }}
+          >
+            Undo
+          </button>
+        )}
       </div>
     </div>
   )
@@ -440,18 +337,17 @@ export default function ScheduleView() {
   const [todayKey, setTodayKey] = useState('')
   useEffect(() => { setTodayKey(toDateKey(new Date())) }, [])
 
-  const [pendingReschedule, setPendingReschedule] = useState<PendingReschedule | null>(null)
   const [contextMenuJob, setContextMenuJob] = useState<Job | null>(null)
   const [notifyClient, setNotifyClient] = useState(true)
   const [notifyStaff, setNotifyStaff] = useState(true)
   const [savingReschedule, setSavingReschedule] = useState(false)
-  const [toast, setToast] = useState<string | null>(null)
+  const [toast, setToast] = useState<{ message: string; undo?: () => void } | null>(null)
   const [addJobPrefill, setAddJobPrefill] = useState<AddJobPrefill | null>(null)
   const [detailJob, setDetailJob] = useState<ScheduleJob | null>(null)
 
   useEffect(() => {
     if (!toast) return
-    const t = setTimeout(() => setToast(null), 3000)
+    const t = setTimeout(() => setToast(null), 4000)
     return () => clearTimeout(t)
   }, [toast])
 
@@ -543,38 +439,60 @@ export default function ScheduleView() {
     setContextMenuJob(job)
   }
 
+  // Drag-and-drop applies immediately — no confirmation modal — since a
+  // toast with Undo covers the same "did I mean to do that?" need with far
+  // less friction for something done many times a day.
   function handleWeekDragReschedule({ job, toStaffKey, toDateKey: toDateKeyStr }: WeekDragReschedulePayload) {
-    const from = resolveStaffKey(job.staff_id ?? UNASSIGNED_KEY)
     const to = resolveStaffKey(toStaffKey)
-    const fromDateKey = job.scheduled_date?.split('T')[0] ?? toDateKeyStr
     const { start, end } = jobTimes(job)
-    setNotifyClient(true)
-    setNotifyStaff(true)
-    setPendingReschedule({
-      job, fromDateKey, toDateKey: toDateKeyStr,
-      fromStaffId: job.staff_id, toStaffId: to.id, fromStaffName: from.name, toStaffName: to.name,
-      fromStartTime: start, toStartTime: start, fromEndTime: end, toEndTime: end,
-    })
+    applyReschedule(job, toDateKeyStr, start, end, to.id, to.name, true, true)
   }
 
   function handleDayDragReschedule({ job, toStaffKey, newStartTime, newEndTime }: DragReschedulePayload) {
-    const from = resolveStaffKey(job.staff_id ?? UNASSIGNED_KEY)
     const to = resolveStaffKey(toStaffKey)
-    const { start, end } = jobTimes(job)
-    setNotifyClient(true)
-    setNotifyStaff(true)
-    setPendingReschedule({
-      job, fromDateKey: dayKey, toDateKey: dayKey,
-      fromStaffId: job.staff_id, toStaffId: to.id, fromStaffName: from.name, toStaffName: to.name,
-      fromStartTime: start, toStartTime: newStartTime, fromEndTime: end, toEndTime: newEndTime,
-    })
+    applyReschedule(job, dayKey, newStartTime, newEndTime, to.id, to.name, true, true)
   }
 
-  // Shared by the drag-and-drop confirm flow and the right-click/long-press
-  // picker flow — same DB update, same notification queueing, same toast.
+  // Reverts a reschedule (from the toast's Undo button) — same DB update
+  // shape as applyReschedule, but silent: no notifications queued, no
+  // follow-up toast beyond a small confirmation.
+  async function revertReschedule(
+    jobId: string,
+    prev: { scheduledDate: string | undefined; startTime: string; endTime: string; staffId: string | null; staffName: string },
+  ) {
+    const { error } = await supabase
+      .from('jobs')
+      .update({ scheduled_date: prev.scheduledDate, start_time: prev.startTime, end_time: prev.endTime, staff_id: prev.staffId })
+      .eq('id', jobId)
+
+    if (error) {
+      console.error('[Reschedule] undo failed:', error)
+      return
+    }
+
+    setJobs(prevJobs => prevJobs.map(j => (
+      j.id === jobId
+        ? {
+          ...j, scheduled_date: prev.scheduledDate ?? null, start_time: prev.startTime, end_time: prev.endTime, staff_id: prev.staffId,
+          staff: prev.staffId ? { name: prev.staffName, pay_rate: j.staff?.pay_rate ?? null } : null,
+        }
+        : j
+    )))
+    setToast({ message: 'Reschedule undone' })
+  }
+
+  // Shared by the drag-and-drop flow and the right-click/long-press picker
+  // flow — same DB update, same notification queueing, same toast (with an
+  // Undo button that restores exactly what this call is about to change).
   async function applyReschedule(
     job: Job, toDateKey: string, toStartTime: string, toEndTime: string, toStaffId: string | null, toStaffName: string,
+    notifyClientFlag: boolean, notifyStaffFlag: boolean,
   ) {
+    const fromDateKey = job.scheduled_date?.split('T')[0]
+    const { start: fromStart, end: fromEnd } = jobTimes(job)
+    const fromStaffId = job.staff_id
+    const fromStaffName = job.staff?.name ?? 'Unassigned'
+
     const { error } = await supabase
       .from('jobs')
       .update({ scheduled_date: toDateKey, start_time: toStartTime, end_time: toEndTime, staff_id: toStaffId })
@@ -582,6 +500,7 @@ export default function ScheduleView() {
 
     if (error) {
       console.error('[Reschedule] update failed:', error)
+      setToast({ message: 'Failed to reschedule job' })
       return
     }
 
@@ -596,10 +515,10 @@ export default function ScheduleView() {
 
     const nowIso = new Date().toISOString()
     const rows: { client_id: string | null; job_id: string; type: string; recipient: string; status: string; scheduled_for: string }[] = []
-    if (notifyClient && job.client_id) {
+    if (notifyClientFlag && job.client_id) {
       rows.push({ client_id: job.client_id, job_id: job.id, type: 'reschedule', recipient: 'client', status: 'pending', scheduled_for: nowIso })
     }
-    if (notifyStaff && toStaffId) {
+    if (notifyStaffFlag && toStaffId) {
       rows.push({ client_id: null, job_id: job.id, type: 'reschedule', recipient: 'staff', status: 'pending', scheduled_for: nowIso })
     }
     if (rows.length > 0) {
@@ -614,31 +533,28 @@ export default function ScheduleView() {
       }
     }
 
-    const fromDateKey = job.scheduled_date?.split('T')[0]
-    const { start: fromStart } = jobTimes(job)
-    if (fromDateKey !== toDateKey) setToast(`Job rescheduled to ${formatModalDate(toDateKey)}`)
-    else if (fromStart !== toStartTime) setToast(`Job moved to ${formatTime(toStartTime)}`)
-    else if ((job.staff_id ?? null) !== toStaffId) setToast(`Job reassigned to ${toStaffName}`)
-    else setToast('Job updated')
-  }
+    const jobLabel = job.title ?? job.job_type ?? 'Job'
+    let message: string
+    if (fromDateKey !== toDateKey) message = `${jobLabel} rescheduled to ${formatModalDate(toDateKey)}`
+    else if (fromStart !== toStartTime) message = `${jobLabel} moved to ${formatTime(toStartTime)}`
+    else if ((fromStaffId ?? null) !== toStaffId) message = `${jobLabel} reassigned to ${toStaffName}`
+    else message = `${jobLabel} updated`
 
-  async function handleConfirmReschedule() {
-    if (!pendingReschedule) return
-    setSavingReschedule(true)
-    const p = pendingReschedule
-    await applyReschedule(p.job, p.toDateKey, p.toStartTime, p.toEndTime, p.toStaffId, p.toStaffName)
-    setSavingReschedule(false)
-    setPendingReschedule(null)
-  }
-
-  function handleCancelReschedule() {
-    setPendingReschedule(null)
+    setToast({
+      message,
+      undo: () => revertReschedule(job.id, {
+        scheduledDate: fromDateKey, startTime: fromStart, endTime: fromEnd, staffId: fromStaffId, staffName: fromStaffName,
+      }),
+    })
   }
 
   async function handleConfirmPickerReschedule(newDateKey: string, newStartTime: string, newEndTime: string) {
     if (!contextMenuJob) return
     setSavingReschedule(true)
-    await applyReschedule(contextMenuJob, newDateKey, newStartTime, newEndTime, contextMenuJob.staff_id, contextMenuJob.staff?.name ?? '')
+    await applyReschedule(
+      contextMenuJob, newDateKey, newStartTime, newEndTime, contextMenuJob.staff_id, contextMenuJob.staff?.name ?? '',
+      notifyClient, notifyStaff,
+    )
     setSavingReschedule(false)
     setContextMenuJob(null)
   }
@@ -788,19 +704,6 @@ export default function ScheduleView() {
         />
       )}
 
-      {pendingReschedule && (
-        <RescheduleModal
-          pending={pendingReschedule}
-          notifyClient={notifyClient}
-          notifyStaff={notifyStaff}
-          onToggleClient={setNotifyClient}
-          onToggleStaff={setNotifyStaff}
-          saving={savingReschedule}
-          onConfirm={handleConfirmReschedule}
-          onCancel={handleCancelReschedule}
-        />
-      )}
-
       {contextMenuJob && (
         <ReschedulePickerModal
           job={contextMenuJob}
@@ -817,7 +720,7 @@ export default function ScheduleView() {
 
       {detailJob && <JobDetailPanel job={detailJob} onClose={() => setDetailJob(null)} />}
 
-      {toast && <Toast message={toast} />}
+      {toast && <Toast message={toast.message} onUndo={toast.undo} />}
     </div>
   )
 }

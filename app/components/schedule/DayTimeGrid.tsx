@@ -12,7 +12,7 @@ import {
 } from '@dnd-kit/core'
 import type { Job } from '@/lib/types'
 import { SLOT_MINUTES, timeToMinutes, minutesToTime, formatTime, DEFAULT_START_TIME, DEFAULT_END_TIME } from '@/lib/timeOptions'
-import { colorForStaff, colorForStatus, UNASSIGNED_KEY } from './scheduleColors'
+import { colorForStaff, colorForStatus, STATUS_LABELS, UNASSIGNED_KEY } from './scheduleColors'
 import { useLongPressReschedule } from './useLongPressReschedule'
 import { useScheduleSensors } from './dndSensors'
 
@@ -58,6 +58,11 @@ function jobEnd(job: Job): number {
 function firstName(name: string): string {
   return name.split(' ')[0] ?? name
 }
+// jobs.location is a strict enum on this schema (see scheduleColors.ts/MapView
+// comments) — the real per-job address usually lives on the linked site.
+function jobAddress(job: Job): string | null {
+  return job.location ?? (job as Job & { sites?: { address: string | null } | null }).sites?.address ?? null
+}
 function pctOf(mins: number): number {
   return Math.max(0, Math.min(100, ((mins - VIEW_START_MIN) / VIEW_RANGE_MIN) * 100))
 }
@@ -94,10 +99,41 @@ function hourLabel(mins: number): string {
   return `${h12} ${h24 < 12 ? 'AM' : 'PM'}`
 }
 
+// ─── hover card ─────────────────────────────────────────────────────────────
+
+function JobHoverCard({ job, x, y }: { job: Job; x: number; y: number }) {
+  const color = colorForStatus(job.status)
+  const statusLabel = STATUS_LABELS[job.status ?? ''] ?? job.status ?? 'Pending'
+  const address = jobAddress(job)
+
+  return (
+    <div
+      className="fixed z-[70] pointer-events-none w-72 rounded-xl bg-white shadow-xl p-4 text-sm"
+      style={{ left: x + 16, top: y + 16 }}
+    >
+      <p className="font-semibold text-[#1A1A2E] mb-1.5 truncate">{job.title ?? job.job_type ?? 'Untitled job'}</p>
+      <span
+        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium mb-2.5"
+        style={{ background: `${color.solid}1F`, color: color.solid }}
+      >
+        <span className="w-1.5 h-1.5 rounded-full" style={{ background: color.solid }} />
+        {statusLabel}
+      </span>
+      <dl className="space-y-1 text-xs text-[#6B7280]">
+        <p><span className="font-medium text-[#1A1A2E]">Client:</span> {job.clients?.name ?? 'No client'}</p>
+        <p><span className="font-medium text-[#1A1A2E]">Location:</span> {address ?? 'Not set'}</p>
+        <p><span className="font-medium text-[#1A1A2E]">Type:</span> {job.job_type ?? 'Not set'}</p>
+        <p><span className="font-medium text-[#1A1A2E]">Time:</span> {formatTime(job.start_time)} – {formatTime(job.end_time)}</p>
+        <p><span className="font-medium text-[#1A1A2E]">Staff:</span> {job.staff?.name ?? 'Unassigned'}</p>
+      </dl>
+    </div>
+  )
+}
+
 // ─── job block ──────────────────────────────────────────────────────────────
 
 function JobBlock({
-  job, topPct, heightPct, leftPct, widthPct, onOpen, onReschedule,
+  job, topPct, heightPct, leftPct, widthPct, onOpen, onReschedule, onHover, onHoverMove, onHoverLeave,
 }: {
   job: Job
   topPct: number
@@ -106,6 +142,9 @@ function JobBlock({
   widthPct: number
   onOpen: (job: Job) => void
   onReschedule: (job: Job) => void
+  onHover: (job: Job, x: number, y: number) => void
+  onHoverMove: (x: number, y: number) => void
+  onHoverLeave: () => void
 }) {
   const color = colorForStatus(job.status)
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: job.id, data: { job } })
@@ -129,6 +168,9 @@ function JobBlock({
       {...attributes}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
+      onMouseEnter={(e) => onHover(job, e.clientX, e.clientY)}
+      onMouseMove={(e) => onHoverMove(e.clientX, e.clientY)}
+      onMouseLeave={onHoverLeave}
       className="absolute rounded-md px-2 py-1 overflow-hidden cursor-pointer select-none transition-[filter] hover:brightness-125"
       style={{
         top: `${topPct}%`,
@@ -157,13 +199,16 @@ function JobBlock({
 // ─── staff column (droppable) ────────────────────────────────────────────────
 
 function DayColumn({
-  staffKey, dayJobs, onEmptySlotClick, onOpen, onReschedule,
+  staffKey, dayJobs, onEmptySlotClick, onOpen, onReschedule, onHover, onHoverMove, onHoverLeave,
 }: {
   staffKey: string
   dayJobs: Job[]
   onEmptySlotClick: (staffKey: string, startTime: string, endTime: string) => void
   onOpen: (job: Job) => void
   onReschedule: (job: Job) => void
+  onHover: (job: Job, x: number, y: number) => void
+  onHoverMove: (x: number, y: number) => void
+  onHoverLeave: () => void
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: staffKey })
   const { laneByJob, totalLanes } = useMemo(() => assignLanes(dayJobs), [dayJobs])
@@ -216,6 +261,9 @@ function DayColumn({
             widthPct={widthPct}
             onOpen={onOpen}
             onReschedule={onReschedule}
+            onHover={onHover}
+            onHoverMove={onHoverMove}
+            onHoverLeave={onHoverLeave}
           />
         )
       })}
@@ -225,7 +273,16 @@ function DayColumn({
 
 // ─── unassigned strip (below the grid) ───────────────────────────────────────
 
-function UnassignedCard({ job, onOpen, onReschedule }: { job: Job; onOpen: (job: Job) => void; onReschedule: (job: Job) => void }) {
+function UnassignedCard({
+  job, onOpen, onReschedule, onHover, onHoverMove, onHoverLeave,
+}: {
+  job: Job
+  onOpen: (job: Job) => void
+  onReschedule: (job: Job) => void
+  onHover: (job: Job, x: number, y: number) => void
+  onHoverMove: (x: number, y: number) => void
+  onHoverLeave: () => void
+}) {
   const color = colorForStatus(job.status)
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: job.id, data: { job } })
   const { elRef, longPressFiredRef } = useLongPressReschedule(job, onReschedule)
@@ -248,6 +305,9 @@ function UnassignedCard({ job, onOpen, onReschedule }: { job: Job; onOpen: (job:
       {...attributes}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
+      onMouseEnter={(e) => onHover(job, e.clientX, e.clientY)}
+      onMouseMove={(e) => onHoverMove(e.clientX, e.clientY)}
+      onMouseLeave={onHoverLeave}
       className="shrink-0 w-44 rounded-md px-2.5 py-1.5 cursor-pointer select-none hover:brightness-125 transition-[filter]"
       style={{
         background: `${color.solid}29`,
@@ -266,12 +326,15 @@ function UnassignedCard({ job, onOpen, onReschedule }: { job: Job; onOpen: (job:
 }
 
 function UnassignedStrip({
-  jobs, onOpen, onReschedule, onAddClick,
+  jobs, onOpen, onReschedule, onAddClick, onHover, onHoverMove, onHoverLeave,
 }: {
   jobs: Job[]
   onOpen: (job: Job) => void
   onReschedule: (job: Job) => void
   onAddClick: () => void
+  onHover: (job: Job, x: number, y: number) => void
+  onHoverMove: (x: number, y: number) => void
+  onHoverLeave: () => void
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: UNASSIGNED_KEY })
   return (
@@ -298,10 +361,55 @@ function UnassignedStrip({
         {jobs.length === 0 ? (
           <p className="text-xs text-gray-600">No unassigned jobs today</p>
         ) : (
-          jobs.map(job => <UnassignedCard key={job.id} job={job} onOpen={onOpen} onReschedule={onReschedule} />)
+          jobs.map(job => (
+            <UnassignedCard
+              key={job.id}
+              job={job}
+              onOpen={onOpen}
+              onReschedule={onReschedule}
+              onHover={onHover}
+              onHoverMove={onHoverMove}
+              onHoverLeave={onHoverLeave}
+            />
+          ))
         )}
       </div>
     </div>
+  )
+}
+
+// ─── current-time indicator ───────────────────────────────────────────────────
+// Its own component (rather than state on the main grid) so its poll interval
+// only re-renders this tiny bit of absolutely-positioned markup, not the
+// whole grid — lets it update genuinely "in real time" without that cost.
+
+function NowIndicator({ isToday }: { isToday: boolean }) {
+  const [nowMin, setNowMin] = useState<number | null>(null)
+
+  useEffect(() => {
+    // Subscribing to the live clock — there's no React state this could be
+    // derived from instead.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (!isToday) { setNowMin(null); return }
+    setNowMin(minutesNow())
+    const interval = setInterval(() => setNowMin(minutesNow()), 15000)
+    return () => clearInterval(interval)
+  }, [isToday])
+
+  if (nowMin == null || nowMin < VIEW_START_MIN || nowMin > VIEW_END_MIN) return null
+  const nowPct = pctOf(nowMin)
+
+  return (
+    <>
+      <div
+        className="absolute pointer-events-none"
+        style={{ top: `${nowPct}%`, left: AXIS_WIDTH, right: 0, height: 2, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
+      />
+      <div
+        className="absolute pointer-events-none rounded-full"
+        style={{ top: `calc(${nowPct}% - 4px)`, left: AXIS_WIDTH - 5, width: 10, height: 10, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
+      />
+    </>
   )
 }
 
@@ -314,18 +422,8 @@ export default function DayTimeGrid({
   const [activeJob, setActiveJob] = useState<Job | null>(null)
   const sensors = useScheduleSensors()
   const bodyRef = useRef<HTMLDivElement | null>(null)
-  const [nowMin, setNowMin] = useState<number | null>(null)
   const [staffPage, setStaffPage] = useState(0)
-
-  useEffect(() => {
-    // Subscribing to the live clock — there's no React state this could be
-    // derived from instead.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (!isToday) { setNowMin(null); return }
-    setNowMin(minutesNow())
-    const interval = setInterval(() => setNowMin(minutesNow()), 60000)
-    return () => clearInterval(interval)
-  }, [isToday])
+  const [hoverJob, setHoverJob] = useState<{ job: Job; x: number; y: number } | null>(null)
 
   // Clamp rather than correct via effect — staffRows can shrink (e.g. a
   // staff member's last job today gets reassigned away) leaving staffPage
@@ -344,6 +442,7 @@ export default function DayTimeGrid({
 
   function handleDragStart(event: DragStartEvent) {
     setActiveJob((event.active.data.current?.job as Job | undefined) ?? null)
+    setHoverJob(null)
   }
 
   function handleDragEnd(event: DragEndEvent) {
@@ -381,8 +480,6 @@ export default function DayTimeGrid({
       newEndTime: minutesToTime(newStart + duration),
     })
   }
-
-  const nowPct = nowMin != null && nowMin >= VIEW_START_MIN && nowMin <= VIEW_END_MIN ? pctOf(nowMin) : null
 
   return (
     <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
@@ -461,22 +558,14 @@ export default function DayTimeGrid({
                   onEmptySlotClick={onEmptySlotClick}
                   onOpen={onOpenDetail}
                   onReschedule={onReschedulePicker}
+                  onHover={(job, x, y) => setHoverJob({ job, x, y })}
+                  onHoverMove={(x, y) => setHoverJob(prev => (prev ? { ...prev, x, y } : prev))}
+                  onHoverLeave={() => setHoverJob(null)}
                 />
               ))
             )}
 
-            {nowPct != null && (
-              <>
-                <div
-                  className="absolute pointer-events-none"
-                  style={{ top: `${nowPct}%`, left: AXIS_WIDTH, right: 0, height: 2, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
-                />
-                <div
-                  className="absolute pointer-events-none rounded-full"
-                  style={{ top: `calc(${nowPct}% - 4px)`, left: AXIS_WIDTH - 5, width: 10, height: 10, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
-                />
-              </>
-            )}
+            <NowIndicator isToday={isToday} />
           </div>
         </div>
 
@@ -485,7 +574,12 @@ export default function DayTimeGrid({
           onOpen={onOpenDetail}
           onReschedule={onReschedulePicker}
           onAddClick={() => onEmptySlotClick(UNASSIGNED_KEY, '08:00', '10:00')}
+          onHover={(job, x, y) => setHoverJob({ job, x, y })}
+          onHoverMove={(x, y) => setHoverJob(prev => (prev ? { ...prev, x, y } : prev))}
+          onHoverLeave={() => setHoverJob(null)}
         />
+
+        {hoverJob && <JobHoverCard job={hoverJob.job} x={hoverJob.x} y={hoverJob.y} />}
 
         <DragOverlay>
           {activeJob && (
