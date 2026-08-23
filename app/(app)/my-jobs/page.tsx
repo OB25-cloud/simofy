@@ -2,28 +2,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { supabase as db } from '@/lib/supabase'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'     },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
-}
-
-function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return null
-  const c = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: c.bg, color: c.text }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
-}
 
 export default async function MyJobsPage() {
   const authSupabase = await createServerSupabase()
@@ -89,12 +70,11 @@ export default async function MyJobsPage() {
                 Upcoming & Active
               </p>
               <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-                {upcoming.map((job, i) => (
+                {upcoming.map(job => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between px-5 py-4 hover:bg-[#F9FAFB] transition-colors group"
-                    style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                    className="flex items-center justify-between px-5 py-4 border-t border-[#F4F5F7] first:border-t-0 hover:bg-[#F9FAFB] transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-[#1A1A2E] group-hover:text-[#C9A84C] transition-colors truncate">
@@ -118,12 +98,11 @@ export default async function MyJobsPage() {
             <div>
               <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Past</p>
               <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-                {past.map((job, i) => (
+                {past.map(job => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between px-5 py-4 hover:bg-[#F9FAFB] transition-colors group opacity-60 hover:opacity-100"
-                    style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                    className="flex items-center justify-between px-5 py-4 border-t border-[#F4F5F7] first:border-t-0 hover:bg-[#F9FAFB] transition-colors group opacity-60 hover:opacity-100"
                   >
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-[#1A1A2E] group-hover:text-[#C9A84C] transition-colors truncate">

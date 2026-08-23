@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Landscaping CRM — Queenstown, NZ',
     start_url: '/',
     display: 'standalone',
-    background_color: '#111111',
-    theme_color: '#111111',
+    background_color: '#1E1E2E',
+    theme_color: '#1E1E2E',
     icons: [
       {
         src: '/icon-192x192.png',

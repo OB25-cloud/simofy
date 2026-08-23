@@ -14,11 +14,11 @@ import { inputClass } from '@/app/components/ui/input'
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   pending:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'     },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
+  scheduled:   { bg: '#DBEAFE', text: '#1D4ED8', dot: '#3B82F6', label: 'Scheduled'   },
+  in_progress: { bg: 'rgba(201, 168, 76,0.12)', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
+  complete:    { bg: '#DCFCE7', text: '#15803D', dot: '#22C55E', label: 'Complete'     },
+  invoiced:    { bg: '#F3E8FF', text: '#7C3AED', dot: '#8b5cf6', label: 'Invoiced'    },
+  cancelled:   { bg: '#FEE2E2', text: '#EF4444', dot: '#EF4444', label: 'Cancelled'   },
 }
 
 const RECURRENCE_LABELS: Record<string, string> = {

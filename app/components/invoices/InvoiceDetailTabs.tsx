@@ -221,7 +221,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                 className="px-4 py-3 sm:py-2 text-sm font-medium rounded-md border transition-colors disabled:opacity-50"
                 style={
                   reminderSent
-                    ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
+                    ? { background: '#DCFCE7', color: '#15803D', borderColor: '#BBF7D0' }
                     : { background: '#F9FAFB', color: '#1A1A2E', borderColor: '#E5E7EB' }
                 }
               >
@@ -251,7 +251,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#3b82f6' }}
+                  style={{ background: '#3B82F6' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Invoice sent to client</p>
                 <p className="text-xs text-[#6B7280] mt-0.5">Date not recorded</p>
@@ -262,7 +262,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#ef4444' }}
+                  style={{ background: '#EF4444' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Invoice became overdue</p>
                 {invoice.due_date && (
@@ -275,7 +275,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#22c55e' }}
+                  style={{ background: '#22C55E' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Invoice paid</p>
                 {invoice.paid_date && (

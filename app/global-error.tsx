@@ -10,10 +10,10 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
   return (
     <html lang="en">
       <body className="h-full antialiased">
-        <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#fafafa' }}>
+        <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: '#F4F5F7' }}>
           <div className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
             <p className="text-sm font-semibold text-[#1A1A2E]">Simofy hit an unexpected error</p>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="mt-2 text-sm text-[#6B7280]">
               Try reloading the page. If this keeps happening, let us know what you were doing.
             </p>
             <div className="mt-6 flex items-center justify-center gap-3">

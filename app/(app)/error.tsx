@@ -11,7 +11,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
     <div className="flex flex-col items-center justify-center h-full px-6 py-20 text-center">
       <div className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
         <p className="text-sm font-semibold text-[#1A1A2E]">Something went wrong</p>
-        <p className="mt-2 text-sm text-gray-500">
+        <p className="mt-2 text-sm text-[#6B7280]">
           This section hit an unexpected error. You can try again, or head back to the dashboard.
         </p>
         <div className="mt-6 flex items-center justify-center gap-3">

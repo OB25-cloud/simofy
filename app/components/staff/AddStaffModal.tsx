@@ -117,7 +117,7 @@ export default function AddStaffModal({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={() => setForm((prev) => ({ ...prev, is_active: !prev.is_active }))}
               className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200"
-              style={{ background: form.is_active ? '#C9A84C' : '#e5e7eb' }}
+              style={{ background: form.is_active ? '#C9A84C' : '#E5E7EB' }}
               aria-label="Toggle active status"
             >
               <span

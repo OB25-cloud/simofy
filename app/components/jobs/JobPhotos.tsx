@@ -7,8 +7,8 @@ import type { JobPhoto } from '@/lib/types'
 type PhotoTag = 'before' | 'after' | null
 
 const TAG_CONFIG = {
-  before: { label: 'Before', bg: '#eff6ff', text: '#1d4ed8' },
-  after:  { label: 'After',  bg: '#f0fdf4', text: '#15803d' },
+  before: { label: 'Before', bg: '#DBEAFE', text: '#1D4ED8' },
+  after:  { label: 'After',  bg: '#DCFCE7', text: '#15803D' },
 } as const
 
 // ── sub-components ────────────────────────────────────────────────────────────
@@ -178,7 +178,7 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
                   style={
                     active
                       ? { background: '#C9A84C', color: '#fff' }
-                      : { color: '#6b7280' }
+                      : { color: '#6B7280' }
                   }
                 >
                   {opt.label}

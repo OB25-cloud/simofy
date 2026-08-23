@@ -16,7 +16,7 @@ const STATUS_BADGE: Record<string, { bg: string; text: string }> = {
   pending:     { bg: '#F4F5F7', text: '#6B7280' },
   scheduled:   { bg: '#dbeafe', text: '#1e40af' },
   in_progress: { bg: '#fdf0d5', text: '#92400e' },
-  complete:    { bg: '#dcfce7', text: '#15803d' },
+  complete:    { bg: '#DCFCE7', text: '#15803D' },
   invoiced:    { bg: '#ede9fe', text: '#5b21b6' },
   cancelled:   { bg: '#fee2e2', text: '#b91c1c' },
 }

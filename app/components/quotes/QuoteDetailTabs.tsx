@@ -274,7 +274,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                 </thead>
                 <tbody>
                   {lineItems.map((item, i) => (
-                    <tr key={item.id} style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}>
+                    <tr key={item.id} className={i > 0 ? 'border-t border-[#F4F5F7]' : ''}>
                       <td className="px-5 py-3 text-[#6B7280]">{item.description ?? '—'}</td>
                       <td className="px-5 py-3 text-right text-[#6B7280] tabular-nums">{item.quantity ?? 0}</td>
                       <td className="px-5 py-3 text-right text-[#6B7280] tabular-nums">{fmt(item.unit_price)}</td>

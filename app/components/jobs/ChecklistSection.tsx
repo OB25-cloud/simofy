@@ -177,7 +177,7 @@ export default function ChecklistSection({
         </p>
         <p className="text-xs font-semibold" style={{ color: '#C9A84C' }}>{progressPct}%</p>
       </div>
-      <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden mb-5">
+      <div className="w-full h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden mb-5">
         <div
           className="h-full rounded-full transition-all duration-300"
           style={{ width: `${progressPct}%`, background: '#C9A84C' }}
@@ -185,7 +185,7 @@ export default function ChecklistSection({
       </div>
 
       {toggleError && (
-        <div className="mb-3 px-3 py-2 rounded-md text-xs" style={{ background: '#fef2f2', color: '#dc2626' }}>
+        <div className="mb-3 px-3 py-2 rounded-md text-xs bg-red-50 text-[#EF4444]">
           {toggleError}
         </div>
       )}
@@ -195,8 +195,7 @@ export default function ChecklistSection({
         {items.map((item, i) => (
           <div
             key={item.id}
-            className="flex items-start gap-3 px-4 py-3.5"
-            style={{ borderTop: i > 0 ? '1px solid #f3f4f6' : undefined }}
+            className={`flex items-start gap-3 px-4 py-3.5 ${i > 0 ? 'border-t border-[#F4F5F7]' : ''}`}
           >
             <input
               type="checkbox"

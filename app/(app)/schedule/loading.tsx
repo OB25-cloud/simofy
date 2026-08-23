@@ -4,13 +4,13 @@ export default function Loading() {
       {/* Header + controls */}
       <div className="mb-5 flex items-center justify-between">
         <div>
-          <div className="h-7 w-24 bg-gray-100 rounded animate-pulse mb-2" />
-          <div className="h-4 w-40 bg-gray-100 rounded animate-pulse" />
+          <div className="h-7 w-24 bg-[#E5E7EB] rounded animate-pulse mb-2" />
+          <div className="h-4 w-40 bg-[#E5E7EB] rounded animate-pulse" />
         </div>
         <div className="flex gap-2">
-          <div className="h-9 w-16 bg-gray-100 rounded animate-pulse" />
-          <div className="h-9 w-9 bg-gray-100 rounded animate-pulse" />
-          <div className="h-9 w-9 bg-gray-100 rounded animate-pulse" />
+          <div className="h-9 w-16 bg-[#E5E7EB] rounded animate-pulse" />
+          <div className="h-9 w-9 bg-[#E5E7EB] rounded animate-pulse" />
+          <div className="h-9 w-9 bg-[#E5E7EB] rounded animate-pulse" />
         </div>
       </div>
 
@@ -18,14 +18,14 @@ export default function Loading() {
       <div className="flex gap-4 mb-5">
         {[...Array(6)].map((_, i) => (
           <div key={i} className="flex items-center gap-1.5">
-            <div className="h-2.5 w-2.5 rounded-full bg-gray-100 animate-pulse" />
-            <div className="h-3 w-16 bg-gray-100 rounded animate-pulse" />
+            <div className="h-2.5 w-2.5 rounded-full bg-[#E5E7EB] animate-pulse" />
+            <div className="h-3 w-16 bg-[#E5E7EB] rounded animate-pulse" />
           </div>
         ))}
       </div>
 
       {/* 7-column calendar grid */}
-      <div className="grid grid-cols-7 gap-px bg-gray-100 rounded-lg overflow-hidden border border-[#E5E7EB]">
+      <div className="grid grid-cols-7 gap-px bg-[#E5E7EB] rounded-lg overflow-hidden border border-[#E5E7EB]">
         {/* Day headers */}
         {[...Array(7)].map((_, i) => (
           <div key={i} className="bg-[#F4F5F7] px-3 py-2 border-b border-[#E5E7EB]">
@@ -38,14 +38,14 @@ export default function Loading() {
           <div key={col} className="bg-white min-h-[200px] p-2 space-y-2">
             {col % 3 !== 2 && (
               <div className="rounded border-l-[3px] border-[#E5E7EB] bg-[#F4F5F7] px-2 py-1.5">
-                <div className="h-3 w-20 bg-gray-100 rounded animate-pulse mb-1" />
-                <div className="h-2.5 w-14 bg-gray-100 rounded animate-pulse" />
+                <div className="h-3 w-20 bg-[#E5E7EB] rounded animate-pulse mb-1" />
+                <div className="h-2.5 w-14 bg-[#E5E7EB] rounded animate-pulse" />
               </div>
             )}
             {col % 2 === 0 && (
               <div className="rounded border-l-[3px] border-[#E5E7EB] bg-[#F4F5F7] px-2 py-1.5">
-                <div className="h-3 w-24 bg-gray-100 rounded animate-pulse mb-1" />
-                <div className="h-2.5 w-16 bg-gray-100 rounded animate-pulse" />
+                <div className="h-3 w-24 bg-[#E5E7EB] rounded animate-pulse mb-1" />
+                <div className="h-2.5 w-16 bg-[#E5E7EB] rounded animate-pulse" />
               </div>
             )}
           </div>
