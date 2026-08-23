@@ -33,6 +33,7 @@ const STATUS_COLOR: Record<string, BadgeColor> = {
   sent: 'blue',
   scheduled: 'blue',
   contacted: 'blue',
+  queued: 'blue',
   // negative / needs attention
   overdue: 'red',
   cancelled: 'red',
@@ -51,6 +52,20 @@ const STATUS_COLOR: Record<string, BadgeColor> = {
 export function statusColor(status: string | null | undefined): BadgeColor {
   if (!status) return 'gray'
   return STATUS_COLOR[status.toLowerCase()] ?? 'gray'
+}
+
+const DOT_HEX: Record<BadgeColor, string> = {
+  green: '#22C55E',
+  amber: '#F59E0B',
+  blue: '#3B82F6',
+  red: '#EF4444',
+  gray: '#9CA3AF',
+}
+
+// Solid dot colour matching a status's badge category — for status pips,
+// timeline markers, board-view accent bars, etc.
+export function statusDot(status: string | null | undefined): string {
+  return DOT_HEX[statusColor(status)]
 }
 
 export function statusLabel(status: string | null | undefined): string {

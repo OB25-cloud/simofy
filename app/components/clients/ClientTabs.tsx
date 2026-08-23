@@ -6,53 +6,9 @@ import type { Client, Job, Quote, Invoice, Site, Notification } from '@/lib/type
 import SitesSection from './SitesSection'
 import NotificationsSection from './NotificationsSection'
 import CommunicationsSection from './CommunicationsSection'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 type NotifSetting = { notification_type: string; enabled: boolean }
-
-const JOB_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'     },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
-}
-
-const QUOTE_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:    { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Draft'    },
-  sent:     { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Sent'     },
-  accepted: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Accepted' },
-  declined: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Declined' },
-  expired:  { bg: '#fff7ed', text: '#c2410c', dot: '#f97316', label: 'Expired'  },
-}
-
-const INV_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Draft'     },
-  sent:      { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Sent'      },
-  paid:      { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Paid'      },
-  overdue:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Overdue'   },
-  cancelled: { bg: '#F9FAFB', text: '#1A1A2E', dot: '#6B7280', label: 'Cancelled' },
-}
-
-function StatusBadge({
-  status,
-  config,
-}: {
-  status: string | null
-  config: Record<string, { bg: string; text: string; dot: string; label: string }>
-}) {
-  if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const c = config[status] ?? { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: status }
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
-      style={{ background: c.bg, color: c.text }}
-    >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
-}
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
@@ -226,11 +182,10 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </tr>
                 </thead>
                 <tbody>
-                  {jobs.map((job, i) => (
+                  {jobs.map(job => (
                     <tr
                       key={job.id}
-                      className="hover:bg-[#F9FAFB] transition-colors"
-                      style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
                     >
                       <td className="px-5 py-3.5">
                         <Link
@@ -242,7 +197,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                         </Link>
                       </td>
                       <td className="px-5 py-3.5">
-                        <StatusBadge status={job.status} config={JOB_STATUS} />
+                        <StatusBadge status={job.status} />
                       </td>
                       <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(job.scheduled_date)}</td>
                       <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(job.created_at)}</td>
@@ -276,11 +231,10 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </tr>
                 </thead>
                 <tbody>
-                  {quotes.map((q, i) => (
+                  {quotes.map(q => (
                     <tr
                       key={q.id}
-                      className="hover:bg-[#F9FAFB] transition-colors"
-                      style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
                     >
                       <td className="px-5 py-3.5">
                         <Link
@@ -292,7 +246,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                         </Link>
                       </td>
                       <td className="px-5 py-3.5">
-                        <StatusBadge status={q.status} config={QUOTE_STATUS} />
+                        <StatusBadge status={q.status} />
                       </td>
                       <td className="px-5 py-3.5 text-[#1A1A2E]">{fmt(q.total)}</td>
                       <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(q.valid_until)}</td>
@@ -327,11 +281,10 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </tr>
                 </thead>
                 <tbody>
-                  {invoices.map((inv, i) => (
+                  {invoices.map(inv => (
                     <tr
                       key={inv.id}
-                      className="hover:bg-[#F9FAFB] transition-colors"
-                      style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
                     >
                       <td className="px-5 py-3.5">
                         <Link
@@ -343,7 +296,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                         </Link>
                       </td>
                       <td className="px-5 py-3.5">
-                        <StatusBadge status={inv.status} config={INV_STATUS} />
+                        <StatusBadge status={inv.status} />
                       </td>
                       <td className="px-5 py-3.5 text-[#1A1A2E]">{fmt(inv.total)}</td>
                       <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(inv.due_date)}</td>

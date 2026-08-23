@@ -15,7 +15,7 @@ function SiteCard({ site }: { site: Site }) {
       </div>
 
       {(site.access_notes || site.hazard_notes) && (
-        <div className="space-y-2.5 pt-3 border-t border-gray-50">
+        <div className="space-y-2.5 pt-3 border-t border-[#F4F5F7]">
           {site.access_notes && (
             <div className="flex gap-2">
               <span className="shrink-0 mt-0.5">

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Client, Job, Quote, Invoice, Site, Notification } from '@/lib/types'
 import ClientTabs from '@/app/components/clients/ClientTabs'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,23 +52,10 @@ export default async function ClientDetailPage({
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
           <h1 className="text-2xl font-bold text-[#1A1A2E]">{client.name}</h1>
-          <span
-            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-            style={
-              client.is_active
-                ? { background: '#fdf8ee', color: '#C9A84C' }
-                : { background: '#F4F5F7', color: '#6B7280' }
-            }
-          >
-            <span
-              className="w-1.5 h-1.5 rounded-full"
-              style={{ background: client.is_active ? '#C9A84C' : '#E5E7EB' }}
-            />
-            {client.is_active ? 'Active' : 'Inactive'}
-          </span>
+          <StatusBadge status={client.is_active ? 'active' : 'inactive'} />
         </div>
         {client.business_name && (
-          <p className="text-gray-500">{client.business_name}</p>
+          <p className="text-sm text-[#6B7280]">{client.business_name}</p>
         )}
       </div>
 
