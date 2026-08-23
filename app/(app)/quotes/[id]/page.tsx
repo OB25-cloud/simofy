@@ -5,16 +5,9 @@ import type { Quote, QuoteLineItem, Client, Job } from '@/lib/types'
 import QuoteActions from '@/app/components/quotes/QuoteActions'
 import QuotePDFButton from '@/app/components/quotes/QuotePDFButton'
 import QuoteDetailTabs from '@/app/components/quotes/QuoteDetailTabs'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:    { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Draft' },
-  sent:     { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Sent' },
-  accepted: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Accepted' },
-  declined: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Declined' },
-  expired:  { bg: '#fff7ed', text: '#c2410c', dot: '#f97316', label: 'Expired' },
-}
 
 function quoteNumber(id: string) {
   return `Q-${id.slice(0, 6).toUpperCase()}`
@@ -45,8 +38,6 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
   const typedClients = (clients ?? []) as unknown as Pick<Client, 'id' | 'name' | 'business_name'>[]
   const typedJobs = (jobs ?? []) as unknown as Pick<Job, 'id' | 'title' | 'job_type' | 'client_id'>[]
 
-  const statusCfg = STATUS_CONFIG[typedQuote.status ?? ''] ?? STATUS_CONFIG.draft
-
   return (
     <div className="p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
@@ -61,13 +52,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
         <div className="mb-6 flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-[#1A1A2E] font-mono">{quoteNumber(typedQuote.id)}</h1>
-            <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-              style={{ background: statusCfg.bg, color: statusCfg.text }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusCfg.dot }} />
-              {statusCfg.label}
-            </span>
+            <StatusBadge status={typedQuote.status} />
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <QuotePDFButton quote={typedQuote} lineItems={typedItems} />

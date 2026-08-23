@@ -5,31 +5,15 @@ import { useRouter } from 'next/navigation'
 import type { Quote, Client, Job } from '@/lib/types'
 import AddQuoteModal from './AddQuoteModal'
 import { isOverdueForFollowUp } from '@/lib/quoteFollowUp'
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:    { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Draft'    },
-  sent:     { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Sent'     },
-  accepted: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Accepted' },
-  declined: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Declined' },
-  expired:  { bg: '#fff7ed', text: '#c2410c', dot: '#f97316', label: 'Expired'  },
-}
-
-function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const c = STATUS_CONFIG[status] ?? { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: status }
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: c.bg, color: c.text }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
-}
+import { StatusBadge } from '@/app/components/ui/Badge'
+import { StatCard } from '@/app/components/ui/StatCard'
+import Button from '@/app/components/ui/Button'
+import { inputClass } from '@/app/components/ui/input'
 
 function FollowUpBadge() {
   return (
     <span
-      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide"
-      style={{ background: '#fffbeb', color: '#b45309' }}
+      className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide bg-amber-100 text-amber-700"
       title="Sent more than 7 days ago with no response"
     >
       <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -112,27 +96,18 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A2E]">Quotes</h1>
-          <p className="mt-0.5 text-sm text-gray-500">{quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'} total</p>
+          <p className="mt-1 text-xs text-[#6B7280]">{quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'} total</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#C9A84C' }}
-        >
+        <Button onClick={() => setShowModal(true)} variant="primary">
           <PlusIcon />
           Add Quote
-        </button>
+        </Button>
       </div>
 
       {/* Stats bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {stats.map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#111827' }}>
-              {s.value}
-            </p>
-          </div>
+          <StatCard key={s.label} label={s.label} value={s.value} />
         ))}
       </div>
 
@@ -145,13 +120,13 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
             placeholder="Search by quote ID, client, job or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
+            className={`pl-9 pr-4 py-2.5 ${inputClass}`}
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent text-[#6B7280]"
+          className={inputClass}
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -174,26 +149,25 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
         <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Quote</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Client</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Job</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Type</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Subtotal</th>
-                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Total</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Valid Until</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Created</th>
-                <th className="px-4 py-3 w-8" />
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Quote</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Client</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Job</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Type</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Subtotal</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Total</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Valid Until</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Created</th>
+                <th className="px-4 py-3 w-8 bg-[#F4F5F7]" />
               </tr>
             </thead>
             <tbody>
-              {filtered.map((quote, i) => (
+              {filtered.map(quote => (
                 <tr
                   key={quote.id}
                   onClick={() => router.push(`/quotes/${quote.id}`)}
-                  className="cursor-pointer hover:bg-[#F9FAFB] transition-colors group"
-                  style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                  className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
                 >
                   <td className="px-4 py-3 font-medium text-[#1A1A2E] font-mono text-xs">
                     {quoteNumber(quote.id)}

@@ -119,7 +119,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
             onClick={() => setActiveTab(tab)}
             className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
             style={{
-              color: activeTab === tab ? '#111827' : '#6b7280',
+              color: activeTab === tab ? '#1A1A2E' : '#6B7280',
             }}
           >
             {tab}
@@ -158,8 +158,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                 <button
                   onClick={handleFollowUp}
                   disabled={loggingFollowUp}
-                  className="px-3.5 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-                  style={{ background: '#b45309' }}
+                  className="px-3.5 py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50 bg-[#F59E0B] hover:bg-amber-600"
                 >
                   {loggingFollowUp ? 'Logging…' : 'Follow Up Sent'}
                 </button>
@@ -227,8 +226,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               <button
                 onClick={handleAccept}
                 disabled={accepting || quote.status === 'accepted'}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-                style={{ background: '#15803d' }}
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50 bg-[#22C55E] hover:bg-green-600"
               >
                 {accepting ? 'Updating…' : 'Accept'}
               </button>
@@ -239,11 +237,11 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               >
                 {declining ? 'Updating…' : 'Decline'}
               </button>
-              <div className="h-6 w-px bg-gray-200" />
+              <div className="h-6 w-px bg-[#E5E7EB]" />
               <button
                 onClick={handleConvertToInvoice}
                 disabled={converting}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
                 style={{ background: GOLD }}
               >
                 {converting ? 'Creating…' : 'Convert to Invoice'}
