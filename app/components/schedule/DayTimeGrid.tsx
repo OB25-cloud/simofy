@@ -1,7 +1,6 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import {
   DndContext,
   DragOverlay,
@@ -12,18 +11,20 @@ import {
   type DragStartEvent,
 } from '@dnd-kit/core'
 import type { Job } from '@/lib/types'
-import {
-  DAY_START_MIN, DAY_END_MIN, SLOT_MINUTES, timeToMinutes, minutesToTime,
-  formatTime, DEFAULT_START_TIME, DEFAULT_END_TIME,
-} from '@/lib/timeOptions'
-import { colorForStaff, glassCardStyle, UNASSIGNED_KEY } from './scheduleColors'
+import { SLOT_MINUTES, timeToMinutes, minutesToTime, formatTime, DEFAULT_START_TIME, DEFAULT_END_TIME } from '@/lib/timeOptions'
+import { colorForStaff, colorForStatus, UNASSIGNED_KEY } from './scheduleColors'
 import { useLongPressReschedule } from './useLongPressReschedule'
 import { useScheduleSensors } from './dndSensors'
 
-const ROW_PX = 56
-const SLOT_COUNT = (DAY_END_MIN - DAY_START_MIN) / SLOT_MINUTES
-const GRID_HEIGHT = SLOT_COUNT * ROW_PX
-const AXIS_WIDTH = 64
+// Day view shows a fixed 7am–6pm working window, compressed to fill
+// whatever height is available (no vertical scrolling) — independent of the
+// wider 6am–7pm range lib/timeOptions.ts exposes for the job time pickers.
+const VIEW_START_MIN = 7 * 60
+const VIEW_END_MIN = 18 * 60
+const VIEW_RANGE_MIN = VIEW_END_MIN - VIEW_START_MIN
+const MIN_BLOCK_PX = 50
+const MAX_VISIBLE_STAFF = 6
+const AXIS_WIDTH = 48
 
 export type StaffRow = { id: string; name: string }
 
@@ -37,12 +38,9 @@ export type DragReschedulePayload = {
 interface Props {
   jobs: Job[]
   staffRows: StaffRow[]
-  hasUnassigned: boolean
   isToday: boolean
+  onOpenDetail: (job: Job) => void
   onReschedulePicker: (job: Job) => void
-  onHover: (job: Job, x: number, y: number) => void
-  onMove: (x: number, y: number) => void
-  onLeave: () => void
   onEmptySlotClick: (staffKey: string, startTime: string, endTime: string) => void
   onDragReschedule: (payload: DragReschedulePayload) => void
 }
@@ -51,12 +49,17 @@ function minutesNow(): number {
   const d = new Date()
   return d.getHours() * 60 + d.getMinutes()
 }
-
 function jobStart(job: Job): number {
   return timeToMinutes(job.start_time?.slice(0, 5) ?? DEFAULT_START_TIME)
 }
 function jobEnd(job: Job): number {
   return timeToMinutes(job.end_time?.slice(0, 5) ?? DEFAULT_END_TIME)
+}
+function firstName(name: string): string {
+  return name.split(' ')[0] ?? name
+}
+function pctOf(mins: number): number {
+  return Math.max(0, Math.min(100, ((mins - VIEW_START_MIN) / VIEW_RANGE_MIN) * 100))
 }
 
 // Side-by-side lane assignment for jobs that overlap in time within the same
@@ -80,47 +83,44 @@ function assignLanes(jobs: Job[]): { laneByJob: Map<string, number>; totalLanes:
   return { laneByJob, totalLanes: Math.max(laneEnds.length, 1) }
 }
 
-function timeAxisLabel(mins: number): string | null {
-  if (mins % 60 !== 0) return null
+const HOUR_MARKS = Array.from(
+  { length: VIEW_RANGE_MIN / 60 + 1 },
+  (_, i) => VIEW_START_MIN + i * 60,
+)
+
+function hourLabel(mins: number): string {
   const h24 = Math.floor(mins / 60)
   const h12 = h24 % 12 === 0 ? 12 : h24 % 12
-  const ampm = h24 < 12 ? 'AM' : 'PM'
-  return `${h12} ${ampm}`
+  return `${h12} ${h24 < 12 ? 'AM' : 'PM'}`
 }
 
 // ─── job block ──────────────────────────────────────────────────────────────
 
 function JobBlock({
-  job, top, height, leftPct, widthPct, onReschedule, onHover, onMove, onLeave,
+  job, topPct, heightPct, leftPct, widthPct, onOpen, onReschedule,
 }: {
   job: Job
-  top: number
-  height: number
+  topPct: number
+  heightPct: number
   leftPct: number
   widthPct: number
+  onOpen: (job: Job) => void
   onReschedule: (job: Job) => void
-  onHover: (job: Job, x: number, y: number) => void
-  onMove: (x: number, y: number) => void
-  onLeave: () => void
 }) {
-  const router = useRouter()
-  const color = colorForStaff(job.staff_id)
+  const color = colorForStatus(job.status)
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: job.id, data: { job } })
   const { elRef, longPressFiredRef } = useLongPressReschedule(job, onReschedule)
 
   function handleClick(e: React.MouseEvent) {
     e.stopPropagation()
     if (longPressFiredRef.current) { longPressFiredRef.current = false; return }
-    router.push(`/jobs/${job.id}`)
+    onOpen(job)
   }
   function handleContextMenu(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     onReschedule(job)
   }
-
-  const showTime = height >= 38
-  const showClient = height >= 68
 
   return (
     <div
@@ -129,33 +129,27 @@ function JobBlock({
       {...attributes}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
-      onMouseEnter={(e) => onHover(job, e.clientX, e.clientY)}
-      onMouseMove={(e) => onMove(e.clientX, e.clientY)}
-      onMouseLeave={onLeave}
-      className="absolute rounded-lg px-2 py-1 overflow-hidden cursor-pointer select-none transition-[filter] hover:brightness-110"
+      className="absolute rounded-md px-2 py-1 overflow-hidden cursor-pointer select-none transition-[filter] hover:brightness-125"
       style={{
-        top,
-        height: Math.max(height - 2, 26),
+        top: `${topPct}%`,
+        height: `${heightPct}%`,
+        minHeight: MIN_BLOCK_PX,
         left: `calc(${leftPct}% + 2px)`,
         width: `calc(${widthPct}% - 4px)`,
-        ...glassCardStyle(color.rgb),
+        background: `${color.solid}29`,
+        borderLeft: `3px solid ${color.solid}`,
         touchAction: 'none',
         WebkitTouchCallout: 'none',
         opacity: isDragging ? 0.3 : 1,
         zIndex: isDragging ? 0 : 1,
       }}
     >
-      <p className="text-[12px] font-bold leading-snug text-white truncate">
+      <p className="text-[12px] font-semibold leading-snug text-white truncate">
         {job.title ?? job.job_type ?? 'Untitled'}
       </p>
-      {showTime && (
-        <p className="text-[10px] leading-snug text-white/70 truncate">
-          {formatTime(job.start_time)} – {formatTime(job.end_time)}
-        </p>
-      )}
-      {showClient && job.clients?.name && (
-        <p className="text-[10px] leading-snug text-white/60 truncate">{job.clients.name}</p>
-      )}
+      <p className="text-[11px] leading-snug text-white/70 truncate">
+        {job.clients?.name ?? 'No client'}
+      </p>
     </div>
   )
 }
@@ -163,63 +157,65 @@ function JobBlock({
 // ─── staff column (droppable) ────────────────────────────────────────────────
 
 function DayColumn({
-  staffKey, dayJobs, onEmptySlotClick, onReschedule, onHover, onMove, onLeave,
+  staffKey, dayJobs, onEmptySlotClick, onOpen, onReschedule,
 }: {
   staffKey: string
   dayJobs: Job[]
   onEmptySlotClick: (staffKey: string, startTime: string, endTime: string) => void
+  onOpen: (job: Job) => void
   onReschedule: (job: Job) => void
-  onHover: (job: Job, x: number, y: number) => void
-  onMove: (x: number, y: number) => void
-  onLeave: () => void
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: staffKey })
   const { laneByJob, totalLanes } = useMemo(() => assignLanes(dayJobs), [dayJobs])
+  const isEmpty = dayJobs.length === 0
+
+  function handleGridClick(e: React.MouseEvent) {
+    // Approximate slot from click position within the column.
+    const rect = e.currentTarget.getBoundingClientRect()
+    const pct = (e.clientY - rect.top) / rect.height
+    const rawStart = VIEW_START_MIN + pct * VIEW_RANGE_MIN
+    const snapped = Math.round(rawStart / SLOT_MINUTES) * SLOT_MINUTES
+    const startMin = Math.max(VIEW_START_MIN, Math.min(snapped, VIEW_END_MIN - SLOT_MINUTES))
+    const endMin = Math.min(startMin + 120, VIEW_END_MIN)
+    onEmptySlotClick(staffKey, minutesToTime(startMin), minutesToTime(endMin))
+  }
 
   return (
     <div
       ref={setNodeRef}
-      className="relative flex-1 min-w-0 border-r"
-      style={{ height: GRID_HEIGHT, background: isOver ? 'rgba(201, 168, 76,0.08)' : 'transparent', borderColor: 'rgba(96,165,250,0.1)' }}
+      onClick={handleGridClick}
+      className="relative flex-1 min-w-0 h-full cursor-pointer"
+      style={{
+        background: isOver ? 'rgba(201,168,76,0.08)' : 'transparent',
+        borderRight: '1px solid #262626',
+        borderLeft: isEmpty ? '1px dashed #3A3A3A' : undefined,
+        borderTop: isEmpty ? '1px dashed #3A3A3A' : undefined,
+        borderBottom: isEmpty ? '1px dashed #3A3A3A' : undefined,
+      }}
     >
-      {Array.from({ length: SLOT_COUNT }, (_, i) => {
-        const slotStart = DAY_START_MIN + i * SLOT_MINUTES
-        const isHourMark = slotStart % 60 === 0
-        return (
-          <div
-            key={i}
-            onClick={() => {
-              const endMin = Math.min(slotStart + 120, DAY_END_MIN)
-              onEmptySlotClick(staffKey, minutesToTime(slotStart), minutesToTime(endMin))
-            }}
-            className="cursor-pointer hover:bg-white/[0.02] transition-colors"
-            style={{
-              height: ROW_PX,
-              borderTop: `1px solid ${isHourMark ? 'rgba(96,165,250,0.16)' : 'rgba(96,165,250,0.06)'}`,
-            }}
-          />
-        )
-      })}
+      {HOUR_MARKS.map(mark => (
+        <div
+          key={mark}
+          className="absolute left-0 right-0 pointer-events-none"
+          style={{ top: `${pctOf(mark)}%`, borderTop: '1px solid #262626' }}
+        />
+      ))}
 
       {dayJobs.map(job => {
-        const start = jobStart(job)
-        const end = jobEnd(job)
-        const top = ((start - DAY_START_MIN) / SLOT_MINUTES) * ROW_PX
-        const height = ((end - start) / SLOT_MINUTES) * ROW_PX
+        const start = Math.max(jobStart(job), VIEW_START_MIN)
+        const end = Math.min(jobEnd(job), VIEW_END_MIN)
         const lane = laneByJob.get(job.id) ?? 0
         const widthPct = 100 / totalLanes
         return (
           <JobBlock
             key={job.id}
             job={job}
-            top={top}
-            height={height}
+            topPct={pctOf(start)}
+            heightPct={pctOf(end) - pctOf(start)}
             leftPct={lane * widthPct}
             widthPct={widthPct}
+            onOpen={onOpen}
             onReschedule={onReschedule}
-            onHover={onHover}
-            onMove={onMove}
-            onLeave={onLeave}
           />
         )
       })}
@@ -227,16 +223,99 @@ function DayColumn({
   )
 }
 
+// ─── unassigned strip (below the grid) ───────────────────────────────────────
+
+function UnassignedCard({ job, onOpen, onReschedule }: { job: Job; onOpen: (job: Job) => void; onReschedule: (job: Job) => void }) {
+  const color = colorForStatus(job.status)
+  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({ id: job.id, data: { job } })
+  const { elRef, longPressFiredRef } = useLongPressReschedule(job, onReschedule)
+
+  function handleClick(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (longPressFiredRef.current) { longPressFiredRef.current = false; return }
+    onOpen(job)
+  }
+  function handleContextMenu(e: React.MouseEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    onReschedule(job)
+  }
+
+  return (
+    <div
+      ref={(el) => { setNodeRef(el); elRef.current = el }}
+      {...listeners}
+      {...attributes}
+      onClick={handleClick}
+      onContextMenu={handleContextMenu}
+      className="shrink-0 w-44 rounded-md px-2.5 py-1.5 cursor-pointer select-none hover:brightness-125 transition-[filter]"
+      style={{
+        background: `${color.solid}29`,
+        borderLeft: `3px solid ${color.solid}`,
+        touchAction: 'none',
+        WebkitTouchCallout: 'none',
+        opacity: isDragging ? 0.3 : 1,
+      }}
+    >
+      <p className="text-[12px] font-semibold leading-snug text-white truncate">{job.title ?? job.job_type ?? 'Untitled'}</p>
+      <p className="text-[11px] leading-snug text-white/70 truncate">
+        {job.clients?.name ?? 'No client'} · {formatTime(job.start_time)}
+      </p>
+    </div>
+  )
+}
+
+function UnassignedStrip({
+  jobs, onOpen, onReschedule, onAddClick,
+}: {
+  jobs: Job[]
+  onOpen: (job: Job) => void
+  onReschedule: (job: Job) => void
+  onAddClick: () => void
+}) {
+  const { setNodeRef, isOver } = useDroppable({ id: UNASSIGNED_KEY })
+  return (
+    <div className="shrink-0 mt-3 rounded-lg" style={{ background: '#1A1A2E' }}>
+      <div className="flex items-center gap-2 px-4 pt-3 pb-1.5">
+        <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Unassigned</span>
+        {jobs.length > 0 && (
+          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(107,114,128,0.3)', color: '#9CA3AF' }}>
+            {jobs.length}
+          </span>
+        )}
+        <button
+          onClick={onAddClick}
+          className="ml-auto text-[11px] font-medium text-gray-500 hover:text-white transition-colors"
+        >
+          + Add job
+        </button>
+      </div>
+      <div
+        ref={setNodeRef}
+        className="flex gap-2 px-4 pb-3 overflow-x-auto min-h-[52px]"
+        style={{ background: isOver ? 'rgba(201,168,76,0.08)' : 'transparent' }}
+      >
+        {jobs.length === 0 ? (
+          <p className="text-xs text-gray-600 py-2.5">No unassigned jobs today</p>
+        ) : (
+          jobs.map(job => <UnassignedCard key={job.id} job={job} onOpen={onOpen} onReschedule={onReschedule} />)
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── main grid ──────────────────────────────────────────────────────────────
 
 export default function DayTimeGrid({
-  jobs, staffRows, hasUnassigned, isToday,
-  onReschedulePicker, onHover, onMove, onLeave, onEmptySlotClick, onDragReschedule,
+  jobs, staffRows, isToday,
+  onOpenDetail, onReschedulePicker, onEmptySlotClick, onDragReschedule,
 }: Props) {
   const [activeJob, setActiveJob] = useState<Job | null>(null)
   const sensors = useScheduleSensors()
-  const containerRef = useRef<HTMLDivElement | null>(null)
+  const bodyRef = useRef<HTMLDivElement | null>(null)
   const [nowMin, setNowMin] = useState<number | null>(null)
+  const [staffPage, setStaffPage] = useState(0)
 
   useEffect(() => {
     // Subscribing to the live clock — there's no React state this could be
@@ -248,19 +327,19 @@ export default function DayTimeGrid({
     return () => clearInterval(interval)
   }, [isToday])
 
-  // Skip the early-morning dead zone by default so the working hours are in view.
-  useEffect(() => {
-    if (!containerRef.current) return
-    const anchor = isToday && nowMin != null ? Math.max(nowMin - 60, DAY_START_MIN) : 7 * 60
-    containerRef.current.scrollTop = ((anchor - DAY_START_MIN) / SLOT_MINUTES) * ROW_PX
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isToday])
+  // Clamp rather than correct via effect — staffRows can shrink (e.g. a
+  // staff member's last job today gets reassigned away) leaving staffPage
+  // pointing past the new last page.
+  const pageCount = Math.max(1, Math.ceil(staffRows.length / MAX_VISIBLE_STAFF))
+  const safeStaffPage = Math.min(staffPage, pageCount - 1)
+  const visibleStaff = staffRows.slice(safeStaffPage * MAX_VISIBLE_STAFF, safeStaffPage * MAX_VISIBLE_STAFF + MAX_VISIBLE_STAFF)
 
   const jobsByStaff: Record<string, Job[]> = {}
+  const unassignedJobs: Job[] = []
   jobs.forEach(job => {
-    const key = job.staff_id ?? UNASSIGNED_KEY
-    if (!jobsByStaff[key]) jobsByStaff[key] = []
-    jobsByStaff[key].push(job)
+    if (!job.staff_id) { unassignedJobs.push(job); return }
+    if (!jobsByStaff[job.staff_id]) jobsByStaff[job.staff_id] = []
+    jobsByStaff[job.staff_id].push(job)
   })
 
   function handleDragStart(event: DragStartEvent) {
@@ -276,11 +355,22 @@ export default function DayTimeGrid({
 
     const fromStaffKey = job.staff_id ?? UNASSIGNED_KEY
     const toStaffKey = String(over.id)
+
+    // Dragging into/within the Unassigned strip never moves it in time —
+    // just changes (or keeps) the assignment.
+    if (toStaffKey === UNASSIGNED_KEY) {
+      if (fromStaffKey === UNASSIGNED_KEY) return
+      const { start, end } = { start: jobStart(job), end: jobEnd(job) }
+      onDragReschedule({ job, toStaffKey, newStartTime: minutesToTime(start), newEndTime: minutesToTime(end) })
+      return
+    }
+
+    const pxPerMin = (bodyRef.current?.clientHeight ?? VIEW_RANGE_MIN) / VIEW_RANGE_MIN
     const fromStart = jobStart(job)
     const duration = jobEnd(job) - fromStart
-
-    const rawNewStart = fromStart + Math.round(delta.y / ROW_PX) * SLOT_MINUTES
-    const newStart = Math.max(DAY_START_MIN, Math.min(rawNewStart, DAY_END_MIN - duration))
+    const deltaMinutes = Math.round((delta.y / pxPerMin) / SLOT_MINUTES) * SLOT_MINUTES
+    const rawNewStart = fromStart + deltaMinutes
+    const newStart = Math.max(VIEW_START_MIN, Math.min(rawNewStart, VIEW_END_MIN - duration))
 
     if (toStaffKey === fromStaffKey && newStart === fromStart) return
 
@@ -292,122 +382,126 @@ export default function DayTimeGrid({
     })
   }
 
-  const nowTop = nowMin != null
-    ? Math.max(0, Math.min(((nowMin - DAY_START_MIN) / SLOT_MINUTES) * ROW_PX, GRID_HEIGHT))
-    : null
-
-  const columns = [
-    ...staffRows.map(s => ({ key: s.id, label: s.name })),
-    ...(hasUnassigned ? [{ key: UNASSIGNED_KEY, label: 'Unassigned' }] : []),
-  ]
+  const nowPct = nowMin != null && nowMin >= VIEW_START_MIN && nowMin <= VIEW_END_MIN ? pctOf(nowMin) : null
 
   return (
-    <div
-      className="rounded-lg overflow-hidden"
-      style={{
-        background: 'radial-gradient(ellipse 1200px 460px at 50% 0%, rgba(59,130,246,0.14), transparent 70%), #1A1A2E',
-        boxShadow: '0 0 50px rgba(59,130,246,0.1), inset 0 0 0 1px rgba(96,165,250,0.14)',
-      }}
-    >
-      <div ref={containerRef} className="overflow-y-auto overflow-x-hidden h-[calc(100vh-230px)]">
-        <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-          <div className="min-w-full">
-            {/* Header row */}
-            <div className="flex sticky top-0 z-20">
-              <div
-                className="shrink-0 sticky left-0 z-30 flex items-end justify-center pb-2"
-                style={{ width: AXIS_WIDTH, background: '#1A1A2E', borderBottom: '1px solid rgba(96,165,250,0.16)', borderRight: '1px solid rgba(96,165,250,0.12)' }}
-              >
-                <span className="text-[10px] font-semibold uppercase tracking-widest text-blue-300/40">Time</span>
-              </div>
-              {columns.map(col => (
-                <div
-                  key={col.key}
-                  className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1.5 py-3 px-2"
-                  style={{
-                    background: '#1A1A2E',
-                    borderBottom: isToday ? '2px solid #C9A84C' : '1px solid rgba(96,165,250,0.16)',
-                    boxShadow: isToday ? 'inset 0 -10px 14px -10px rgba(201, 168, 76,0.4)' : undefined,
-                  }}
+    <div className="h-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
+      <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="flex-1 min-h-0 flex flex-col">
+          {/* Header row */}
+          <div className="flex items-center shrink-0" style={{ borderBottom: '1px solid #262626' }}>
+            <div className="shrink-0 flex items-center justify-center" style={{ width: AXIS_WIDTH }}>
+              {pageCount > 1 && (
+                <button
+                  onClick={() => setStaffPage(p => Math.max(0, p - 1))}
+                  disabled={safeStaffPage === 0}
+                  className="p-1 text-gray-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                  aria-label="Previous staff"
                 >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="15 18 9 12 15 6" />
+                  </svg>
+                </button>
+              )}
+            </div>
+            {visibleStaff.map(col => {
+              const staffColor = colorForStaff(col.id)
+              return (
+                <div key={col.id} className="flex-1 min-w-0 flex flex-col items-center justify-center gap-1 py-2.5 px-2">
                   <span
                     className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold text-white shrink-0"
-                    style={{
-                      background: col.key === UNASSIGNED_KEY ? '#475569' : '#C9A84C',
-                      boxShadow: col.key === UNASSIGNED_KEY ? undefined : '0 0 10px rgba(201, 168, 76,0.5)',
-                    }}
+                    style={{ background: staffColor.solid }}
                   >
-                    {col.label.charAt(0).toUpperCase()}
+                    {col.name.charAt(0).toUpperCase()}
                   </span>
-                  <span className="text-[12px] font-medium text-white/85 truncate max-w-full">{col.label}</span>
+                  <span className="text-[12px] font-medium text-white/85 truncate max-w-full">{firstName(col.name)}</span>
                 </div>
-              ))}
-            </div>
-
-            {/* Body */}
-            <div className="relative flex" style={{ height: GRID_HEIGHT }}>
-              <div
-                className="shrink-0 sticky left-0 z-10"
-                style={{ width: AXIS_WIDTH, background: '#1A1A2E', borderRight: '1px solid rgba(96,165,250,0.12)' }}
-              >
-                {Array.from({ length: SLOT_COUNT }, (_, i) => {
-                  const mins = DAY_START_MIN + i * SLOT_MINUTES
-                  const label = timeAxisLabel(mins)
-                  return (
-                    <div key={i} style={{ height: ROW_PX }} className="relative">
-                      {label && (
-                        <span className="absolute -top-2 right-2 text-[10px] text-blue-200/40 font-medium">
-                          {label}
-                        </span>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-
-              {columns.map(col => (
-                <DayColumn
-                  key={col.key}
-                  staffKey={col.key}
-                  dayJobs={jobsByStaff[col.key] ?? []}
-                  onEmptySlotClick={onEmptySlotClick}
-                  onReschedule={onReschedulePicker}
-                  onHover={onHover}
-                  onMove={onMove}
-                  onLeave={onLeave}
-                />
-              ))}
-
-              {nowTop != null && (
-                <>
-                  <div
-                    className="absolute pointer-events-none"
-                    style={{ top: nowTop, left: AXIS_WIDTH, right: 0, height: 2, background: '#C9A84C', boxShadow: '0 0 8px #C9A84C, 0 0 2px #C9A84C' }}
-                  />
-                  <div
-                    className="absolute pointer-events-none rounded-full"
-                    style={{ top: nowTop - 4, left: AXIS_WIDTH - 5, width: 10, height: 10, background: '#C9A84C', boxShadow: '0 0 8px #C9A84C' }}
-                  />
-                </>
+              )
+            })}
+            <div className="shrink-0 flex items-center justify-center" style={{ width: AXIS_WIDTH }}>
+              {pageCount > 1 && (
+                <button
+                  onClick={() => setStaffPage(p => Math.min(pageCount - 1, p + 1))}
+                  disabled={safeStaffPage >= pageCount - 1}
+                  className="p-1 text-gray-500 hover:text-white disabled:opacity-20 disabled:pointer-events-none transition-colors"
+                  aria-label="Next staff"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="9 18 15 12 9 6" />
+                  </svg>
+                </button>
               )}
             </div>
           </div>
 
-          <DragOverlay>
-            {activeJob && (
-              <div
-                className="rounded-lg px-2 py-1 w-40"
-                style={{
-                  height: Math.max(((jobEnd(activeJob) - jobStart(activeJob)) / SLOT_MINUTES) * ROW_PX - 2, 26),
-                  ...glassCardStyle(colorForStaff(activeJob.staff_id).rgb),
-                }}
-              >
-                <p className="text-[12px] font-bold text-white truncate">{activeJob.title ?? activeJob.job_type ?? 'Untitled'}</p>
+          {/* Body */}
+          <div ref={bodyRef} className="relative flex-1 min-h-0 flex">
+            <div className="shrink-0 relative" style={{ width: AXIS_WIDTH }}>
+              {HOUR_MARKS.map(mark => (
+                <span
+                  key={mark}
+                  className="absolute right-1.5 text-xs text-gray-500 -translate-y-1/2"
+                  style={{ top: `${pctOf(mark)}%` }}
+                >
+                  {hourLabel(mark)}
+                </span>
+              ))}
+            </div>
+
+            {visibleStaff.length === 0 ? (
+              <div className="flex-1 flex items-center justify-center">
+                <p className="text-sm text-gray-500">No staff to display</p>
               </div>
+            ) : (
+              visibleStaff.map(col => (
+                <DayColumn
+                  key={col.id}
+                  staffKey={col.id}
+                  dayJobs={jobsByStaff[col.id] ?? []}
+                  onEmptySlotClick={onEmptySlotClick}
+                  onOpen={onOpenDetail}
+                  onReschedule={onReschedulePicker}
+                />
+              ))
             )}
-          </DragOverlay>
-        </DndContext>
-      </div>
+
+            {nowPct != null && (
+              <>
+                <div
+                  className="absolute pointer-events-none"
+                  style={{ top: `${nowPct}%`, left: AXIS_WIDTH, right: 0, height: 2, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
+                />
+                <div
+                  className="absolute pointer-events-none rounded-full"
+                  style={{ top: `calc(${nowPct}% - 4px)`, left: AXIS_WIDTH - 5, width: 10, height: 10, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
+                />
+              </>
+            )}
+          </div>
+        </div>
+
+        <UnassignedStrip
+          jobs={unassignedJobs}
+          onOpen={onOpenDetail}
+          onReschedule={onReschedulePicker}
+          onAddClick={() => onEmptySlotClick(UNASSIGNED_KEY, '08:00', '10:00')}
+        />
+
+        <DragOverlay>
+          {activeJob && (
+            <div
+              className="rounded-md px-2 py-1 w-40"
+              style={{
+                minHeight: MIN_BLOCK_PX,
+                background: `${colorForStatus(activeJob.status).solid}29`,
+                borderLeft: `3px solid ${colorForStatus(activeJob.status).solid}`,
+              }}
+            >
+              <p className="text-[12px] font-semibold text-white truncate">{activeJob.title ?? activeJob.job_type ?? 'Untitled'}</p>
+            </div>
+          )}
+        </DragOverlay>
+      </DndContext>
     </div>
   )
 }

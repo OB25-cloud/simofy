@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Script from 'next/script'
 import type { Job } from '@/lib/types'
 import { TOWN_COORDS } from '@/lib/townMatch'
@@ -17,11 +17,11 @@ const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 
 const STATUS_COLOR: Record<string, string> = {
   pending: '#6B7280',
-  scheduled: '#3b82f6',
-  in_progress: '#C9A84C',
-  complete: '#22c55e',
-  invoiced: '#8b5cf6',
-  cancelled: '#ef4444',
+  scheduled: '#3B82F6',
+  in_progress: '#F59E0B',
+  complete: '#22C55E',
+  invoiced: '#22C55E',
+  cancelled: '#EF4444',
 }
 
 // ─── minimal ambient Leaflet typings (CDN global, no @types package) ────────
@@ -97,7 +97,7 @@ function escapeHtml(s: string): string {
 
 // ─── component ───────────────────────────────────────────────────────────────
 
-export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
+export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
   // Defensive: if Leaflet's script tag is already loaded (e.g. this
   // component remounted while the global <script> persisted in the
   // document — next/script's onLoad won't fire a second time for an
@@ -107,6 +107,22 @@ export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<LeafletMap | null>(null)
   const layerGroupRef = useRef<LeafletLayerGroup | null>(null)
+
+  // Client-side filters over whatever range of jobs is currently loaded
+  // (the Day/Week toggle above still controls what that range actually is).
+  const [dateFilter, setDateFilter] = useState('all')
+  const [staffFilter, setStaffFilter] = useState('all')
+
+  const dateOptions = [...new Set(allJobs.map(j => j.scheduled_date?.split('T')[0]).filter((d): d is string => !!d))].sort()
+  const staffOptions = [...new Map(allJobs.filter(j => j.staff_id && j.staff?.name).map(j => [j.staff_id as string, j.staff!.name])).entries()]
+    .sort((a, b) => a[1].localeCompare(b[1]))
+
+  const jobs = useMemo(() => allJobs.filter(j => {
+    if (dateFilter !== 'all' && j.scheduled_date?.split('T')[0] !== dateFilter) return false
+    if (staffFilter === 'unassigned' && j.staff_id) return false
+    if (staffFilter !== 'all' && staffFilter !== 'unassigned' && j.staff_id !== staffFilter) return false
+    return true
+  }), [allJobs, dateFilter, staffFilter])
 
   // Create the map once Leaflet has loaded
   useEffect(() => {
@@ -178,15 +194,35 @@ export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
   }, [jobs, leafletReady])
 
   const unlocatedCount = jobs.filter(j => !jobTown(j)).length
+  const selectClass = 'border border-[#E5E7EB] rounded-lg px-2.5 py-1.5 text-xs text-[#1A1A2E] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent'
 
   return (
-    <div>
+    <div className="h-full flex flex-col">
       <link rel="stylesheet" href={LEAFLET_CSS} />
       <Script src={LEAFLET_JS} strategy="afterInteractive" onLoad={() => setLeafletReady(true)} />
+
+      <div className="shrink-0 flex items-center gap-2 mb-3">
+        <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Filter</label>
+        <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} className={selectClass}>
+          <option value="all">All dates</option>
+          {dateOptions.map(d => (
+            <option key={d} value={d}>
+              {new Date(`${d}T00:00:00`).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}
+            </option>
+          ))}
+        </select>
+        <select value={staffFilter} onChange={e => setStaffFilter(e.target.value)} className={selectClass}>
+          <option value="all">All staff</option>
+          <option value="unassigned">Unassigned</option>
+          {staffOptions.map(([id, name]) => (
+            <option key={id} value={id}>{name}</option>
+          ))}
+        </select>
+      </div>
+
       <div
         ref={containerRef}
-        className="rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden bg-[#F4F5F7]"
-        style={{ height: 560 }}
+        className="flex-1 min-h-0 rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden bg-[#F4F5F7]"
       >
         {!leafletReady && (
           <div className="h-full flex items-center justify-center">
@@ -195,7 +231,7 @@ export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
         )}
       </div>
       {unlocatedCount > 0 && (
-        <p className="mt-3 text-xs text-[#6B7280]">
+        <p className="shrink-0 mt-3 text-xs text-[#6B7280]">
           {unlocatedCount} job{unlocatedCount !== 1 ? 's' : ''} not shown — location doesn&apos;t mention Queenstown, Wanaka or Cromwell.
         </p>
       )}

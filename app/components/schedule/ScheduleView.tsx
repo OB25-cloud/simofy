@@ -8,27 +8,9 @@ import MapView, { type ScheduleJob } from './MapView'
 import AddJobModal from '@/app/components/jobs/AddJobModal'
 import DayTimeGrid, { type DragReschedulePayload } from './DayTimeGrid'
 import WeekGrid, { type WeekDragReschedulePayload } from './WeekGrid'
-import { UNASSIGNED_KEY } from './scheduleColors'
+import JobDetailPanel from './JobDetailPanel'
+import { UNASSIGNED_KEY, colorForStatus, STATUS_LABELS } from './scheduleColors'
 import { StatCard } from '@/app/components/ui/StatCard'
-
-// ─── status colours (hover-tooltip status badge only) ────────────────────────
-
-const STATUS_BADGE: Record<string, { bg: string; text: string }> = {
-  pending:     { bg: '#F4F5F7', text: '#6B7280' },
-  scheduled:   { bg: '#dbeafe', text: '#1e40af' },
-  in_progress: { bg: '#fdf0d5', text: '#92400e' },
-  complete:    { bg: '#DCFCE7', text: '#15803D' },
-  invoiced:    { bg: '#ede9fe', text: '#5b21b6' },
-  cancelled:   { bg: '#fee2e2', text: '#b91c1c' },
-}
-const STATUS_LABEL: Record<string, string> = {
-  pending: 'Pending',
-  scheduled: 'Scheduled',
-  in_progress: 'In Progress',
-  complete: 'Complete',
-  invoiced: 'Invoiced',
-  cancelled: 'Cancelled',
-}
 
 // ─── date helpers ───────────────────────────────────────────────────────────────
 
@@ -60,7 +42,7 @@ function addDays(d: Date, n: number): Date {
 }
 
 function formatWeekRange(start: Date): string {
-  const end = addDays(start, 5) // Mon–Sat
+  const end = addDays(start, 6) // Mon–Sun
   const opts: Intl.DateTimeFormatOptions = { month: 'long' }
   const startMonth = start.toLocaleDateString('en-NZ', opts)
   const endMonth = end.toLocaleDateString('en-NZ', opts)
@@ -77,8 +59,9 @@ function formatModalDate(dateKey: string): string {
   })
 }
 
+// Mon–Sun, 7 days.
 function buildWeekDays(weekStart: Date): Date[] {
-  return Array.from({ length: 6 }, (_, i) => addDays(weekStart, i))
+  return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
 }
 
 function jobTimes(job: Job): { start: string; end: string } {
@@ -366,44 +349,6 @@ function ReschedulePickerModal({
   )
 }
 
-// ─── glass tooltip ────────────────────────────────────────────────────────────
-
-function JobTooltip({ job, x, y }: { job: Job; x: number; y: number }) {
-  const badge = STATUS_BADGE[job.status ?? ''] ?? STATUS_BADGE.pending
-  const label = STATUS_LABEL[job.status ?? ''] ?? job.status ?? 'Pending'
-
-  return (
-    <div
-      className="fixed z-[60] pointer-events-none w-64 rounded-lg bg-[#1A1A2E] text-white px-3.5 py-3 text-xs"
-      style={{
-        left: x + 14,
-        top: y + 14,
-        border: '1px solid rgba(96,165,250,0.25)',
-        boxShadow: '0 0 24px rgba(59,130,246,0.25), 0 10px 30px rgba(0,0,0,0.45)',
-      }}
-    >
-      <p className="text-sm font-semibold mb-1.5">{job.title ?? job.job_type ?? 'Untitled job'}</p>
-      <span
-        className="inline-block px-2 py-0.5 rounded-full text-[10px] font-semibold mb-2"
-        style={{ background: badge.bg, color: badge.text }}
-      >
-        {label}
-      </span>
-      <div className="space-y-1 text-gray-300">
-        {job.clients?.name && <p><span className="text-[#6B7280]">Client:</span> {job.clients.name}</p>}
-        {job.job_type && <p><span className="text-[#6B7280]">Type:</span> {job.job_type}</p>}
-        {job.location && <p><span className="text-[#6B7280]">Location:</span> {job.location}</p>}
-        {job.scheduled_date && (
-          <p><span className="text-[#6B7280]">Scheduled:</span> {formatModalDate(job.scheduled_date.split('T')[0])}</p>
-        )}
-        {job.start_time && job.end_time && (
-          <p><span className="text-[#6B7280]">Time:</span> {formatTime(job.start_time)} – {formatTime(job.end_time)}</p>
-        )}
-      </div>
-    </div>
-  )
-}
-
 // ─── toast ────────────────────────────────────────────────────────────────────
 
 function Toast({ message }: { message: string }) {
@@ -418,6 +363,56 @@ function Toast({ message }: { message: string }) {
         </svg>
         {message}
       </div>
+    </div>
+  )
+}
+
+// ─── mobile list view ─────────────────────────────────────────────────────────
+// "On mobile switch to a simple list view of today's jobs sorted by time" —
+// always today, regardless of which day/week is selected in the desktop grid.
+
+function MobileJobList({ jobs, todayKey, onOpen }: { jobs: Job[]; todayKey: string; onOpen: (job: Job) => void }) {
+  const todaysJobs = useMemo(
+    () => jobs
+      .filter(j => j.scheduled_date?.split('T')[0] === todayKey)
+      .sort((a, b) => (a.start_time ?? '').localeCompare(b.start_time ?? '')),
+    [jobs, todayKey],
+  )
+
+  if (todaysJobs.length === 0) {
+    return (
+      <div className="rounded-xl border border-[#E5E7EB] bg-white py-12 text-center">
+        <p className="text-sm text-[#6B7280]">No jobs scheduled for today</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm divide-y divide-[#F4F5F7]">
+      {todaysJobs.map(job => {
+        const color = colorForStatus(job.status)
+        return (
+          <button
+            key={job.id}
+            onClick={() => onOpen(job)}
+            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[#F9FAFB] transition-colors"
+          >
+            <span className="shrink-0 w-1 h-10 rounded-full" style={{ background: color.solid }} />
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-[#1A1A2E] truncate">{job.title ?? job.job_type ?? 'Untitled'}</p>
+              <p className="text-xs text-[#6B7280] truncate mt-0.5">
+                {formatTime(job.start_time)} · {job.clients?.name ?? 'No client'} · {job.staff?.name ?? 'Unassigned'}
+              </p>
+            </div>
+            <span
+              className="shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full"
+              style={{ background: `${color.solid}1F`, color: color.solid }}
+            >
+              {STATUS_LABELS[job.status ?? ''] ?? 'Pending'}
+            </span>
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -452,7 +447,7 @@ export default function ScheduleView() {
   const [savingReschedule, setSavingReschedule] = useState(false)
   const [toast, setToast] = useState<string | null>(null)
   const [addJobPrefill, setAddJobPrefill] = useState<AddJobPrefill | null>(null)
-  const [hoverTooltip, setHoverTooltip] = useState<{ job: Job; x: number; y: number } | null>(null)
+  const [detailJob, setDetailJob] = useState<ScheduleJob | null>(null)
 
   useEffect(() => {
     if (!toast) return
@@ -481,7 +476,7 @@ export default function ScheduleView() {
     async function load() {
       setLoading(true)
       const rangeStart = isDayMode ? dayKey : weekKey
-      const rangeEnd = isDayMode ? addDays(dayDate, 1) : addDays(weekStart, 6)
+      const rangeEnd = isDayMode ? addDays(dayDate, 1) : addDays(weekStart, 7)
 
       const { data } = await supabase
         .from('jobs')
@@ -535,6 +530,11 @@ export default function ScheduleView() {
   function goToday() {
     setDayDate(startOfDay(new Date()))
     setWeekStart(getMonday(new Date()))
+  }
+  function jumpToDay(date: Date) {
+    setDayDate(startOfDay(date))
+    setView('day')
+    setGridMode('day')
   }
 
   function openReschedulePicker(job: Job) {
@@ -651,10 +651,12 @@ export default function ScheduleView() {
     ? dayDate.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
     : formatWeekRange(weekStart)
 
+  const completedTodayCount = jobs.filter(j => j.status === 'complete' && j.scheduled_date?.split('T')[0] === todayKey).length
+
   return (
-    <>
+    <div className="h-full flex flex-col">
       {/* Page header */}
-      <div className="mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+      <div className="shrink-0 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A2E]">Schedule</h1>
           <p className="mt-1 text-xs text-[#6B7280]">{headerLabel}</p>
@@ -704,7 +706,7 @@ export default function ScheduleView() {
       </div>
 
       {/* Stats bar */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="shrink-0 grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
         <StatCard label={isDayMode ? "Today's Jobs" : "This Week's Jobs"} value={String(jobs.length)} />
         <StatCard label="Staff Scheduled" value={String(staffRows.length)} />
         <StatCard
@@ -712,74 +714,67 @@ export default function ScheduleView() {
           value={String(jobs.filter(j => !j.staff_id).length)}
           danger={hasUnassigned}
         />
-        <StatCard label="Completed" value={String(jobs.filter(j => j.status === 'complete').length)} />
+        <StatCard label="Completed Today" value={String(completedTodayCount)} />
       </div>
 
-      {/* Day grid */}
-      <div style={{ display: view === 'day' ? 'block' : 'none' }}>
-        {loading ? (
-          <div className="rounded-lg py-20 text-center" style={{ background: '#1A1A2E' }}>
-            <p className="text-sm text-blue-200/40">Loading schedule…</p>
-          </div>
-        ) : (
-          <DayTimeGrid
-            jobs={dayJobs}
-            staffRows={staffRows}
-            hasUnassigned={hasUnassigned}
-            isToday={dayKey === todayKey}
-            onReschedulePicker={openReschedulePicker}
-            onHover={(j, x, y) => setHoverTooltip({ job: j, x, y })}
-            onMove={(x, y) => setHoverTooltip(prev => (prev ? { ...prev, x, y } : prev))}
-            onLeave={() => setHoverTooltip(null)}
-            onEmptySlotClick={(staffKey, startTime, endTime) => setAddJobPrefill({
-              staffId: staffKey === UNASSIGNED_KEY ? '' : staffKey, date: dayKey, startTime, endTime,
-            })}
-            onDragReschedule={handleDayDragReschedule}
-          />
-        )}
-      </div>
-
-      {/* Week grid */}
-      <div style={{ display: view === 'week' ? 'block' : 'none' }}>
-        {loading ? (
-          <div className="rounded-lg py-20 text-center" style={{ background: '#1A1A2E' }}>
-            <p className="text-sm text-blue-200/40">Loading schedule…</p>
-          </div>
-        ) : (
-          <WeekGrid
-            jobs={jobs}
-            staffRows={staffRows}
-            hasUnassigned={hasUnassigned}
-            weekDays={weekDays}
-            todayKey={todayKey}
-            toDateKey={toDateKey}
-            onReschedulePicker={openReschedulePicker}
-            onHover={(j, x, y) => setHoverTooltip({ job: j, x, y })}
-            onMove={(x, y) => setHoverTooltip(prev => (prev ? { ...prev, x, y } : prev))}
-            onLeave={() => setHoverTooltip(null)}
-            onEmptyCellClick={(staffKey, dateKey) => setAddJobPrefill({
-              staffId: staffKey === UNASSIGNED_KEY ? '' : staffKey, date: dateKey,
-            })}
-            onDragReschedule={handleWeekDragReschedule}
-          />
-        )}
-      </div>
-
-      {/* Map — stays mounted once opened (and across date changes) so
-          Leaflet's CDN script and the map instance are never torn down and
-          reinitialized; markers just update via the jobs prop instead */}
-      {mapEverShown && (
-        <div style={{ display: view === 'map' ? 'block' : 'none' }}>
-          <MapView jobs={jobs} />
+      {/* Desktop grid / week / map — hidden on mobile in favour of the simple list below */}
+      <div className="hidden md:flex flex-1 min-h-0 flex-col">
+        {/* Day grid */}
+        <div className="flex-1 min-h-0" style={{ display: view === 'day' ? 'flex' : 'none' }}>
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
+              <p className="text-sm text-gray-500">Loading schedule…</p>
+            </div>
+          ) : (
+            <DayTimeGrid
+              jobs={dayJobs}
+              staffRows={staffRows}
+              isToday={dayKey === todayKey}
+              onOpenDetail={setDetailJob}
+              onReschedulePicker={openReschedulePicker}
+              onEmptySlotClick={(staffKey, startTime, endTime) => setAddJobPrefill({
+                staffId: staffKey === UNASSIGNED_KEY ? '' : staffKey, date: dayKey, startTime, endTime,
+              })}
+              onDragReschedule={handleDayDragReschedule}
+            />
+          )}
         </div>
-      )}
-      {!loading && jobs.length === 0 && view !== 'map' && (
-        <p className="mt-6 text-center text-sm text-[#6B7280]">
-          No jobs scheduled for this {isDayMode ? 'day' : 'week'}
-        </p>
-      )}
 
-      {hoverTooltip && <JobTooltip job={hoverTooltip.job} x={hoverTooltip.x} y={hoverTooltip.y} />}
+        {/* Week grid */}
+        <div className="flex-1 min-h-0" style={{ display: view === 'week' ? 'flex' : 'none' }}>
+          {loading ? (
+            <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
+              <p className="text-sm text-gray-500">Loading schedule…</p>
+            </div>
+          ) : (
+            <WeekGrid
+              jobs={jobs}
+              weekDays={weekDays}
+              todayKey={todayKey}
+              toDateKey={toDateKey}
+              onOpenDetail={setDetailJob}
+              onReschedulePicker={openReschedulePicker}
+              onJumpToDay={jumpToDay}
+              onEmptyDayClick={(dateKeyStr) => setAddJobPrefill({ staffId: '', date: dateKeyStr })}
+              onDragReschedule={handleWeekDragReschedule}
+            />
+          )}
+        </div>
+
+        {/* Map — stays mounted once opened (and across date changes) so
+            Leaflet's CDN script and the map instance are never torn down and
+            reinitialized; markers just update via the jobs prop instead */}
+        {mapEverShown && (
+          <div className="flex-1 min-h-0" style={{ display: view === 'map' ? 'flex' : 'none' }}>
+            <MapView jobs={jobs} />
+          </div>
+        )}
+      </div>
+
+      {/* Mobile — simple list of today's jobs, sorted by time */}
+      <div className="md:hidden flex-1 min-h-0 overflow-y-auto">
+        <MobileJobList jobs={jobs} todayKey={todayKey} onOpen={setDetailJob} />
+      </div>
 
       {addJobPrefill && (
         <AddJobModal
@@ -820,7 +815,9 @@ export default function ScheduleView() {
         />
       )}
 
+      {detailJob && <JobDetailPanel job={detailJob} onClose={() => setDetailJob(null)} />}
+
       {toast && <Toast message={toast} />}
-    </>
+    </div>
   )
 }
