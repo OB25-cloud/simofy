@@ -9,6 +9,7 @@ import AddJobModal from '@/app/components/jobs/AddJobModal'
 import DayTimeGrid, { type DragReschedulePayload } from './DayTimeGrid'
 import WeekGrid, { type WeekDragReschedulePayload } from './WeekGrid'
 import { UNASSIGNED_KEY } from './scheduleColors'
+import { StatCard } from '@/app/components/ui/StatCard'
 
 // ─── status colours (hover-tooltip status badge only) ────────────────────────
 
@@ -700,6 +701,18 @@ export default function ScheduleView() {
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Stats bar */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <StatCard label={isDayMode ? "Today's Jobs" : "This Week's Jobs"} value={String(jobs.length)} />
+        <StatCard label="Staff Scheduled" value={String(staffRows.length)} />
+        <StatCard
+          label="Unassigned"
+          value={String(jobs.filter(j => !j.staff_id).length)}
+          danger={hasUnassigned}
+        />
+        <StatCard label="Completed" value={String(jobs.filter(j => j.status === 'complete').length)} />
       </div>
 
       {/* Day grid */}
