@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -25,7 +25,7 @@ export function StatusBadge({ status }: { status: string | null }) {
 
 function SearchIcon() {
   return (
-    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   )
@@ -80,7 +80,7 @@ export default function LeadsView({ leads, openModal }: Props) {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Leads</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A2E]">Leads</h1>
           <p className="mt-0.5 text-sm text-gray-500">{leads.length} {leads.length === 1 ? 'lead' : 'leads'} total</p>
         </div>
         <button
@@ -96,8 +96,8 @@ export default function LeadsView({ leads, openModal }: Props) {
       {/* Stats bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {stats.map(s => (
-          <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
+          <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
             <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#111827' }}>
               {s.value}
             </p>
@@ -114,13 +114,13 @@ export default function LeadsView({ leads, openModal }: Props) {
             placeholder="Search by name, email, phone, source or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-gray-600"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-[#6B7280]"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -133,24 +133,24 @@ export default function LeadsView({ leads, openModal }: Props) {
 
       {/* Table */}
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
-          <p className="text-sm text-gray-400">
+        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
+          <p className="text-sm text-[#6B7280]">
             {search || statusFilter !== 'all' ? 'No leads match the current filters.' : 'No leads yet. Add your first lead above.'}
           </p>
         </div>
       ) : (
-        <div className="rounded-lg border border-gray-100 overflow-x-auto">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Email</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Phone</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Message</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Notes</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Source</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Received</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
+              <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Email</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Phone</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Message</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Notes</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Source</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Received</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Status</th>
                 <th className="px-4 py-3 w-8" />
               </tr>
             </thead>
@@ -159,10 +159,10 @@ export default function LeadsView({ leads, openModal }: Props) {
                 <tr
                   key={lead.id}
                   onClick={() => router.push(`/leads/${lead.id}`)}
-                  className="cursor-pointer hover:bg-gray-50 transition-colors group"
+                  className="cursor-pointer hover:bg-[#F9FAFB] transition-colors group"
                   style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                 >
-                  <td className="px-4 py-3 font-medium text-gray-900">
+                  <td className="px-4 py-3 font-medium text-[#1A1A2E]">
                     {lead.name ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 text-gray-500">
@@ -176,7 +176,7 @@ export default function LeadsView({ leads, openModal }: Props) {
                       ? <span className="block truncate">{lead.message}</span>
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-400 max-w-[140px] text-xs">
+                  <td className="px-4 py-3 text-[#6B7280] max-w-[140px] text-xs">
                     {lead.notes
                       ? <span className="block truncate">{lead.notes}</span>
                       : <span className="text-gray-300">—</span>}
@@ -184,7 +184,7 @@ export default function LeadsView({ leads, openModal }: Props) {
                   <td className="px-4 py-3 text-gray-500">
                     {lead.source ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
+                  <td className="px-4 py-3 text-[#6B7280] text-xs">
                     {new Date(lead.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3">

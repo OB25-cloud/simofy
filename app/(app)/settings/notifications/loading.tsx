@@ -8,7 +8,7 @@ export default function Loading() {
         <div className="h-3.5 w-2/3 bg-gray-100 rounded animate-pulse" />
       </div>
 
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
         {[...Array(5)].map((_, i) => (
           <div
             key={i}

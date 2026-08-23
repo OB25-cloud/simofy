@@ -1,4 +1,4 @@
-﻿import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { supabase as db } from '@/lib/supabase'
@@ -40,8 +40,8 @@ export default async function MyJobsPage() {
   if (!staffRecord) {
     return (
       <div className="p-4 md:p-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2">My Jobs</h1>
-        <p className="text-sm text-gray-400">
+        <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">My Jobs</h1>
+        <p className="text-sm text-[#6B7280]">
           No staff record found for your account ({user.email}). Contact your administrator.
         </p>
       </div>
@@ -73,34 +73,34 @@ export default async function MyJobsPage() {
   return (
     <div className="p-4 md:p-8 max-w-2xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">My Jobs</h1>
-        <p className="mt-0.5 text-sm text-gray-400">Jobs assigned to {staffRecord.name}</p>
+        <h1 className="text-2xl font-bold text-[#1A1A2E]">My Jobs</h1>
+        <p className="mt-0.5 text-sm text-[#6B7280]">Jobs assigned to {staffRecord.name}</p>
       </div>
 
       {jobList.length === 0 ? (
-        <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
-          <p className="text-sm text-gray-400">No jobs assigned to you yet.</p>
+        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
+          <p className="text-sm text-[#6B7280]">No jobs assigned to you yet.</p>
         </div>
       ) : (
         <>
           {upcoming.length > 0 && (
             <div className="mb-6">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
                 Upcoming & Active
               </p>
-              <div className="rounded-lg border border-gray-100 overflow-hidden">
+              <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
                 {upcoming.map((job, i) => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors group"
+                    className="flex items-center justify-between px-5 py-4 hover:bg-[#F9FAFB] transition-colors group"
                     style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#C9A84C] transition-colors truncate">
+                      <p className="text-sm font-medium text-[#1A1A2E] group-hover:text-[#C9A84C] transition-colors truncate">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs text-[#6B7280] mt-0.5">
                         {job.clients?.name ?? '—'}
                         {job.scheduled_date && (
                           <span> · {new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
@@ -116,20 +116,20 @@ export default async function MyJobsPage() {
 
           {past.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Past</p>
-              <div className="rounded-lg border border-gray-100 overflow-hidden">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Past</p>
+              <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
                 {past.map((job, i) => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors group opacity-60 hover:opacity-100"
+                    className="flex items-center justify-between px-5 py-4 hover:bg-[#F9FAFB] transition-colors group opacity-60 hover:opacity-100"
                     style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#C9A84C] transition-colors truncate">
+                      <p className="text-sm font-medium text-[#1A1A2E] group-hover:text-[#C9A84C] transition-colors truncate">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-xs text-[#6B7280] mt-0.5">
                         {job.clients?.name ?? '—'}
                         {job.scheduled_date && (
                           <span> · {new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>

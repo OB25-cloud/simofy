@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import type { Site } from '@/lib/types'
@@ -6,11 +6,11 @@ import AddSiteModal from './AddSiteModal'
 
 function SiteCard({ site }: { site: Site }) {
   return (
-    <div className="rounded-lg border border-gray-100 p-4">
+    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
       <div className="mb-3">
-        <p className="text-sm font-medium text-gray-900">{site.address}</p>
+        <p className="text-sm font-medium text-[#1A1A2E]">{site.address}</p>
         {site.location && (
-          <p className="text-xs text-gray-400 mt-0.5">{site.location}</p>
+          <p className="text-xs text-[#6B7280] mt-0.5">{site.location}</p>
         )}
       </div>
 
@@ -25,8 +25,8 @@ function SiteCard({ site }: { site: Site }) {
                 </svg>
               </span>
               <div>
-                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-0.5">Access</p>
-                <p className="text-xs text-gray-600 leading-relaxed">{site.access_notes}</p>
+                <p className="text-xs font-medium text-[#6B7280] uppercase tracking-wider mb-0.5">Access</p>
+                <p className="text-xs text-[#6B7280] leading-relaxed">{site.access_notes}</p>
               </div>
             </div>
           )}
@@ -40,8 +40,8 @@ function SiteCard({ site }: { site: Site }) {
                 </svg>
               </span>
               <div>
-                <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-0.5">Hazards</p>
-                <p className="text-xs text-gray-600 leading-relaxed">{site.hazard_notes}</p>
+                <p className="text-xs font-medium text-[#6B7280] uppercase tracking-wider mb-0.5">Hazards</p>
+                <p className="text-xs text-[#6B7280] leading-relaxed">{site.hazard_notes}</p>
               </div>
             </div>
           )}
@@ -63,9 +63,9 @@ export default function SitesSection({
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-900">
+        <h2 className="text-base font-semibold text-[#1A1A2E]">
           Sites
-          <span className="ml-2 text-sm font-normal text-gray-400">({sites.length})</span>
+          <span className="ml-2 text-sm font-normal text-[#6B7280]">({sites.length})</span>
         </h2>
         <button
           onClick={() => setShowModal(true)}
@@ -81,8 +81,8 @@ export default function SitesSection({
       </div>
 
       {sites.length === 0 ? (
-        <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-          <p className="text-sm text-gray-400">No sites added yet</p>
+        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+          <p className="text-sm text-[#6B7280]">No sites added yet</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4">

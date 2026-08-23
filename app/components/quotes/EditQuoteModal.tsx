@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useMemo, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -12,8 +12,8 @@ const STATUS_OPTIONS = [
   { value: 'expired',  label: 'Expired' },
 ]
 
-const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white'
-const numClass   = 'w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#C9A84C] bg-white text-right'
+const inputClass = 'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C] bg-white'
+const numClass   = 'w-full border border-[#E5E7EB] rounded-md px-2 py-2 text-sm text-[#1A1A2E] focus:outline-none focus:border-[#C9A84C] bg-white text-right'
 
 type LineItem = { id: string; description: string; quantity: string; unit_price: string }
 
@@ -138,9 +138,9 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className="bg-white w-full h-full sm:h-[92vh] sm:max-w-2xl sm:rounded-xl shadow-2xl flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 shrink-0">
-          <h2 className="text-sm font-semibold text-gray-900">Edit Quote</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] shrink-0">
+          <h2 className="text-sm font-semibold text-[#1A1A2E]">Edit Quote</h2>
+          <button onClick={onClose} className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -152,7 +152,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
                   Client <span style={{ color: '#C9A84C' }}>*</span>
                 </label>
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
@@ -163,7 +163,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Status</label>
+                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Status</label>
                 <select value={form.status} onChange={setField('status')} className={inputClass}>
                   {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -172,7 +172,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Linked Job</label>
+                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Linked Job</label>
                 <select value={form.job_id} onChange={setField('job_id')} className={inputClass}>
                   <option value="">No linked job</option>
                   {filteredJobs.map(j => (
@@ -181,20 +181,20 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Valid Until</label>
+                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Valid Until</label>
                 <input type="date" value={form.valid_until} onChange={setField('valid_until')} className={inputClass} />
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Notes</label>
               <textarea value={form.notes} onChange={setField('notes')} rows={2} className={`${inputClass} resize-none`} />
             </div>
 
             {/* Line Items */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Line Items</p>
+                <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Line Items</p>
                 <button type="button" onClick={addItem} className="flex items-center gap-1 text-xs font-medium transition-opacity hover:opacity-70" style={{ color: '#C9A84C' }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                     <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -204,7 +204,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
               </div>
 
               {loadingItems ? (
-                <p className="text-xs text-gray-400 py-3 text-center">Loading items…</p>
+                <p className="text-xs text-[#6B7280] py-3 text-center">Loading items…</p>
               ) : (
                 <div className="space-y-3">
                   {lineItems.map((item, idx) => (
@@ -213,11 +213,11 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
                       <div className="grid grid-cols-[60px_1fr_80px_28px] gap-2 items-center">
                         <input type="number" value={item.quantity} onChange={e => setItem(item.id, 'quantity', e.target.value)} min="0" step="0.01" className={numClass} />
                         <div className="relative">
-                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
+                          <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6B7280] text-sm pointer-events-none">$</span>
                           <input type="number" value={item.unit_price} onChange={e => setItem(item.id, 'unit_price', e.target.value)} min="0" step="0.01" placeholder="0.00" className={`${numClass} pl-6`} />
                         </div>
-                        <span className="text-sm text-right text-gray-600 tabular-nums">${calc.amounts[idx].toFixed(2)}</span>
-                        <button type="button" onClick={() => removeItem(item.id)} disabled={lineItems.length === 1} className="flex items-center justify-center w-6 h-6 rounded text-gray-300 hover:text-red-400 hover:bg-red-50 transition-colors disabled:opacity-0" aria-label="Remove">
+                        <span className="text-sm text-right text-[#6B7280] tabular-nums">${calc.amounts[idx].toFixed(2)}</span>
+                        <button type="button" onClick={() => removeItem(item.id)} disabled={lineItems.length === 1} className="flex items-center justify-center w-6 h-6 rounded text-gray-300 hover:text-[#EF4444]/70 hover:bg-red-50 transition-colors disabled:opacity-0" aria-label="Remove">
                           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                             <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                           </svg>
@@ -228,7 +228,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
                 </div>
               )}
 
-              <div className="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+              <div className="mt-4 pt-4 border-t border-[#E5E7EB] flex justify-end">
                 <div className="w-52 space-y-1.5">
                   <div className="flex justify-between text-sm text-gray-500">
                     <span>Subtotal</span><span className="tabular-nums">${calc.subtotal.toFixed(2)}</span>
@@ -236,18 +236,18 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
                   <div className="flex justify-between text-sm text-gray-500">
                     <span>GST (15%)</span><span className="tabular-nums">${calc.gst.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-semibold text-gray-900 pt-2 border-t border-gray-200">
+                  <div className="flex justify-between text-sm font-semibold text-[#1A1A2E] pt-2 border-t border-[#E5E7EB]">
                     <span>Total</span><span className="tabular-nums">${calc.total.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {error && <p className="text-xs text-red-500">{error}</p>}
+            {error && <p className="text-xs text-[#EF4444]">{error}</p>}
           </div>
 
-          <div className="flex justify-end gap-3 px-6 py-4 border-t border-gray-100 shrink-0">
-            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] shrink-0">
+            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
               Cancel
             </button>
             <button type="submit" disabled={loading || loadingItems} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>

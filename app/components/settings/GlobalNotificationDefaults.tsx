@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -119,7 +119,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
   return (
     <div className="space-y-6">
       {/* Defaults toggles */}
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
         {NOTIFICATION_TYPES.map((type, i) => {
           const enabled = defaults[type.key]
           const isSaving = saving.has(type.key)
@@ -130,11 +130,11 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
               style={{ borderTop: i > 0 ? '1px solid #f3f4f6' : undefined }}
             >
               <div className="min-w-0 flex-1 pr-6">
-                <p className="text-sm font-medium text-gray-900">{type.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{type.description}</p>
+                <p className="text-sm font-medium text-[#1A1A2E]">{type.label}</p>
+                <p className="text-xs text-[#6B7280] mt-0.5">{type.description}</p>
                 {type.key === 'review_request' && (
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs text-gray-400">Send after</span>
+                    <span className="text-xs text-[#6B7280]">Send after</span>
                     <input
                       type="number"
                       min={1}
@@ -143,9 +143,9 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                       onChange={e => setReviewDelayHours(Number(e.target.value))}
                       onBlur={e => saveReviewDelay(Number(e.target.value))}
                       disabled={savingDelay}
-                      className="w-16 border border-gray-200 rounded px-2 py-0.5 text-xs text-gray-900 focus:outline-none focus:border-[#C9A84C] disabled:opacity-50"
+                      className="w-16 border border-[#E5E7EB] rounded px-2 py-0.5 text-xs text-[#1A1A2E] focus:outline-none focus:border-[#C9A84C] disabled:opacity-50"
                     />
-                    <span className="text-xs text-gray-400">hours after job completion</span>
+                    <span className="text-xs text-[#6B7280]">hours after job completion</span>
                   </div>
                 )}
               </div>
@@ -168,14 +168,14 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
         })}
       </div>
 
-      {error && <p className="text-xs text-red-500">{error}</p>}
+      {error && <p className="text-xs text-[#EF4444]">{error}</p>}
 
       {/* Apply to all clients */}
-      <div className="rounded-lg border border-gray-100 p-5">
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-gray-900">Apply defaults to all existing clients</p>
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-sm font-medium text-[#1A1A2E]">Apply defaults to all existing clients</p>
+            <p className="text-xs text-[#6B7280] mt-1">
               Overwrites all {clientCount} client{clientCount !== 1 ? 's' : ''}&apos; notification preferences with the defaults above.
             </p>
           </div>

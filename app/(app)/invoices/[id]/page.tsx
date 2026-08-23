@@ -45,16 +45,16 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
     <div className="p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <div className="mb-5 flex items-center gap-2 text-sm text-gray-400">
-          <Link href="/invoices" className="hover:text-gray-600 transition-colors">Invoices</Link>
+        <div className="mb-5 flex items-center gap-2 text-sm text-[#6B7280]">
+          <Link href="/invoices" className="hover:text-[#6B7280] transition-colors">Invoices</Link>
           <span>/</span>
-          <span className="text-gray-700 font-mono text-xs font-medium">{invoiceNumber(inv.id)}</span>
+          <span className="text-[#6B7280] font-mono text-xs font-medium">{invoiceNumber(inv.id)}</span>
         </div>
 
         {/* Header */}
         <div className="mb-6 flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-semibold text-gray-900 font-mono">{invoiceNumber(inv.id)}</h1>
+            <h1 className="text-2xl font-bold text-[#1A1A2E] font-mono">{invoiceNumber(inv.id)}</h1>
             <span
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
               style={{ background: statusCfg.bg, color: statusCfg.text }}

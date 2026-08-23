@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
@@ -83,7 +83,7 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="flex border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
@@ -106,12 +106,12 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
       {activeTab === 'Overview' && (
         <div className="grid grid-cols-2 gap-5">
           {/* Contact Details */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Contact Details</h2>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Contact Details</h2>
             <dl className="space-y-3.5">
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Email</dt>
-                <dd className="text-sm text-gray-900">
+                <dt className="text-xs text-[#6B7280] mb-0.5">Email</dt>
+                <dd className="text-sm text-[#1A1A2E]">
                   {staff.email ? (
                     <a href={`mailto:${staff.email}`} className="hover:underline" style={{ color: GOLD }}>
                       {staff.email}
@@ -122,8 +122,8 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Phone</dt>
-                <dd className="text-sm text-gray-900">
+                <dt className="text-xs text-[#6B7280] mb-0.5">Phone</dt>
+                <dd className="text-sm text-[#1A1A2E]">
                   {staff.phone ? (
                     <a href={`tel:${staff.phone}`} className="hover:underline" style={{ color: GOLD }}>
                       {staff.phone}
@@ -134,8 +134,8 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Member Since</dt>
-                <dd className="text-sm text-gray-900">
+                <dt className="text-xs text-[#6B7280] mb-0.5">Member Since</dt>
+                <dd className="text-sm text-[#1A1A2E]">
                   {new Date(staff.created_at).toLocaleDateString('en-NZ', {
                     day: 'numeric', month: 'long', year: 'numeric',
                   })}
@@ -145,11 +145,11 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
           </div>
 
           {/* Employment */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Employment</h2>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Employment</h2>
             <dl className="space-y-3.5">
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Role</dt>
+                <dt className="text-xs text-[#6B7280] mb-0.5">Role</dt>
                 <dd className="mt-1">
                   {roleConfig ? (
                     <span
@@ -159,20 +159,20 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                       {roleConfig.label}
                     </span>
                   ) : (
-                    <span className="text-sm text-gray-900">{staff.role ?? <span className="text-gray-300">—</span>}</span>
+                    <span className="text-sm text-[#1A1A2E]">{staff.role ?? <span className="text-gray-300">—</span>}</span>
                   )}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Pay Rate</dt>
-                <dd className="text-sm text-gray-900">
+                <dt className="text-xs text-[#6B7280] mb-0.5">Pay Rate</dt>
+                <dd className="text-sm text-[#1A1A2E]">
                   {staff.pay_rate != null
                     ? `$${Number(staff.pay_rate).toFixed(2)}/hr`
                     : <span className="text-gray-300">—</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Status</dt>
+                <dt className="text-xs text-[#6B7280] mb-0.5">Status</dt>
                 <dd className="mt-1">
                   <span
                     className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
@@ -198,22 +198,22 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
       {/* Jobs */}
       {activeTab === 'Jobs' && (
         <div>
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-[#6B7280] mb-4">
             {jobs.length} job{jobs.length !== 1 ? 's' : ''} assigned
           </p>
           {jobs.length === 0 ? (
-            <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-              <p className="text-sm text-gray-400">No jobs assigned to this staff member</p>
+            <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+              <p className="text-sm text-[#6B7280]">No jobs assigned to this staff member</p>
             </div>
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
-                    <th className="text-left px-5 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Title</th>
-                    <th className="text-left px-5 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Client</th>
-                    <th className="text-left px-5 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
-                    <th className="text-left px-5 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Scheduled</th>
+                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+                    <th className="text-left px-5 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Title</th>
+                    <th className="text-left px-5 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Client</th>
+                    <th className="text-left px-5 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Status</th>
+                    <th className="text-left px-5 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Scheduled</th>
                     <th className="px-5 py-3 w-8" />
                   </tr>
                 </thead>
@@ -221,10 +221,10 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                   {jobs.map((job, i) => (
                     <tr
                       key={job.id}
-                      className="hover:bg-gray-50 transition-colors group"
+                      className="hover:bg-[#F9FAFB] transition-colors group"
                       style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                     >
-                      <td className="px-5 py-3.5 font-medium text-gray-900">
+                      <td className="px-5 py-3.5 font-medium text-[#1A1A2E]">
                         <Link href={`/jobs/${job.id}`} className="hover:underline" style={{ color: 'inherit' }}>
                           {job.title ?? job.job_type ?? <span className="text-gray-300">—</span>}
                         </Link>
@@ -235,7 +235,7 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                       <td className="px-5 py-3.5">
                         <StatusBadge status={job.status} />
                       </td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">
                         {fmtDate(job.scheduled_date) ?? <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-5 py-3.5 text-right">
@@ -256,26 +256,26 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
       {activeTab === 'Performance' && (
         <div className="space-y-4">
           <div className="grid grid-cols-3 gap-4">
-            <div className="rounded-lg border border-gray-100 p-5 text-center">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 text-center">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
                 Completed This Month
               </p>
-              <p className="text-4xl font-bold text-gray-900">{perf.completedThisMonth}</p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-4xl font-bold text-[#1A1A2E]">{perf.completedThisMonth}</p>
+              <p className="text-xs text-[#6B7280] mt-1">
                 {new Date().toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })}
               </p>
             </div>
 
-            <div className="rounded-lg border border-gray-100 p-5 text-center">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 text-center">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
                 Completed All Time
               </p>
-              <p className="text-4xl font-bold text-gray-900">{perf.completedAllTime}</p>
-              <p className="text-xs text-gray-400 mt-1">total jobs</p>
+              <p className="text-4xl font-bold text-[#1A1A2E]">{perf.completedAllTime}</p>
+              <p className="text-xs text-[#6B7280] mt-1">total jobs</p>
             </div>
 
-            <div className="rounded-lg border border-gray-100 p-5 text-center">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 text-center">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
                 Most Common Type
               </p>
               {perf.mostCommonType ? (
@@ -286,7 +286,7 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                   >
                     {perf.mostCommonType.replace(/_/g, ' ')}
                   </p>
-                  <p className="text-xs text-gray-400 mt-1">of completed jobs</p>
+                  <p className="text-xs text-[#6B7280] mt-1">of completed jobs</p>
                 </>
               ) : (
                 <p className="text-sm text-gray-300 mt-3">No data yet</p>
@@ -296,8 +296,8 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
 
           {/* Breakdown by status */}
           {jobs.length > 0 && (
-            <div className="rounded-lg border border-gray-100 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">All Jobs by Status</p>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">All Jobs by Status</p>
               <div className="space-y-2.5">
                 {Object.entries(JOB_STATUS_CONFIG).map(([statusKey, cfg]) => {
                   const count = jobs.filter(j => j.status === statusKey).length
@@ -306,8 +306,8 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                   return (
                     <div key={statusKey}>
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-xs text-gray-600">{cfg.label}</span>
-                        <span className="text-xs text-gray-400 tabular-nums">{count}</span>
+                        <span className="text-xs text-[#6B7280]">{cfg.label}</span>
+                        <span className="text-xs text-[#6B7280] tabular-nums">{count}</span>
                       </div>
                       <div className="h-1.5 rounded-full bg-gray-100 overflow-hidden">
                         <div

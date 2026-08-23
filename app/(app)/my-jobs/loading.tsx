@@ -10,7 +10,7 @@ export default function Loading() {
       {/* Upcoming group */}
       <div className="mb-6">
         <div className="h-3 w-32 bg-gray-100 rounded animate-pulse mb-3" />
-        <div className="rounded-lg border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
@@ -30,7 +30,7 @@ export default function Loading() {
       {/* Past group */}
       <div>
         <div className="h-3 w-14 bg-gray-100 rounded animate-pulse mb-3" />
-        <div className="rounded-lg border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
           {[...Array(2)].map((_, i) => (
             <div
               key={i}

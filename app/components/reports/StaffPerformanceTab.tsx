@@ -8,8 +8,8 @@ import type { StaffPerfRow } from './types'
 export default function StaffPerformanceTab({ data }: { data: StaffPerfRow[] }) {
   if (data.length === 0) {
     return (
-      <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
-        <p className="text-sm text-gray-400">No active staff to report on</p>
+      <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
+        <p className="text-sm text-[#6B7280]">No active staff to report on</p>
       </div>
     )
   }
@@ -37,24 +37,24 @@ export default function StaffPerformanceTab({ data }: { data: StaffPerfRow[] }) 
         </ResponsiveContainer>
       </ChartCard>
 
-      <div className="rounded-lg border border-gray-100 overflow-x-auto">
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
         <table className="w-full min-w-[560px] text-sm">
           <thead>
-            <tr className="bg-gray-50 border-b border-gray-100">
-              <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Staff</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Assigned</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Completed</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Revenue</th>
-              <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Avg Job Value</th>
+            <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+              <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Staff</th>
+              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Assigned</th>
+              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Completed</th>
+              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Revenue</th>
+              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Avg Job Value</th>
             </tr>
           </thead>
           <tbody>
             {data.map((row, i) => (
               <tr key={row.name} style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}>
-                <td className="px-4 py-3 font-medium text-gray-900">{row.name}</td>
+                <td className="px-4 py-3 font-medium text-[#1A1A2E]">{row.name}</td>
                 <td className="px-4 py-3 text-right text-gray-500 tabular-nums">{row.jobsAssigned}</td>
                 <td className="px-4 py-3 text-right text-gray-500 tabular-nums">{row.jobsCompleted}</td>
-                <td className="px-4 py-3 text-right font-medium text-gray-900 tabular-nums">{moneyFormatter.format(row.revenue)}</td>
+                <td className="px-4 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">{moneyFormatter.format(row.revenue)}</td>
                 <td className="px-4 py-3 text-right text-gray-500 tabular-nums">{moneyFormatter.format(row.avgJobValue)}</td>
               </tr>
             ))}

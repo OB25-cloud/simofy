@@ -1,4 +1,4 @@
-﻿import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import ChecklistsView from '@/app/components/settings/ChecklistsView'
 import type { ChecklistTemplate, ChecklistTemplateItem } from '@/lib/types'
@@ -32,10 +32,10 @@ export default async function ChecklistsSettingsPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="px-6 py-5 border-b border-gray-100 shrink-0">
+      <div className="px-6 py-5 border-b border-[#E5E7EB] shrink-0">
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>Settings</p>
-        <h1 className="text-xl font-bold text-gray-900">Checklist Templates</h1>
-        <p className="text-sm text-gray-400 mt-0.5">Build reusable job checklists for your crew to work through on site.</p>
+        <h1 className="text-xl font-bold text-[#1A1A2E]">Checklist Templates</h1>
+        <p className="text-sm text-[#6B7280] mt-0.5">Build reusable job checklists for your crew to work through on site.</p>
       </div>
       <div className="flex-1 overflow-hidden">
         <ChecklistsView initialTemplates={templatesWithItems} />

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import RevenueTab from './RevenueTab'
@@ -27,7 +27,7 @@ export default function ReportsTabs({ revenue, jobsStats, staffPerformance, prof
 
   return (
     <div>
-      <div className="border-b border-gray-100 mb-6">
+      <div className="border-b border-[#E5E7EB] mb-6">
         <nav className="-mb-px flex gap-1 overflow-x-auto scrollbar-hidden min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key

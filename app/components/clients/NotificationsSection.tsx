@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -60,11 +60,11 @@ export default function NotificationsSection({ clientId, initialSettings }: Prop
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-gray-900">Notification Preferences</h2>
-        <span className="text-xs text-gray-400">Per-client overrides</span>
+        <h2 className="text-base font-semibold text-[#1A1A2E]">Notification Preferences</h2>
+        <span className="text-xs text-[#6B7280]">Per-client overrides</span>
       </div>
 
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
         {NOTIFICATION_TYPES.map((type, i) => {
           const enabled = settings[type.key]
           const isSaving = saving.has(type.key)
@@ -75,8 +75,8 @@ export default function NotificationsSection({ clientId, initialSettings }: Prop
               style={{ borderTop: i > 0 ? '1px solid #f3f4f6' : undefined }}
             >
               <div className="min-w-0 flex-1 pr-6">
-                <p className="text-sm font-medium text-gray-900">{type.label}</p>
-                <p className="text-xs text-gray-400 mt-0.5">{type.description}</p>
+                <p className="text-sm font-medium text-[#1A1A2E]">{type.label}</p>
+                <p className="text-xs text-[#6B7280] mt-0.5">{type.description}</p>
               </div>
               <button
                 role="switch"
@@ -102,7 +102,7 @@ export default function NotificationsSection({ clientId, initialSettings }: Prop
       </div>
 
       {error && (
-        <p className="mt-2 text-xs text-red-500">{error}</p>
+        <p className="mt-2 text-xs text-[#EF4444]">{error}</p>
       )}
     </div>
   )

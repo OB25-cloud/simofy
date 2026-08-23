@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -40,13 +40,13 @@ export default function InvoiceActions({ invoice, clients, jobs, quotes }: Props
             <button
               onClick={handleDelete}
               disabled={deleting}
-              className="px-3 py-3 sm:py-2 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-60"
+              className="px-3 py-3 sm:py-2 text-sm font-medium text-white bg-[#EF4444] rounded-md hover:bg-[#DC2626] transition-colors disabled:opacity-60"
             >
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="px-3 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-3 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
             >
               Cancel
             </button>
@@ -54,7 +54,7 @@ export default function InvoiceActions({ invoice, clients, jobs, quotes }: Props
         ) : (
           <button
             onClick={() => setConfirmDelete(true)}
-            className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           >
             Delete
           </button>

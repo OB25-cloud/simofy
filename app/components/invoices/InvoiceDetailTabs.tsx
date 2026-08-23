@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -75,7 +75,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="flex border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
@@ -99,11 +99,11 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
         <div className="space-y-4 tab-fade-in">
           <div className="grid grid-cols-2 gap-4">
             {/* Client */}
-            <div className="rounded-lg border border-gray-100 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Client</p>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Client</p>
               {invoice.clients ? (
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-900">{invoice.clients.name}</p>
+                  <p className="text-sm font-medium text-[#1A1A2E]">{invoice.clients.name}</p>
                   {invoice.clients.email && <p className="text-sm text-gray-500">{invoice.clients.email}</p>}
                   {invoice.clients.phone && <p className="text-sm text-gray-500">{invoice.clients.phone}</p>}
                 </div>
@@ -113,41 +113,41 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
             </div>
 
             {/* Details */}
-            <div className="rounded-lg border border-gray-100 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Details</p>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Details</p>
               <dl className="space-y-2">
                 <div className="flex justify-between gap-4">
-                  <dt className="text-xs text-gray-400">Status</dt>
-                  <dd className="text-xs text-gray-700 capitalize">{invoice.status ?? '—'}</dd>
+                  <dt className="text-xs text-[#6B7280]">Status</dt>
+                  <dd className="text-xs text-[#6B7280] capitalize">{invoice.status ?? '—'}</dd>
                 </div>
                 <div className="flex justify-between gap-4">
-                  <dt className="text-xs text-gray-400">Created</dt>
-                  <dd className="text-xs text-gray-700">{fmtDate(invoice.created_at)}</dd>
+                  <dt className="text-xs text-[#6B7280]">Created</dt>
+                  <dd className="text-xs text-[#6B7280]">{fmtDate(invoice.created_at)}</dd>
                 </div>
                 {invoice.due_date && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-xs text-gray-400">Due Date</dt>
-                    <dd className="text-xs text-gray-700">{fmtDate(invoice.due_date)}</dd>
+                    <dt className="text-xs text-[#6B7280]">Due Date</dt>
+                    <dd className="text-xs text-[#6B7280]">{fmtDate(invoice.due_date)}</dd>
                   </div>
                 )}
                 {invoice.paid_date && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-xs text-gray-400">Paid Date</dt>
-                    <dd className="text-xs text-gray-700">{fmtDate(invoice.paid_date)}</dd>
+                    <dt className="text-xs text-[#6B7280]">Paid Date</dt>
+                    <dd className="text-xs text-[#6B7280]">{fmtDate(invoice.paid_date)}</dd>
                   </div>
                 )}
                 {invoice.jobs && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-xs text-gray-400">Linked Job</dt>
-                    <dd className="text-xs text-gray-700 text-right truncate max-w-[160px]">
+                    <dt className="text-xs text-[#6B7280]">Linked Job</dt>
+                    <dd className="text-xs text-[#6B7280] text-right truncate max-w-[160px]">
                       {invoice.jobs.title ?? invoice.jobs.job_type ?? '—'}
                     </dd>
                   </div>
                 )}
                 {invoice.quotes && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-xs text-gray-400">Linked Quote</dt>
-                    <dd className="text-xs font-mono text-gray-700">{quoteNumber(invoice.quotes.id)}</dd>
+                    <dt className="text-xs text-[#6B7280]">Linked Quote</dt>
+                    <dd className="text-xs font-mono text-[#6B7280]">{quoteNumber(invoice.quotes.id)}</dd>
                   </div>
                 )}
               </dl>
@@ -155,9 +155,9 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
           </div>
 
           {invoice.notes && (
-            <div className="rounded-lg border border-gray-100 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Notes</p>
-              <p className="text-sm text-gray-700 whitespace-pre-wrap">{invoice.notes}</p>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Notes</p>
+              <p className="text-sm text-[#6B7280] whitespace-pre-wrap">{invoice.notes}</p>
             </div>
           )}
         </div>
@@ -167,13 +167,13 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
       {activeTab === 'Payment' && (
         <div className="space-y-4 tab-fade-in">
           {/* Prominent amount */}
-          <div className="rounded-lg border border-gray-100 p-6 text-center">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+          <div className="rounded-lg border border-[#E5E7EB] p-6 text-center">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">
               {isPaid ? 'Amount Paid' : 'Amount Due'}
             </p>
-            <p className="text-4xl font-bold text-gray-900 tabular-nums">{fmt(invoice.total)}</p>
+            <p className="text-4xl font-bold text-[#1A1A2E] tabular-nums">{fmt(invoice.total)}</p>
             {invoice.due_date && !isPaid && (
-              <p className={`mt-2 text-sm ${isOverdue ? 'text-red-500 font-medium' : 'text-gray-500'}`}>
+              <p className={`mt-2 text-sm ${isOverdue ? 'text-[#EF4444] font-medium' : 'text-gray-500'}`}>
                 Due {fmtDate(invoice.due_date)}{isOverdue ? ' — Overdue' : ''}
               </p>
             )}
@@ -186,8 +186,8 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
           </div>
 
           {/* Breakdown */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Breakdown</p>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Breakdown</p>
             <div className="space-y-2 max-w-xs">
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Subtotal</span>
@@ -197,7 +197,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                 <span>GST (15%)</span>
                 <span className="tabular-nums">{fmt(invoice.tax)}</span>
               </div>
-              <div className="flex justify-between text-sm font-semibold text-gray-900 pt-2 border-t border-gray-200">
+              <div className="flex justify-between text-sm font-semibold text-[#1A1A2E] pt-2 border-t border-[#E5E7EB]">
                 <span>Total</span>
                 <span className="tabular-nums">{fmt(invoice.total)}</span>
               </div>
@@ -205,8 +205,8 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
           </div>
 
           {/* Actions */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Actions</p>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Actions</p>
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={handleMarkPaid}
@@ -229,23 +229,23 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                 {sendingReminder ? 'Sending…' : reminderSent ? 'Reminder queued' : 'Send Reminder'}
               </button>
             </div>
-            {reminderError && <p className="mt-2 text-xs text-red-500">{reminderError}</p>}
+            {reminderError && <p className="mt-2 text-xs text-[#EF4444]">{reminderError}</p>}
           </div>
         </div>
       )}
 
       {/* Activity */}
       {activeTab === 'Activity' && (
-        <div className="rounded-lg border border-gray-100 p-5 tab-fade-in">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Activity</p>
-          <ol className="relative border-l border-gray-200 ml-2 space-y-6">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 tab-fade-in">
+          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Activity</p>
+          <ol className="relative border-l border-[#E5E7EB] ml-2 space-y-6">
             <li className="pl-5">
               <span
                 className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                 style={{ background: GOLD }}
               />
-              <p className="text-xs font-medium text-gray-700">Invoice created</p>
-              <p className="text-xs text-gray-400 mt-0.5">{fmtDate(invoice.created_at)}</p>
+              <p className="text-xs font-medium text-[#6B7280]">Invoice created</p>
+              <p className="text-xs text-[#6B7280] mt-0.5">{fmtDate(invoice.created_at)}</p>
             </li>
 
             {(invoice.status === 'sent' || invoice.status === 'paid' || invoice.status === 'overdue') && (
@@ -254,8 +254,8 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#3b82f6' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Invoice sent to client</p>
-                <p className="text-xs text-gray-400 mt-0.5">Date not recorded</p>
+                <p className="text-xs font-medium text-[#6B7280]">Invoice sent to client</p>
+                <p className="text-xs text-[#6B7280] mt-0.5">Date not recorded</p>
               </li>
             )}
 
@@ -265,9 +265,9 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#ef4444' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Invoice became overdue</p>
+                <p className="text-xs font-medium text-[#6B7280]">Invoice became overdue</p>
                 {invoice.due_date && (
-                  <p className="text-xs text-gray-400 mt-0.5">Due date was {fmtDate(invoice.due_date)}</p>
+                  <p className="text-xs text-[#6B7280] mt-0.5">Due date was {fmtDate(invoice.due_date)}</p>
                 )}
               </li>
             )}
@@ -278,9 +278,9 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#22c55e' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Invoice paid</p>
+                <p className="text-xs font-medium text-[#6B7280]">Invoice paid</p>
                 {invoice.paid_date && (
-                  <p className="text-xs text-gray-400 mt-0.5">{fmtDate(invoice.paid_date)}</p>
+                  <p className="text-xs text-[#6B7280] mt-0.5">{fmtDate(invoice.paid_date)}</p>
                 )}
               </li>
             )}
@@ -291,7 +291,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#6b7280' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Invoice cancelled</p>
+                <p className="text-xs font-medium text-[#6B7280]">Invoice cancelled</p>
               </li>
             )}
           </ol>

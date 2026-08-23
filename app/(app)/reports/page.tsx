@@ -1,4 +1,4 @@
-﻿import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { paginateAll } from '@/lib/supabasePaginate'
 import { matchTownName } from '@/lib/townMatch'
@@ -243,8 +243,8 @@ export default async function ReportsPage() {
     <div className="p-4 md:p-8">
       <div className="mb-6">
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>Finance</p>
-        <h1 className="text-2xl font-bold text-gray-900">Reports</h1>
-        <p className="text-sm text-gray-400 mt-0.5">
+        <h1 className="text-2xl font-bold text-[#1A1A2E]">Reports</h1>
+        <p className="text-sm text-[#6B7280] mt-0.5">
           {windowStart.toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })} – {now.toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })}
         </p>
       </div>

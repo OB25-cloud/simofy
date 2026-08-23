@@ -13,7 +13,7 @@ export default function Loading() {
       {/* 4 stat cards */}
       <div className="grid grid-cols-4 gap-4 mb-6">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="rounded-lg border border-gray-100 bg-white p-4">
+          <div key={i} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
             <div className="h-3 w-24 bg-gray-100 rounded animate-pulse mb-3" />
             <div className="h-7 w-20 bg-gray-100 rounded animate-pulse" />
           </div>
@@ -27,8 +27,8 @@ export default function Loading() {
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
-        <div className="h-10 bg-gray-50 border-b border-gray-100" />
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+        <div className="h-10 bg-[#F4F5F7] border-b border-[#E5E7EB]" />
         {[...Array(6)].map((_, i) => (
           <div key={i} className="h-14 border-b border-gray-50 px-5 flex items-center gap-5">
             <div className="h-3.5 w-24 bg-gray-100 rounded animate-pulse" />

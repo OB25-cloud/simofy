@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -165,12 +165,12 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
         >
           <div className="bg-white rounded-xl shadow-xl w-full max-w-md mx-4 p-6">
             <div className="flex items-center justify-between mb-5">
-              <h2 className="text-base font-semibold text-gray-900">New Checklist Template</h2>
-              <button onClick={() => setShowNew(false)} className="text-gray-400 hover:text-gray-600 text-xl leading-none p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">×</button>
+              <h2 className="text-base font-semibold text-[#1A1A2E]">New Checklist Template</h2>
+              <button onClick={() => setShowNew(false)} className="text-[#6B7280] hover:text-[#1A1A2E] text-xl leading-none p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">×</button>
             </div>
             <form onSubmit={handleCreateTemplate} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1.5">Name</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-1.5">Name</label>
                 <input
                   type="text"
                   required
@@ -178,14 +178,14 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
                   placeholder="e.g. Standard Lawn Mow"
-                  className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#C9A84C]"
+                  className="w-full px-3 py-2 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:border-[#C9A84C]"
                 />
               </div>
               {newError && (
                 <div className="px-3 py-2 rounded-md text-sm" style={{ background: '#fef2f2', color: '#dc2626' }}>{newError}</div>
               )}
               <div className="flex justify-end gap-2 pt-1">
-                <button type="button" onClick={() => setShowNew(false)} className="px-4 py-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900">Cancel</button>
+                <button type="button" onClick={() => setShowNew(false)} className="px-4 py-3 sm:py-2 text-sm text-[#6B7280] hover:text-[#1A1A2E]">Cancel</button>
                 <button
                   type="submit"
                   disabled={creating}
@@ -208,15 +208,15 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
           onClick={e => { if (e.target === e.currentTarget) setConfirmDeleteTemplate(false) }}
         >
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
-            <h2 className="text-base font-semibold text-gray-900 mb-2">Delete template?</h2>
+            <h2 className="text-base font-semibold text-[#1A1A2E] mb-2">Delete template?</h2>
             <p className="text-sm text-gray-500 mb-1">
-              Are you sure you want to delete <span className="font-medium text-gray-700">{selected.name}</span>?
+              Are you sure you want to delete <span className="font-medium text-[#6B7280]">{selected.name}</span>?
             </p>
-            <p className="text-sm text-red-500 mb-6">
+            <p className="text-sm text-[#EF4444] mb-6">
               This deletes all {selected.items.length} item{selected.items.length !== 1 ? 's' : ''}. Jobs that already have this checklist assigned keep their checked-off progress.
             </p>
             <div className="flex justify-end gap-2">
-              <button onClick={() => setConfirmDeleteTemplate(false)} className="px-4 py-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900">Cancel</button>
+              <button onClick={() => setConfirmDeleteTemplate(false)} className="px-4 py-3 sm:py-2 text-sm text-[#6B7280] hover:text-[#1A1A2E]">Cancel</button>
               <button
                 onClick={handleDeleteTemplate}
                 disabled={deletingTemplate}
@@ -233,8 +233,8 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
       {/* Template list — hidden on mobile once a template is selected, so the
           detail panel gets the full screen instead of being squeezed beside a
           fixed-width list */}
-      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-gray-100 flex-col`}>
-        <div className="px-4 py-3 border-b border-gray-100 shrink-0">
+      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-[#E5E7EB] flex-col`}>
+        <div className="px-4 py-3 border-b border-[#E5E7EB] shrink-0">
           <button
             onClick={() => setShowNew(true)}
             className="w-full flex items-center justify-center gap-1.5 px-3 py-3 sm:py-2 text-sm font-medium text-white rounded-md"
@@ -263,8 +263,8 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   }}
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-gray-900 truncate">{t.name}</p>
-                    <p className="text-xs text-gray-400 truncate">{t.items.length} item{t.items.length !== 1 ? 's' : ''}</p>
+                    <p className="text-sm font-medium text-[#1A1A2E] truncate">{t.name}</p>
+                    <p className="text-xs text-[#6B7280] truncate">{t.items.length} item{t.items.length !== 1 ? 's' : ''}</p>
                   </div>
                 </button>
               )
@@ -278,7 +278,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
         <div className="flex-1 overflow-y-auto p-6">
           <button
             onClick={() => setSelectedId(null)}
-            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-900"
+            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-[#1A1A2E]"
           >
             ← Back to templates
           </button>
@@ -291,7 +291,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   value={nameValue}
                   onChange={e => setNameValue(e.target.value)}
                   autoFocus
-                  className="text-xl font-semibold text-gray-900 px-2 py-1 rounded-md border border-gray-200 focus:outline-none focus:border-[#C9A84C] flex-1"
+                  className="text-xl font-semibold text-[#1A1A2E] px-2 py-1 rounded-md border border-[#E5E7EB] focus:outline-none focus:border-[#C9A84C] flex-1"
                 />
                 <button
                   onClick={handleSaveName}
@@ -301,18 +301,18 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 >
                   {savingName ? 'Saving…' : 'Save'}
                 </button>
-                <button onClick={() => setEditingName(false)} className="px-3 py-1.5 text-sm text-gray-500 hover:text-gray-700">Cancel</button>
+                <button onClick={() => setEditingName(false)} className="px-3 py-1.5 text-sm text-gray-500 hover:text-[#6B7280]">Cancel</button>
               </div>
             ) : (
               <div className="flex items-center gap-2">
-                <h2 className="text-xl font-semibold text-gray-900">{selected.name}</h2>
-                <button onClick={startEditName} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Rename</button>
+                <h2 className="text-xl font-semibold text-[#1A1A2E]">{selected.name}</h2>
+                <button onClick={startEditName} className="text-xs text-[#6B7280] hover:text-[#1A1A2E] transition-colors">Rename</button>
               </div>
             )}
             {!editingName && (
               <button
                 onClick={() => setConfirmDeleteTemplate(true)}
-                className="text-sm font-medium text-red-500 hover:text-red-700 shrink-0"
+                className="text-sm font-medium text-[#EF4444] hover:text-red-700 shrink-0"
               >
                 Delete Template
               </button>
@@ -320,7 +320,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
           </div>
 
           {/* Items */}
-          <div className="rounded-lg border border-gray-100 overflow-hidden mb-5">
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden mb-5">
             {selected.items.length === 0 ? (
               <div className="px-5 py-8 text-center">
                 <p className="text-sm text-gray-300">No items yet — add the first checklist item below</p>
@@ -335,7 +335,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                         value={editItemText}
                         onChange={e => setEditItemText(e.target.value)}
                         autoFocus
-                        className="flex-1 px-2 py-1.5 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#C9A84C]"
+                        className="flex-1 px-2 py-1.5 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:border-[#C9A84C]"
                       />
                       <label className="flex items-center gap-1.5 text-xs text-gray-500 shrink-0">
                         <input
@@ -355,12 +355,12 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                       >
                         {savingItemId === item.id ? 'Saving…' : 'Save'}
                       </button>
-                      <button onClick={() => setEditingItemId(null)} className="text-xs text-gray-500 hover:text-gray-700 shrink-0">Cancel</button>
+                      <button onClick={() => setEditingItemId(null)} className="text-xs text-gray-500 hover:text-[#6B7280] shrink-0">Cancel</button>
                     </div>
                   ) : (
                     <div className="flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2 min-w-0">
-                        <span className="text-sm text-gray-900 truncate">{item.item_text}</span>
+                        <span className="text-sm text-[#1A1A2E] truncate">{item.item_text}</span>
                         {item.required && (
                           <span
                             className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
@@ -371,11 +371,11 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                         )}
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <button onClick={() => startEditItem(item)} className="text-xs text-gray-400 hover:text-gray-600 transition-colors">Edit</button>
+                        <button onClick={() => startEditItem(item)} className="text-xs text-[#6B7280] hover:text-[#1A1A2E] transition-colors">Edit</button>
                         <button
                           onClick={() => handleDeleteItem(item.id)}
                           disabled={deletingItemId === item.id}
-                          className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                          className="text-xs text-[#EF4444]/70 hover:text-[#EF4444] transition-colors disabled:opacity-50"
                         >
                           {deletingItemId === item.id ? 'Deleting…' : 'Delete'}
                         </button>
@@ -388,13 +388,13 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
           </div>
 
           {/* Add item form */}
-          <form onSubmit={handleAddItem} className="rounded-lg border border-gray-100 p-4 flex items-center gap-3">
+          <form onSubmit={handleAddItem} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4 flex items-center gap-3">
             <input
               type="text"
               value={newItemText}
               onChange={e => setNewItemText(e.target.value)}
               placeholder="Add a checklist item…"
-              className="flex-1 px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#C9A84C]"
+              className="flex-1 px-3 py-2 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:border-[#C9A84C]"
             />
             <label className="flex items-center gap-1.5 text-xs text-gray-500 shrink-0">
               <input

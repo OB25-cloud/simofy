@@ -1,11 +1,11 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const inputClass =
-  'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C]'
+  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C]'
 
 export default function AddClientModal({ onClose }: { onClose: () => void }) {
   const router = useRouter()
@@ -64,11 +64,11 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
       }}
     >
       <div className="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-xl shadow-2xl overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
-          <h2 className="text-sm font-semibold text-gray-900">Add Client</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB]">
+          <h2 className="text-sm font-semibold text-[#1A1A2E]">Add Client</h2>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
+            className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
             aria-label="Close"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -80,7 +80,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
               Name <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
@@ -94,7 +94,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
               Business Name
             </label>
             <input
@@ -108,7 +108,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Email</label>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Email</label>
               <input
                 type="email"
                 value={form.email}
@@ -118,7 +118,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Phone</label>
+              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Phone</label>
               <input
                 type="tel"
                 value={form.phone}
@@ -130,7 +130,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Address</label>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Address</label>
             <input
               type="text"
               value={form.address}
@@ -141,7 +141,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Notes</label>
             <textarea
               value={form.notes}
               onChange={set('notes')}
@@ -153,8 +153,8 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
           <div className="flex items-center justify-between py-1">
             <div>
-              <p className="text-xs font-medium text-gray-600">Status</p>
-              <p className="text-xs text-gray-400 mt-0.5">
+              <p className="text-xs font-medium text-[#6B7280]">Status</p>
+              <p className="text-xs text-[#6B7280] mt-0.5">
                 {form.is_active ? 'Active client' : 'Inactive client'}
               </p>
             </div>
@@ -172,13 +172,13 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
             </button>
           </div>
 
-          {error && <p className="text-xs text-red-500">{error}</p>}
+          {error && <p className="text-xs text-[#EF4444]">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-1">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
             >
               Cancel
             </button>

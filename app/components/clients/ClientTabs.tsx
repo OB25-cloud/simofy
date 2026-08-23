@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -56,7 +56,7 @@ function StatusBadge({
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="text-left px-5 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">
+    <th className="text-left px-5 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">
       {children}
     </th>
   )
@@ -64,8 +64,8 @@ function Th({ children }: { children: React.ReactNode }) {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-      <p className="text-sm text-gray-400">{message}</p>
+    <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+      <p className="text-sm text-[#6B7280]">{message}</p>
     </div>
   )
 }
@@ -110,7 +110,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
   return (
     <>
       {/* Tab bar */}
-      <div className="border-b border-gray-100 mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
         <nav className="-mb-px flex gap-1 min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key
@@ -140,22 +140,22 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
               { label: 'Total Invoiced', value: `$${totalInvoiced.toFixed(0)}` },
               { label: 'Outstanding',    value: `$${outstanding.toFixed(0)}` },
             ].map(stat => (
-              <div key={stat.label} className="rounded-lg border border-gray-100 p-4">
-                <p className="text-xs text-gray-400 mb-1">{stat.label}</p>
-                <p className="text-xl font-semibold text-gray-900">{stat.value}</p>
+              <div key={stat.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
+                <p className="text-xs text-[#6B7280] mb-1">{stat.label}</p>
+                <p className="text-xl font-semibold text-[#1A1A2E]">{stat.value}</p>
               </div>
             ))}
           </div>
 
           <div className="grid grid-cols-2 gap-5">
-            <div className="rounded-lg border border-gray-100 p-5">
-              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
                 Contact Details
               </h2>
               <dl className="space-y-3.5">
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Email</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Email</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {client.email ? (
                       <a href={`mailto:${client.email}`} className="hover:underline" style={{ color: '#C9A84C' }}>
                         {client.email}
@@ -166,8 +166,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Phone</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Phone</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {client.phone ? (
                       <a href={`tel:${client.phone}`} className="hover:underline" style={{ color: '#C9A84C' }}>
                         {client.phone}
@@ -178,14 +178,14 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Address</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Address</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {client.address ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Client Since</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Client Since</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {new Date(client.created_at).toLocaleDateString('en-NZ', {
                       day: 'numeric', month: 'long', year: 'numeric',
                     })}
@@ -194,10 +194,10 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
               </dl>
             </div>
 
-            <div className="rounded-lg border border-gray-100 p-5">
-              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Notes</h2>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Notes</h2>
               {client.notes ? (
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{client.notes}</p>
+                <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{client.notes}</p>
               ) : (
                 <p className="text-sm text-gray-300 italic">No notes added</p>
               )}
@@ -209,16 +209,16 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Jobs */}
       {activeTab === 'jobs' && (
         <div className="tab-fade-in">
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-[#6B7280] mb-4">
             {jobs.length} job{jobs.length !== 1 ? 's' : ''}
           </p>
           {jobs.length === 0 ? (
             <EmptyState message="No jobs linked to this client yet" />
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
               <table className="w-full min-w-[480px] text-sm">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
+                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
                     <Th>Job</Th>
                     <Th>Status</Th>
                     <Th>Scheduled</Th>
@@ -229,7 +229,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   {jobs.map((job, i) => (
                     <tr
                       key={job.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-[#F9FAFB] transition-colors"
                       style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                     >
                       <td className="px-5 py-3.5">
@@ -244,8 +244,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                       <td className="px-5 py-3.5">
                         <StatusBadge status={job.status} config={JOB_STATUS} />
                       </td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">{fmtDate(job.scheduled_date)}</td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">{fmtDate(job.created_at)}</td>
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(job.scheduled_date)}</td>
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(job.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -258,16 +258,16 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Quotes */}
       {activeTab === 'quotes' && (
         <div className="tab-fade-in">
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-[#6B7280] mb-4">
             {quotes.length} quote{quotes.length !== 1 ? 's' : ''}
           </p>
           {quotes.length === 0 ? (
             <EmptyState message="No quotes for this client yet" />
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
+                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
                     <Th>Quote #</Th>
                     <Th>Status</Th>
                     <Th>Total</Th>
@@ -279,7 +279,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   {quotes.map((q, i) => (
                     <tr
                       key={q.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-[#F9FAFB] transition-colors"
                       style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                     >
                       <td className="px-5 py-3.5">
@@ -294,9 +294,9 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                       <td className="px-5 py-3.5">
                         <StatusBadge status={q.status} config={QUOTE_STATUS} />
                       </td>
-                      <td className="px-5 py-3.5 text-gray-900">{fmt(q.total)}</td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">{fmtDate(q.valid_until)}</td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">{fmtDate(q.created_at)}</td>
+                      <td className="px-5 py-3.5 text-[#1A1A2E]">{fmt(q.total)}</td>
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(q.valid_until)}</td>
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(q.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -309,16 +309,16 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Invoices */}
       {activeTab === 'invoices' && (
         <div className="tab-fade-in">
-          <p className="text-xs text-gray-400 mb-4">
+          <p className="text-xs text-[#6B7280] mb-4">
             {invoices.length} invoice{invoices.length !== 1 ? 's' : ''}
           </p>
           {invoices.length === 0 ? (
             <EmptyState message="No invoices for this client yet" />
           ) : (
-            <div className="rounded-lg border border-gray-100 overflow-x-auto">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
-                  <tr className="bg-gray-50 border-b border-gray-100">
+                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
                     <Th>Invoice #</Th>
                     <Th>Status</Th>
                     <Th>Total</Th>
@@ -330,7 +330,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   {invoices.map((inv, i) => (
                     <tr
                       key={inv.id}
-                      className="hover:bg-gray-50 transition-colors"
+                      className="hover:bg-[#F9FAFB] transition-colors"
                       style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                     >
                       <td className="px-5 py-3.5">
@@ -345,9 +345,9 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                       <td className="px-5 py-3.5">
                         <StatusBadge status={inv.status} config={INV_STATUS} />
                       </td>
-                      <td className="px-5 py-3.5 text-gray-900">{fmt(inv.total)}</td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">{fmtDate(inv.due_date)}</td>
-                      <td className="px-5 py-3.5 text-gray-400 text-xs">{fmtDate(inv.created_at)}</td>
+                      <td className="px-5 py-3.5 text-[#1A1A2E]">{fmt(inv.total)}</td>
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(inv.due_date)}</td>
+                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(inv.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>

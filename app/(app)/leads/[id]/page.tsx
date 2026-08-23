@@ -32,17 +32,17 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
     <div className="p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <div className="mb-5 flex items-center gap-2 text-sm text-gray-400">
-          <Link href="/leads" className="hover:text-gray-600 transition-colors">Leads</Link>
+        <div className="mb-5 flex items-center gap-2 text-sm text-[#6B7280]">
+          <Link href="/leads" className="hover:text-[#6B7280] transition-colors">Leads</Link>
           <span>/</span>
-          <span className="text-gray-700 font-medium">{typedLead.name ?? 'Lead'}</span>
+          <span className="text-[#6B7280] font-medium">{typedLead.name ?? 'Lead'}</span>
         </div>
 
         {/* Header */}
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 flex-wrap mb-1">
-              <h1 className="text-2xl font-semibold text-gray-900">{typedLead.name ?? 'Unnamed Lead'}</h1>
+              <h1 className="text-2xl font-bold text-[#1A1A2E]">{typedLead.name ?? 'Unnamed Lead'}</h1>
               <span
                 className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
                 style={{ background: statusCfg.bg, color: statusCfg.text }}
@@ -52,7 +52,7 @@ export default async function LeadDetailPage({ params }: { params: Promise<{ id:
               </span>
             </div>
             {typedLead.source && (
-              <p className="text-sm text-gray-400">via {typedLead.source}</p>
+              <p className="text-sm text-[#6B7280]">via {typedLead.source}</p>
             )}
           </div>
           <LeadHeaderActions lead={typedLead} />

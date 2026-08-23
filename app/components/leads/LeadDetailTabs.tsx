@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -73,7 +73,7 @@ export default function LeadDetailTabs({ lead }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-gray-200 mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="flex border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
@@ -96,55 +96,55 @@ export default function LeadDetailTabs({ lead }: Props) {
       {activeTab === 'Overview' && (
         <div className="space-y-4">
           {/* Contact details */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Contact Details</p>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Contact Details</p>
             <dl className="grid grid-cols-2 gap-4">
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Email</dt>
-                <dd className="text-sm text-gray-900">
+                <dt className="text-xs text-[#6B7280] mb-0.5">Email</dt>
+                <dd className="text-sm text-[#1A1A2E]">
                   {lead.email
                     ? <a href={`mailto:${lead.email}`} className="hover:underline" style={{ color: GOLD }}>{lead.email}</a>
                     : <span className="text-gray-300">—</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Phone</dt>
-                <dd className="text-sm text-gray-900">
+                <dt className="text-xs text-[#6B7280] mb-0.5">Phone</dt>
+                <dd className="text-sm text-[#1A1A2E]">
                   {lead.phone
                     ? <a href={`tel:${lead.phone}`} className="hover:underline" style={{ color: GOLD }}>{lead.phone}</a>
                     : <span className="text-gray-300">—</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Source</dt>
-                <dd className="text-sm text-gray-900">{lead.source ?? <span className="text-gray-300">—</span>}</dd>
+                <dt className="text-xs text-[#6B7280] mb-0.5">Source</dt>
+                <dd className="text-sm text-[#1A1A2E]">{lead.source ?? <span className="text-gray-300">—</span>}</dd>
               </div>
               <div>
-                <dt className="text-xs text-gray-400 mb-0.5">Received</dt>
-                <dd className="text-sm text-gray-900">{fmtDate(lead.created_at, true)}</dd>
+                <dt className="text-xs text-[#6B7280] mb-0.5">Received</dt>
+                <dd className="text-sm text-[#1A1A2E]">{fmtDate(lead.created_at, true)}</dd>
               </div>
             </dl>
           </div>
 
           {/* Message */}
           {lead.message && (
-            <div className="rounded-lg border border-gray-100 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Message</p>
-              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{lead.message}</p>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Message</p>
+              <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{lead.message}</p>
             </div>
           )}
 
           {/* Notes */}
           {lead.notes && (
-            <div className="rounded-lg border border-gray-100 p-5">
-              <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Notes</p>
-              <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{lead.notes}</p>
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Notes</p>
+              <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{lead.notes}</p>
             </div>
           )}
 
           {/* Status */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Status</p>
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Status</p>
             <div className="flex flex-wrap gap-2">
               {STATUS_OPTIONS.map(opt => {
                 const isActive = currentStatus === opt.value
@@ -168,7 +168,7 @@ export default function LeadDetailTabs({ lead }: Props) {
 
             {/* Convert to Client */}
             {currentStatus === 'converted' && (
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-4 pt-4 border-t border-[#E5E7EB]">
                 <button
                   onClick={handleConvertToClient}
                   disabled={converting}
@@ -177,10 +177,10 @@ export default function LeadDetailTabs({ lead }: Props) {
                 >
                   {converting ? 'Creating client…' : 'Convert to Client'}
                 </button>
-                <p className="mt-1.5 text-xs text-gray-400">
+                <p className="mt-1.5 text-xs text-[#6B7280]">
                   Creates a new client with this lead&apos;s name, email, and phone.
                 </p>
-                {convertError && <p className="mt-1 text-xs text-red-500">{convertError}</p>}
+                {convertError && <p className="mt-1 text-xs text-[#EF4444]">{convertError}</p>}
               </div>
             )}
           </div>
@@ -189,19 +189,19 @@ export default function LeadDetailTabs({ lead }: Props) {
 
       {/* Activity */}
       {activeTab === 'Activity' && (
-        <div className="rounded-lg border border-gray-100 p-5">
-          <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">Activity</p>
-          <ol className="relative border-l border-gray-200 ml-2 space-y-6">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Activity</p>
+          <ol className="relative border-l border-[#E5E7EB] ml-2 space-y-6">
             {/* Created */}
             <li className="pl-5">
               <span
                 className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                 style={{ background: GOLD }}
               />
-              <p className="text-xs font-medium text-gray-700">Lead received</p>
-              <p className="text-xs text-gray-400 mt-0.5">{fmtDate(lead.created_at, false)}</p>
+              <p className="text-xs font-medium text-[#6B7280]">Lead received</p>
+              <p className="text-xs text-[#6B7280] mt-0.5">{fmtDate(lead.created_at, false)}</p>
               {lead.source && (
-                <p className="text-xs text-gray-400">via {lead.source}</p>
+                <p className="text-xs text-[#6B7280]">via {lead.source}</p>
               )}
             </li>
 
@@ -212,8 +212,8 @@ export default function LeadDetailTabs({ lead }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#3b82f6' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Lead contacted</p>
-                <p className="text-xs text-gray-400 mt-0.5">Date not recorded</p>
+                <p className="text-xs font-medium text-[#6B7280]">Lead contacted</p>
+                <p className="text-xs text-[#6B7280] mt-0.5">Date not recorded</p>
               </li>
             )}
 
@@ -224,7 +224,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#22c55e' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Lead converted</p>
+                <p className="text-xs font-medium text-[#6B7280]">Lead converted</p>
               </li>
             )}
 
@@ -235,7 +235,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#d1d5db' }}
                 />
-                <p className="text-xs font-medium text-gray-700">Lead marked as lost</p>
+                <p className="text-xs font-medium text-[#6B7280]">Lead marked as lost</p>
               </li>
             )}
           </ol>

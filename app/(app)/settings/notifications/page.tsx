@@ -1,4 +1,4 @@
-﻿import { supabase } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import GlobalNotificationDefaults from '@/app/components/settings/GlobalNotificationDefaults'
 
 export const dynamic = 'force-dynamic'
@@ -19,7 +19,7 @@ export default async function NotificationSettingsPage() {
         <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
           Settings
         </p>
-        <h1 className="text-2xl font-semibold text-gray-900">Notification Defaults</h1>
+        <h1 className="text-2xl font-bold text-[#1A1A2E]">Notification Defaults</h1>
         <p className="text-sm text-gray-500 mt-1">
           Set the default notification preferences for new clients. You can override these per client from their profile page.
         </p>

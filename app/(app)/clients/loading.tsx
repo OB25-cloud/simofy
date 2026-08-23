@@ -9,8 +9,8 @@ export default function Loading() {
         <div className="h-9 w-28 bg-gray-100 rounded animate-pulse" />
       </div>
       <div className="h-10 w-full bg-gray-100 rounded-lg animate-pulse mb-5" />
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
-        <div className="h-10 bg-gray-50 border-b border-gray-100" />
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+        <div className="h-10 bg-[#F4F5F7] border-b border-[#E5E7EB]" />
         {[...Array(6)].map((_, i) => (
           <div
             key={i}

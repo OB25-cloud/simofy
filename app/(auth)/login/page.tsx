@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useActionState } from 'react'
 import { login } from '@/app/actions/auth'
@@ -16,16 +16,16 @@ export default function LoginPage() {
         >
           SIMOFY
         </span>
-        <p className="mt-2 text-sm text-gray-400">Queenstown, NZ — Landscaping CRM</p>
+        <p className="mt-2 text-sm text-[#6B7280]">Queenstown, NZ — Landscaping CRM</p>
       </div>
 
       {/* Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 px-8 py-8">
-        <h1 className="text-base font-semibold text-gray-900 mb-6">Sign in to your account</h1>
+      <div className="bg-white rounded-xl shadow-sm border border-[#E5E7EB] px-8 py-8">
+        <h1 className="text-base font-semibold text-[#1A1A2E] mb-6">Sign in to your account</h1>
 
         <form action={action} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label htmlFor="email" className="block text-xs font-medium text-[#6B7280] mb-1.5">
               Email address
             </label>
             <input
@@ -34,13 +34,13 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white"
+              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C] bg-white"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-xs font-medium text-gray-600 mb-1.5">
+            <label htmlFor="password" className="block text-xs font-medium text-[#6B7280] mb-1.5">
               Password
             </label>
             <input
@@ -49,7 +49,7 @@ export default function LoginPage() {
               type="password"
               autoComplete="current-password"
               required
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white"
+              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C] bg-white"
               placeholder="••••••••"
             />
           </div>
@@ -71,7 +71,7 @@ export default function LoginPage() {
         </form>
       </div>
 
-      <p className="mt-5 text-center text-xs text-gray-400">
+      <p className="mt-5 text-center text-xs text-[#6B7280]">
         Contact your administrator to reset your password.
       </p>
     </div>

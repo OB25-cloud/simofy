@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect } from 'react'
 
@@ -9,8 +9,8 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
 
   return (
     <div className="flex flex-col items-center justify-center h-full px-6 py-20 text-center">
-      <div className="w-full max-w-md rounded-xl border border-gray-100 bg-white p-8 shadow-sm">
-        <p className="text-sm font-semibold text-gray-900">Something went wrong</p>
+      <div className="w-full max-w-md rounded-xl border border-[#E5E7EB] bg-white p-8 shadow-sm">
+        <p className="text-sm font-semibold text-[#1A1A2E]">Something went wrong</p>
         <p className="mt-2 text-sm text-gray-500">
           This section hit an unexpected error. You can try again, or head back to the dashboard.
         </p>
@@ -24,7 +24,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
           </button>
           <a
             href="/dashboard"
-            className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
           >
             Back to dashboard
           </a>

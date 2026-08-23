@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { MODULES, ACTIONS, ROLE_DEFAULTS, buildPermissionMap } from '@/lib/permissions'
@@ -160,15 +160,15 @@ export default function UsersView({
           onClick={e => { if (e.target === e.currentTarget) setShowDeleteConfirm(false) }}
         >
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
-            <h2 className="text-base font-semibold text-gray-900 mb-2">Delete user?</h2>
+            <h2 className="text-base font-semibold text-[#1A1A2E] mb-2">Delete user?</h2>
             <p className="text-sm text-gray-500 mb-1">
-              Are you sure you want to delete <span className="font-medium text-gray-700">{selectedUser.name ?? selectedUser.email}</span>?
+              Are you sure you want to delete <span className="font-medium text-[#6B7280]">{selectedUser.name ?? selectedUser.email}</span>?
             </p>
-            <p className="text-sm text-red-500 mb-6">This cannot be undone.</p>
+            <p className="text-sm text-[#EF4444] mb-6">This cannot be undone.</p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-3 sm:py-2 text-sm text-gray-600 hover:text-gray-900"
+                className="px-4 py-3 sm:py-2 text-sm text-[#6B7280] hover:text-[#1A1A2E]"
               >
                 Cancel
               </button>
@@ -188,7 +188,7 @@ export default function UsersView({
       {/* User list — hidden on mobile once a user is selected, so the detail
           panel gets the full screen instead of being squeezed beside a
           fixed-width list */}
-      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-gray-100 flex-col`}>
+      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-[#E5E7EB] flex-col`}>
         <div className="flex-1 overflow-y-auto">
           {users.map(user => {
             const initials = (user.name ?? user.email).slice(0, 2).toUpperCase()
@@ -210,8 +210,8 @@ export default function UsersView({
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-gray-900 truncate">{user.name ?? '—'}</p>
-                  <p className="text-xs text-gray-400 truncate">{user.email}</p>
+                  <p className="text-sm font-medium text-[#1A1A2E] truncate">{user.name ?? '—'}</p>
+                  <p className="text-xs text-[#6B7280] truncate">{user.email}</p>
                 </div>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={roleBadgeStyle(user.role)}>
                   {ROLE_LABELS[user.role] ?? user.role}
@@ -227,7 +227,7 @@ export default function UsersView({
         <div className="flex-1 overflow-y-auto p-6">
           <button
             onClick={() => { setSelectedId(null); setPermMap(null) }}
-            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-gray-900"
+            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-gray-500 hover:text-[#1A1A2E]"
           >
             ← Back to users
           </button>
@@ -240,8 +240,8 @@ export default function UsersView({
               {(selectedUser.name ?? selectedUser.email).slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <p className="font-semibold text-gray-900">{selectedUser.name ?? '—'}</p>
-              <p className="text-sm text-gray-400">{selectedUser.email}</p>
+              <p className="font-semibold text-[#1A1A2E]">{selectedUser.name ?? '—'}</p>
+              <p className="text-sm text-[#6B7280]">{selectedUser.email}</p>
             </div>
           </div>
 
@@ -253,31 +253,31 @@ export default function UsersView({
 
           {/* Role */}
           <div className="mb-7">
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Role</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-2">Role</label>
             <div className="flex items-center gap-3">
               <select
                 value={selectedUser.role}
                 onChange={e => handleRoleChange(selectedUser.id, e.target.value)}
                 disabled={roleChanging || selectedUser.id === currentUserId || selectedUser.role === 'admin'}
-                className="px-3 py-2 rounded-md border border-gray-200 text-sm font-medium text-gray-900 bg-white focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 rounded-md border border-[#E5E7EB] text-sm font-medium text-[#1A1A2E] bg-white focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {ROLES.map(r => (
                   <option key={r} value={r}>{ROLE_LABELS[r]}</option>
                 ))}
               </select>
-              {roleChanging && <span className="text-xs text-gray-400">Saving…</span>}
+              {roleChanging && <span className="text-xs text-[#6B7280]">Saving…</span>}
             </div>
             {selectedUser.id === currentUserId && (
-              <p className="text-xs text-gray-400 mt-1.5">You cannot change your own role.</p>
+              <p className="text-xs text-[#6B7280] mt-1.5">You cannot change your own role.</p>
             )}
             {selectedUser.role === 'admin' && selectedUser.id !== currentUserId && (
-              <p className="text-xs text-gray-400 mt-1.5">Admin roles cannot be changed.</p>
+              <p className="text-xs text-[#6B7280] mt-1.5">Admin roles cannot be changed.</p>
             )}
           </div>
 
           {/* Permissions */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-3">
               Permissions
             </label>
 
@@ -287,19 +287,19 @@ export default function UsersView({
                 style={{ background: 'rgba(201, 168, 76,0.04)', borderColor: 'rgba(201, 168, 76,0.2)' }}
               >
                 <span className="text-sm font-semibold" style={{ color: '#C9A84C' }}>Full Access</span>
-                <span className="text-xs text-gray-400">— Admins have unrestricted access to all modules</span>
+                <span className="text-xs text-[#6B7280]">— Admins have unrestricted access to all modules</span>
               </div>
             ) : (
               <>
-                <div className="rounded-lg border border-gray-100 overflow-x-auto">
+                <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
                   <table className="w-full min-w-[560px] text-sm">
                     <thead>
                       <tr style={{ background: '#fafafa', borderBottom: '1px solid #f3f4f6' }}>
-                        <th className="text-left px-4 py-2.5 text-xs font-bold text-gray-400 uppercase tracking-wider w-32">
+                        <th className="text-left px-4 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider w-32">
                           Module
                         </th>
                         {ACTIONS.map(a => (
-                          <th key={a} className="text-center px-2 py-2.5 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                          <th key={a} className="text-center px-2 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider">
                             {ACTION_LABELS[a]}
                           </th>
                         ))}
@@ -308,7 +308,7 @@ export default function UsersView({
                     <tbody>
                       {MODULES.map((module, i) => (
                         <tr key={module} style={{ borderTop: i === 0 ? undefined : '1px solid #f9fafb' }}>
-                          <td className="px-4 py-3 text-sm font-medium text-gray-700">
+                          <td className="px-4 py-3 text-sm font-medium text-[#6B7280]">
                             {MODULE_LABELS[module]}
                           </td>
                           {ACTIONS.map(action => (
@@ -348,10 +348,10 @@ export default function UsersView({
           </div>
           {/* Secondary actions */}
           {selectedUser.role !== 'admin' && selectedUser.id !== currentUserId && (
-            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-end">
+            <div className="mt-8 pt-6 border-t border-[#E5E7EB] flex items-center justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(true)}
-                className="text-sm font-medium text-red-500 hover:text-red-700"
+                className="text-sm font-medium text-[#EF4444] hover:text-red-700"
               >
                 Delete User
               </button>

@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -40,7 +40,7 @@ function invoiceNumber(id: string) {
 
 function SearchIcon() {
   return (
-    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   )
@@ -101,7 +101,7 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900">Invoices</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A2E]">Invoices</h1>
           <p className="mt-0.5 text-sm text-gray-500">{invoices.length} {invoices.length === 1 ? 'invoice' : 'invoices'} total</p>
         </div>
         <button
@@ -117,8 +117,8 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
       {/* Stats bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {stats.map(s => (
-          <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
+          <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
             <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.danger ? '#dc2626' : s.accent ? '#C9A84C' : '#111827' }}>
               {s.value}
             </p>
@@ -135,13 +135,13 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
             placeholder="Search by invoice ID, client, job or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-gray-600"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-[#6B7280]"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -155,25 +155,25 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
 
       {/* Table */}
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-gray-100 bg-gray-50 py-16 text-center">
-          <p className="text-sm text-gray-400">
+        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
+          <p className="text-sm text-[#6B7280]">
             {search || statusFilter !== 'all' ? 'No invoices match the current filters.' : 'No invoices yet. Add your first invoice above.'}
           </p>
         </div>
       ) : (
-        <div className="rounded-lg border border-gray-100 overflow-x-auto">
+        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="bg-gray-50 border-b border-gray-100">
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Invoice</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Client</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Job</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Amount</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">GST</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Total</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Due Date</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-400 text-xs uppercase tracking-wider">Created</th>
+              <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Invoice</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Client</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Job</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Status</th>
+                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Amount</th>
+                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">GST</th>
+                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Total</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Due Date</th>
+                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Created</th>
                 <th className="px-4 py-3 w-8" />
               </tr>
             </thead>
@@ -182,20 +182,20 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
                 <tr
                   key={inv.id}
                   onClick={() => router.push(`/invoices/${inv.id}`)}
-                  className="cursor-pointer hover:bg-gray-50 transition-colors group"
+                  className="cursor-pointer hover:bg-[#F9FAFB] transition-colors group"
                   style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                 >
-                  <td className="px-4 py-3 font-mono text-xs font-medium text-gray-900">
+                  <td className="px-4 py-3 font-mono text-xs font-medium text-[#1A1A2E]">
                     {invoiceNumber(inv.id)}
                   </td>
-                  <td className="px-4 py-3 text-gray-700">
+                  <td className="px-4 py-3 text-[#6B7280]">
                     {inv.clients?.name ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 text-gray-500 max-w-[140px]">
                     {inv.jobs?.title
                       ? <span className="block truncate">{inv.jobs.title}</span>
                       : inv.jobs?.job_type
-                        ? <span className="block truncate text-gray-400">{inv.jobs.job_type}</span>
+                        ? <span className="block truncate text-[#6B7280]">{inv.jobs.job_type}</span>
                         : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3">
@@ -204,10 +204,10 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
                   <td className="px-4 py-3 text-right text-gray-500 tabular-nums text-xs">
                     {fmt(inv.amount)}
                   </td>
-                  <td className="px-4 py-3 text-right text-gray-400 tabular-nums text-xs">
+                  <td className="px-4 py-3 text-right text-[#6B7280] tabular-nums text-xs">
                     {fmt(inv.tax)}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-gray-900 tabular-nums">
+                  <td className="px-4 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">
                     {fmt(inv.total)}
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">
@@ -215,7 +215,7 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
                       ? new Date(inv.due_date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-400 text-xs">
+                  <td className="px-4 py-3 text-[#6B7280] text-xs">
                     {new Date(inv.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3 text-right">
