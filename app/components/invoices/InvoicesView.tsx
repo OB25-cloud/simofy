@@ -4,25 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Invoice, Client, Job, Quote } from '@/lib/types'
 import AddInvoiceModal from './AddInvoiceModal'
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:     { bg: '#F4F5F7', text: '#6B7280',  dot: '#E5E7EB', label: 'Draft'     },
-  sent:      { bg: '#eff6ff', text: '#1d4ed8',  dot: '#3b82f6', label: 'Sent'      },
-  paid:      { bg: '#f0fdf4', text: '#15803d',  dot: '#22c55e', label: 'Paid'      },
-  overdue:   { bg: '#fef2f2', text: '#dc2626',  dot: '#ef4444', label: 'Overdue'   },
-  cancelled: { bg: '#F9FAFB', text: '#1A1A2E',  dot: '#6B7280', label: 'Cancelled' },
-}
-
-function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const c = STATUS_CONFIG[status] ?? STATUS_CONFIG.draft
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: c.bg, color: c.text }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
-}
+import { StatusBadge } from '@/app/components/ui/Badge'
+import { StatCard } from '@/app/components/ui/StatCard'
+import Button from '@/app/components/ui/Button'
+import { inputClass } from '@/app/components/ui/input'
 
 function fmt(n: number | null | undefined) {
   return n != null ? `$${n.toFixed(2)}` : '—'
@@ -102,27 +87,18 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A2E]">Invoices</h1>
-          <p className="mt-0.5 text-sm text-gray-500">{invoices.length} {invoices.length === 1 ? 'invoice' : 'invoices'} total</p>
+          <p className="mt-1 text-xs text-[#6B7280]">{invoices.length} {invoices.length === 1 ? 'invoice' : 'invoices'} total</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#C9A84C' }}
-        >
+        <Button onClick={() => setShowModal(true)} variant="primary">
           <PlusIcon />
           Add Invoice
-        </button>
+        </Button>
       </div>
 
       {/* Stats bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {stats.map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.danger ? '#dc2626' : s.accent ? '#C9A84C' : '#1A1A2E' }}>
-              {s.value}
-            </p>
-          </div>
+          <StatCard key={s.label} label={s.label} value={s.value} danger={s.danger} />
         ))}
       </div>
 
@@ -135,13 +111,13 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
             placeholder="Search by invoice ID, client, job or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
+            className={`pl-9 pr-4 py-2.5 ${inputClass}`}
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent text-[#6B7280]"
+          className={inputClass}
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -164,26 +140,25 @@ export default function InvoicesView({ invoices, clients, jobs, quotes }: Props)
         <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Invoice</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Client</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Job</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Status</th>
-                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Amount</th>
-                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">GST</th>
-                <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Total</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Due Date</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Created</th>
-                <th className="px-4 py-3 w-8" />
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Invoice</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Client</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Job</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Amount</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">GST</th>
+                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Total</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Due Date</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Created</th>
+                <th className="px-4 py-3 w-8 bg-[#F4F5F7]" />
               </tr>
             </thead>
             <tbody>
-              {filtered.map((inv, i) => (
+              {filtered.map(inv => (
                 <tr
                   key={inv.id}
                   onClick={() => router.push(`/invoices/${inv.id}`)}
-                  className="cursor-pointer hover:bg-[#F9FAFB] transition-colors group"
-                  style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                  className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
                 >
                   <td className="px-4 py-3 font-mono text-xs font-medium text-[#1A1A2E]">
                     {invoiceNumber(inv.id)}

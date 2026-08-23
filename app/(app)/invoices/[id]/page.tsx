@@ -4,16 +4,9 @@ import Link from 'next/link'
 import type { Invoice, Client, Job, Quote } from '@/lib/types'
 import InvoiceActions from '@/app/components/invoices/InvoiceActions'
 import InvoiceDetailTabs from '@/app/components/invoices/InvoiceDetailTabs'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:     { bg: '#F4F5F7', text: '#6B7280',  dot: '#E5E7EB', label: 'Draft'     },
-  sent:      { bg: '#eff6ff', text: '#1d4ed8',  dot: '#3b82f6', label: 'Sent'      },
-  paid:      { bg: '#f0fdf4', text: '#15803d',  dot: '#22c55e', label: 'Paid'      },
-  overdue:   { bg: '#fef2f2', text: '#dc2626',  dot: '#ef4444', label: 'Overdue'   },
-  cancelled: { bg: '#F9FAFB', text: '#1A1A2E',  dot: '#6B7280', label: 'Cancelled' },
-}
 
 function invoiceNumber(id: string) {
   return `INV-${id.slice(0, 6).toUpperCase()}`
@@ -36,7 +29,6 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
   if (!invoice) notFound()
 
   const inv           = invoice as unknown as Invoice
-  const statusCfg     = STATUS_CONFIG[inv.status ?? ''] ?? STATUS_CONFIG.draft
   const typedClients  = (clients ?? []) as unknown as Pick<Client, 'id' | 'name' | 'business_name'>[]
   const typedJobs     = (jobs    ?? []) as unknown as Pick<Job, 'id' | 'title' | 'job_type' | 'client_id'>[]
   const typedQuotes   = (quotes  ?? []) as unknown as Pick<Quote, 'id' | 'client_id' | 'total'>[]
@@ -55,13 +47,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         <div className="mb-6 flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
             <h1 className="text-2xl font-bold text-[#1A1A2E] font-mono">{invoiceNumber(inv.id)}</h1>
-            <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium"
-              style={{ background: statusCfg.bg, color: statusCfg.text }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full" style={{ background: statusCfg.dot }} />
-              {statusCfg.label}
-            </span>
+            <StatusBadge status={inv.status} />
           </div>
           <InvoiceActions invoice={inv} clients={typedClients} jobs={typedJobs} quotes={typedQuotes} />
         </div>

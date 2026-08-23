@@ -211,8 +211,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <button
                 onClick={handleMarkPaid}
                 disabled={markingPaid || isPaid}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-                style={{ background: '#15803d' }}
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50 bg-[#22C55E] hover:bg-green-600"
               >
                 {markingPaid ? 'Updating…' : isPaid ? 'Already Paid' : 'Mark as Paid'}
               </button>
