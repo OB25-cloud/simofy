@@ -48,7 +48,7 @@ export default function ProfitabilityTab({ data }: { data: ProfitabilityData }) 
               stroke={GOLD}
               strokeWidth={2.5}
               dot={{ fill: GOLD, r: 4, strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: GOLD, stroke: '#1a1a1a', strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: GOLD, stroke: '#1A1A2E', strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>

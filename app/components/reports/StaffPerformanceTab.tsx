@@ -40,22 +40,22 @@ export default function StaffPerformanceTab({ data }: { data: StaffPerfRow[] }) 
       <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
         <table className="w-full min-w-[560px] text-sm">
           <thead>
-            <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
-              <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Staff</th>
-              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Assigned</th>
-              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Completed</th>
-              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Revenue</th>
-              <th className="text-right px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Avg Job Value</th>
+            <tr>
+              <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Staff</th>
+              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Assigned</th>
+              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Completed</th>
+              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Revenue</th>
+              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Avg Job Value</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((row, i) => (
-              <tr key={row.name} style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}>
-                <td className="px-4 py-3 font-medium text-[#1A1A2E]">{row.name}</td>
-                <td className="px-4 py-3 text-right text-gray-500 tabular-nums">{row.jobsAssigned}</td>
-                <td className="px-4 py-3 text-right text-gray-500 tabular-nums">{row.jobsCompleted}</td>
+            {data.map(row => (
+              <tr key={row.name} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
+                <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">{row.name}</td>
+                <td className="px-4 py-3 text-right text-sm text-[#6B7280] tabular-nums">{row.jobsAssigned}</td>
+                <td className="px-4 py-3 text-right text-sm text-[#6B7280] tabular-nums">{row.jobsCompleted}</td>
                 <td className="px-4 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">{moneyFormatter.format(row.revenue)}</td>
-                <td className="px-4 py-3 text-right text-gray-500 tabular-nums">{moneyFormatter.format(row.avgJobValue)}</td>
+                <td className="px-4 py-3 text-right text-sm text-[#6B7280] tabular-nums">{moneyFormatter.format(row.avgJobValue)}</td>
               </tr>
             ))}
           </tbody>

@@ -12,7 +12,7 @@ export const axisLine = { stroke: 'rgba(201, 168, 76,0.2)' }
 export const gridStroke = '#2a2a2a'
 
 export const tooltipContentStyle = {
-  background: '#1a1a1a',
+  background: '#1A1A2E',
   border: '1px solid rgba(201, 168, 76,0.3)',
   borderRadius: 8,
   boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
