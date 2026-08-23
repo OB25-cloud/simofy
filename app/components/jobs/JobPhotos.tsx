@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -43,7 +43,7 @@ function PhotoCard({ photo, height = 'h-36', deleting, onDelete }: PhotoCardProp
         <img
           src={photo.url}
           alt="Job photo"
-          className={`w-full ${height} object-cover rounded-lg border border-gray-100 hover:opacity-90 transition-opacity`}
+          className={`w-full ${height} object-cover rounded-lg border border-[#E5E7EB] hover:opacity-90 transition-opacity`}
         />
       </a>
 
@@ -61,7 +61,7 @@ function PhotoCard({ photo, height = 'h-36', deleting, onDelete }: PhotoCardProp
       <button
         onClick={() => onDelete(photo)}
         disabled={deleting === photo.id}
-        className="absolute top-1.5 right-1.5 flex items-center justify-center w-6 h-6 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 disabled:opacity-50"
+        className="absolute top-1.5 right-1.5 flex items-center justify-center w-6 h-6 rounded-full bg-black/50 text-white opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#DC2626] disabled:opacity-50"
         aria-label="Delete photo"
       >
         <DeleteIcon spinning={deleting === photo.id} />
@@ -160,14 +160,14 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
     <div>
       {/* Header + upload controls */}
       <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <h2 className="text-base font-semibold text-gray-900">
+        <h2 className="text-base font-semibold text-[#1A1A2E]">
           Photos
-          <span className="ml-2 text-sm font-normal text-gray-400">({photos.length})</span>
+          <span className="ml-2 text-sm font-normal text-[#6B7280]">({photos.length})</span>
         </h2>
 
         <div className="flex items-center gap-3 flex-wrap">
           {/* Tag selector */}
-          <div className="flex items-center rounded-lg border border-gray-200 p-0.5 bg-gray-50 gap-0.5">
+          <div className="flex items-center rounded-lg border border-[#E5E7EB] p-0.5 bg-[#F4F5F7] gap-0.5">
             {TAG_OPTIONS.map(opt => {
               const active = pendingTag === opt.value
               return (
@@ -202,11 +202,11 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
         </div>
       </div>
 
-      {error && <p className="text-xs text-red-500 mb-3">{error}</p>}
+      {error && <p className="text-xs text-[#EF4444] mb-3">{error}</p>}
 
       {photos.length === 0 ? (
-        <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-          <p className="text-sm text-gray-400">No photos yet</p>
+        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+          <p className="text-sm text-[#6B7280]">No photos yet</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -226,13 +226,13 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
                       >
                         {cfg.label}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-[#6B7280]">
                         {col.length} photo{col.length !== 1 ? 's' : ''}
                       </span>
                     </div>
                     {col.length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-gray-200 bg-gray-50 h-32 flex items-center justify-center">
-                        <p className="text-xs text-gray-400">No {tag} photos</p>
+                      <div className="rounded-lg border border-dashed border-[#E5E7EB] bg-[#F4F5F7] h-32 flex items-center justify-center">
+                        <p className="text-xs text-[#6B7280]">No {tag} photos</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 gap-2">
@@ -257,7 +257,7 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
           {untagged.length > 0 && (
             <div>
               {hasTagged && (
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
                   Other Photos
                   <span className="ml-1.5 font-normal normal-case">{untagged.length}</span>
                 </p>

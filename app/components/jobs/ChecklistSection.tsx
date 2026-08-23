@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -133,11 +133,11 @@ export default function ChecklistSection({
 
   if (!templateId) {
     return (
-      <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-        <p className="text-sm text-gray-400 mb-4">No checklist assigned to this job yet</p>
+      <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+        <p className="text-sm text-[#6B7280] mb-4">No checklist assigned to this job yet</p>
         {isAdmin && (
           templates.length === 0 ? (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-[#6B7280]">
               No checklist templates exist yet — create one under Settings → Checklists.
             </p>
           ) : (
@@ -145,7 +145,7 @@ export default function ChecklistSection({
               <select
                 value={selectedTemplate}
                 onChange={e => setSelectedTemplate(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:border-[#C9A84C] text-gray-700"
+                className="px-3 py-2 text-sm border border-[#E5E7EB] rounded-md bg-white focus:outline-none focus:border-[#C9A84C] text-[#6B7280]"
               >
                 <option value="">Select a checklist…</option>
                 {templates.map(t => (
@@ -163,7 +163,7 @@ export default function ChecklistSection({
             </div>
           )
         )}
-        {assignError && <p className="text-xs text-red-500 mt-3">{assignError}</p>}
+        {assignError && <p className="text-xs text-[#EF4444] mt-3">{assignError}</p>}
       </div>
     )
   }
@@ -172,7 +172,7 @@ export default function ChecklistSection({
     <div>
       {/* Progress */}
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm font-medium text-gray-700">
+        <p className="text-sm font-medium text-[#6B7280]">
           {completedCount} of {totalCount} item{totalCount !== 1 ? 's' : ''} complete
         </p>
         <p className="text-xs font-semibold" style={{ color: '#C9A84C' }}>{progressPct}%</p>
@@ -191,7 +191,7 @@ export default function ChecklistSection({
       )}
 
       {/* Items */}
-      <div className="rounded-lg border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
         {items.map((item, i) => (
           <div
             key={item.id}
@@ -224,7 +224,7 @@ export default function ChecklistSection({
                 )}
               </div>
               {item.completed && item.completed_by && item.completed_at && (
-                <p className="text-xs text-gray-400 mt-0.5">
+                <p className="text-xs text-[#6B7280] mt-0.5">
                   ✓ {item.completed_by} · {fmtDateTime(item.completed_at)}
                 </p>
               )}

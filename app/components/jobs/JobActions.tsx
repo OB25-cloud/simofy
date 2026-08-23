@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Job, Client, Staff } from '@/lib/types'
 import EditJobModal from './EditJobModal'
+import Button from '@/app/components/ui/Button'
 
 interface Props {
   job: Job
@@ -25,37 +26,24 @@ export default function JobActions({ job, clients, staff }: Props) {
   return (
     <>
       <div className="flex items-center gap-2 shrink-0">
-        <button
-          onClick={() => setShowEdit(true)}
-          className="px-3 py-3 sm:py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-        >
+        <Button onClick={() => setShowEdit(true)} variant="secondary">
           Edit
-        </button>
+        </Button>
 
         {confirmDelete ? (
           <>
-            <span className="text-xs text-gray-500">Delete this job?</span>
-            <button
-              onClick={handleDelete}
-              disabled={deleting}
-              className="px-3 py-3 sm:py-1.5 text-sm font-medium text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors disabled:opacity-60"
-            >
+            <span className="text-xs text-[#6B7280]">Delete this job?</span>
+            <Button onClick={handleDelete} disabled={deleting} variant="destructive">
               {deleting ? 'Deleting…' : 'Yes, delete'}
-            </button>
-            <button
-              onClick={() => setConfirmDelete(false)}
-              className="px-3 py-3 sm:py-1.5 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-            >
+            </Button>
+            <Button onClick={() => setConfirmDelete(false)} variant="secondary">
               Cancel
-            </button>
+            </Button>
           </>
         ) : (
-          <button
-            onClick={() => setConfirmDelete(true)}
-            className="px-3 py-3 sm:py-1.5 text-sm font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100 transition-colors"
-          >
+          <Button onClick={() => setConfirmDelete(true)} variant="destructive">
             Delete
-          </button>
+          </Button>
         )}
       </div>
 

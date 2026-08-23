@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Job, Client, Site, Staff } from '@/lib/types'
 import { buildOccurrences } from '@/lib/recurrence'
+import { TIME_OPTIONS, DEFAULT_START_TIME, DEFAULT_END_TIME } from '@/lib/timeOptions'
+import ModalShell from '@/app/components/ui/Modal'
+import Button from '@/app/components/ui/Button'
+import { inputClass, labelClass } from '@/app/components/ui/input'
 
 const RECURRENCE_OPTIONS = [
   { value: 'none',        label: 'None (one-off)' },
@@ -33,9 +37,6 @@ const JOB_TYPES = [
   'Other',
 ]
 
-const inputClass =
-  'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white'
-
 interface Props {
   job: Job
   clients: Pick<Client, 'id' | 'name' | 'business_name'>[]
@@ -53,6 +54,8 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
     site_id: job.site_id ?? '',
     location: job.location ?? '',
     scheduled_date: job.scheduled_date ? job.scheduled_date.split('T')[0] : '',
+    start_time: job.start_time ? job.start_time.slice(0, 5) : DEFAULT_START_TIME,
+    end_time: job.end_time ? job.end_time.slice(0, 5) : DEFAULT_END_TIME,
     recurrence_pattern: job.recurrence_pattern ?? 'none',
     notes: job.notes ?? '',
   })
@@ -127,6 +130,8 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
       site_id: form.site_id || null,
       location: form.location.trim() || null,
       scheduled_date: form.scheduled_date || null,
+      start_time: form.start_time,
+      end_time: form.end_time,
       is_recurring: isRecurring,
       recurrence_pattern: isRecurring ? form.recurrence_pattern : null,
       recurring_series_id: seriesId,
@@ -152,6 +157,8 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
       staff_id: form.staff_id || null,
       location: form.location.trim() || null,
       notes: form.notes.trim() || null,
+      start_time: form.start_time,
+      end_time: form.end_time,
     }
 
     // Generate 8 occurrences upfront when a job is first set to recurring
@@ -300,30 +307,11 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex sm:items-center sm:justify-center sm:p-4"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
-    >
-      <div className="bg-white w-full h-full sm:h-auto sm:max-w-lg sm:rounded-xl sm:max-h-[90vh] shadow-2xl overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 sticky top-0 bg-white z-10">
-          <h2 className="text-sm font-semibold text-gray-900">Edit Job</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
-            aria-label="Close"
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
-          </button>
-        </div>
-
+    <ModalShell title="Edit Job" onClose={onClose}>
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              Title <span style={{ color: '#B8922A' }}>*</span>
+            <label className={labelClass}>
+              Title <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
               type="text"
@@ -336,7 +324,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Job Type</label>
+              <label className={labelClass}>Job Type</label>
               <select value={form.job_type} onChange={set('job_type')} className={inputClass}>
                 <option value="">Select type…</option>
                 {JOB_TYPES.map((t) => (
@@ -345,7 +333,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Status</label>
+              <label className={labelClass}>Status</label>
               <select value={form.status} onChange={set('status')} className={inputClass}>
                 {STATUS_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>{o.label}</option>
@@ -355,7 +343,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Assign To</label>
+            <label className={labelClass}>Assign To</label>
             <select value={form.staff_id} onChange={set('staff_id')} className={inputClass}>
               <option value="">Unassigned</option>
               {staff.map((s) => (
@@ -365,7 +353,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Client</label>
+            <label className={labelClass}>Client</label>
             <select value={form.client_id} onChange={handleClientChange} className={inputClass}>
               <option value="">Select client…</option>
               {clients.map((c) => (
@@ -377,7 +365,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Site</label>
+            <label className={labelClass}>Site</label>
             <select
               value={form.site_id}
               onChange={set('site_id')}
@@ -396,7 +384,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Location</label>
+            <label className={labelClass}>Location</label>
             <input
               type="text"
               value={form.location}
@@ -407,7 +395,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Scheduled Date</label>
+            <label className={labelClass}>Scheduled Date</label>
             <input
               type="date"
               value={form.scheduled_date}
@@ -416,8 +404,27 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
             />
           </div>
 
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>Start Time</label>
+              <select value={form.start_time} onChange={set('start_time')} className={inputClass}>
+                {TIME_OPTIONS.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className={labelClass}>End Time</label>
+              <select value={form.end_time} onChange={set('end_time')} className={inputClass}>
+                {TIME_OPTIONS.map((t) => (
+                  <option key={t.value} value={t.value}>{t.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Recurrence</label>
+            <label className={labelClass}>Recurrence</label>
             <select value={form.recurrence_pattern} onChange={set('recurrence_pattern')} className={inputClass}>
               {RECURRENCE_OPTIONS.map(o => (
                 <option key={o.value} value={o.value}>{o.label}</option>
@@ -426,7 +433,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Notes</label>
+            <label className={labelClass}>Notes</label>
             <textarea
               value={form.notes}
               onChange={set('notes')}
@@ -436,7 +443,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           {notifBanner && (
-            <div className="flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium" style={{ background: 'rgba(184,146,42,0.1)', color: '#B8922A' }}>
+            <div className="flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium" style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>
@@ -444,27 +451,17 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
             </div>
           )}
 
-          {error && <p className="text-xs text-red-500">{error}</p>}
+          {error && <p className="text-xs text-[#EF4444]">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-1">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-            >
+            <Button type="button" variant="secondary" onClick={onClose}>
               Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#B8922A' }}
-            >
+            </Button>
+            <Button type="submit" variant="primary" disabled={loading}>
               {loading ? 'Saving…' : 'Save Changes'}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </ModalShell>
   )
 }

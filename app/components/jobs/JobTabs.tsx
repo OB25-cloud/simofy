@@ -4,38 +4,18 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'
 import type { Job, JobPhoto, JobNote, Material, JobMaterial, ChecklistTemplate, JobChecklistItem, PurchaseOrder } from '@/lib/types'
+import { formatTime } from '@/lib/timeOptions'
 import JobPhotos from './JobPhotos'
 import MaterialsSection from './MaterialsSection'
 import ChecklistSection from './ChecklistSection'
 import PurchaseOrdersSection from './PurchaseOrdersSection'
+import { StatusBadge } from '@/app/components/ui/Badge'
+import Button from '@/app/components/ui/Button'
 
 const RECURRENCE_LABELS: Record<string, string> = {
   weekly:      'Weekly',
   fortnightly: 'Fortnightly',
   monthly:     'Monthly',
-}
-
-const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#B8922A', dot: '#B8922A', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
-}
-
-function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const c = STATUS_CONFIG[status] ?? { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: status }
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-      style={{ background: c.bg, color: c.text }}
-    >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
 }
 
 function fmtDate(s: string | null | undefined) {
@@ -196,7 +176,7 @@ export default function JobTabs({
   return (
     <>
       {/* Tab bar */}
-      <div className="border-b border-gray-100 mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
         <nav className="-mb-px flex gap-1 min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key
@@ -206,8 +186,8 @@ export default function JobTabs({
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#B8922A' : '#9ca3af',
-                  borderBottom: active ? '2px solid #B8922A' : '2px solid transparent',
+                  color: active ? '#C9A84C' : '#9ca3af',
+                  borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
                 }}
               >
                 {tab.label}
@@ -221,30 +201,30 @@ export default function JobTabs({
       {activeTab === 'overview' && (
         <div className="space-y-5 tab-fade-in">
           <div className="grid grid-cols-2 gap-5">
-            <div className="rounded-lg border border-gray-100 p-5">
-              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
                 Job Details
               </h2>
               <dl className="space-y-3.5">
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Status</dt>
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Status</dt>
                   <dd><StatusBadge status={job.status} /></dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Job Type</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Job Type</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {job.job_type ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Recurrence</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Recurrence</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {job.recurrence_pattern
                       ? (
                         <span className="inline-flex items-center gap-1.5">
                           <span
                             className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
-                            style={{ background: '#fdf8ee', color: '#B8922A' }}
+                            style={{ background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }}
                           >
                             Recurring
                           </span>
@@ -256,13 +236,13 @@ export default function JobTabs({
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Client</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Client</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {job.client_id ? (
                       <Link
                         href={`/clients/${job.client_id}`}
                         className="hover:underline"
-                        style={{ color: '#B8922A' }}
+                        style={{ color: '#C9A84C' }}
                       >
                         {job.clients?.name ?? 'View client'}
                       </Link>
@@ -272,34 +252,41 @@ export default function JobTabs({
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Assigned To</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Assigned To</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {job.staff?.name ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Location</dt>
-                  <dd className="text-sm text-gray-900">
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Location</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
                     {job.location ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Scheduled Date</dt>
-                  <dd className="text-sm text-gray-900">{fmtDate(job.scheduled_date)}</dd>
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Scheduled Date</dt>
+                  <dd className="text-sm text-[#1A1A2E]">
+                    {fmtDate(job.scheduled_date)}
+                    {job.scheduled_date && job.start_time && job.end_time && (
+                      <span className="text-[#6B7280]">
+                        {' · '}{formatTime(job.start_time)} – {formatTime(job.end_time)}
+                      </span>
+                    )}
+                  </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-gray-400 mb-0.5">Created</dt>
-                  <dd className="text-sm text-gray-900">{fmtDate(job.created_at)}</dd>
+                  <dt className="text-xs text-[#6B7280] mb-0.5">Created</dt>
+                  <dd className="text-sm text-[#1A1A2E]">{fmtDate(job.created_at)}</dd>
                 </div>
               </dl>
             </div>
 
-            <div className="rounded-lg border border-gray-100 p-5">
-              <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
                 Description
               </h2>
               {job.notes ? (
-                <p className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{job.notes}</p>
+                <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{job.notes}</p>
               ) : (
                 <p className="text-sm text-gray-300 italic">No description added</p>
               )}
@@ -307,47 +294,47 @@ export default function JobTabs({
           </div>
 
           {/* Job Cost Summary */}
-          <div className="rounded-lg border border-gray-100 p-5">
-            <h2 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-4">
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+            <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
               Job Cost Summary
             </h2>
             <div className="space-y-2.5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Materials Cost</span>
-                <span className="font-medium text-gray-900">{fmtCurrency(materialsCost)}</span>
+                <span className="font-medium text-[#1A1A2E]">{fmtCurrency(materialsCost)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">
                   Purchase Orders
-                  <span className="text-xs text-gray-400 ml-1.5">(received only)</span>
+                  <span className="text-xs text-[#6B7280] ml-1.5">(received only)</span>
                 </span>
-                <span className="font-medium text-gray-900">{fmtCurrency(purchaseOrdersCost)}</span>
+                <span className="font-medium text-[#1A1A2E]">{fmtCurrency(purchaseOrdersCost)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">
                   Labour Cost
-                  <span className="text-xs text-gray-400 ml-1.5">
+                  <span className="text-xs text-[#6B7280] ml-1.5">
                     ({job.staff?.pay_rate ? `${fmtCurrency(payRate)}/hr` : 'no rate set'} × 2 hrs est.)
                   </span>
                 </span>
-                <span className="font-medium text-gray-900">{fmtCurrency(labourCost)}</span>
+                <span className="font-medium text-[#1A1A2E]">{fmtCurrency(labourCost)}</span>
               </div>
-              <div className="flex items-center justify-between text-sm border-t border-gray-100 pt-2.5 mt-1">
-                <span className="font-semibold text-gray-700">Total Cost</span>
-                <span className="font-semibold text-gray-900">{fmtCurrency(totalCost)}</span>
+              <div className="flex items-center justify-between text-sm border-t border-[#E5E7EB] pt-2.5 mt-1">
+                <span className="font-semibold text-[#6B7280]">Total Cost</span>
+                <span className="font-semibold text-[#1A1A2E]">{fmtCurrency(totalCost)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Quote Total</span>
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-[#1A1A2E]">
                   {quoteTotal !== null ? fmtCurrency(quoteTotal) : <span className="text-gray-300">No quote</span>}
                 </span>
               </div>
               {margin !== null && (
-                <div className="flex items-center justify-between text-sm border-t border-gray-100 pt-2.5 mt-1">
-                  <span className="font-semibold text-gray-700">Profit Margin</span>
+                <div className="flex items-center justify-between text-sm border-t border-[#E5E7EB] pt-2.5 mt-1">
+                  <span className="font-semibold text-[#6B7280]">Profit Margin</span>
                   <span
                     className="font-semibold text-base"
-                    style={{ color: margin >= 0 ? '#B8922A' : '#dc2626' }}
+                    style={{ color: margin >= 0 ? '#C9A84C' : '#EF4444' }}
                   >
                     {margin >= 0 ? '+' : ''}{fmtCurrency(margin)}
                   </span>
@@ -362,85 +349,81 @@ export default function JobTabs({
       {activeTab === 'notes' && (
         <div className="tab-fade-in">
           {/* Add note form */}
-          <div className="rounded-lg border border-gray-100 p-4 mb-5">
+          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4 mb-5">
             <textarea
               value={noteText}
               onChange={e => setNoteText(e.target.value)}
               placeholder="Add a note…"
               rows={3}
-              className="w-full text-sm text-gray-900 placeholder-gray-300 resize-none border-0 outline-none focus:ring-0"
+              className="w-full text-sm text-[#1A1A2E] placeholder-gray-300 resize-none border-0 outline-none focus:ring-0"
             />
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+            <div className="flex items-center justify-between pt-2 border-t border-[#E5E7EB]">
               {noteError ? (
-                <p className="text-xs text-red-500">{noteError}</p>
+                <p className="text-xs text-[#EF4444]">{noteError}</p>
               ) : (
                 <span />
               )}
-              <button
-                onClick={handleAddNote}
-                disabled={saving || !noteText.trim()}
-                className="px-3 py-1.5 text-xs font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-                style={{ background: '#B8922A' }}
-              >
+              <Button onClick={handleAddNote} disabled={saving || !noteText.trim()} variant="primary" size="sm">
                 {saving ? 'Saving…' : 'Add Note'}
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Notes list */}
           {notes.length === 0 ? (
-            <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-              <p className="text-sm text-gray-400">No notes yet</p>
+            <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+              <p className="text-sm text-[#6B7280]">No notes yet</p>
             </div>
           ) : (
             <div className="space-y-3">
               {notes.map(note => (
-                <div key={note.id} className="rounded-lg border border-gray-100 p-4">
+                <div key={note.id} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
                   {editingId === note.id ? (
                     <>
                       <textarea
                         value={editText}
                         onChange={e => setEditText(e.target.value)}
                         rows={3}
-                        className="w-full text-sm text-gray-900 resize-none border-0 outline-none focus:ring-0 mb-2"
+                        className="w-full text-sm text-[#1A1A2E] resize-none border-0 outline-none focus:ring-0 mb-2"
                         autoFocus
                       />
-                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-gray-100">
-                        <button
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5E7EB]">
+                        <Button
                           onClick={cancelEdit}
                           disabled={updatingId === note.id}
-                          className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
+                          variant="secondary"
+                          size="sm"
                         >
                           Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => handleSaveEdit(note.id)}
                           disabled={updatingId === note.id || !editText.trim()}
-                          className="px-3 py-1.5 text-xs font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-                          style={{ background: '#B8922A' }}
+                          variant="primary"
+                          size="sm"
                         >
                           {updatingId === note.id ? 'Saving…' : 'Save'}
-                        </button>
+                        </Button>
                       </div>
                     </>
                   ) : (
                     <>
-                      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap mb-2">
+                      <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap mb-2">
                         {note.content}
                       </p>
                       <div className="flex items-center justify-between">
-                        <p className="text-xs text-gray-400">{fmtDateTime(note.created_at)}</p>
+                        <p className="text-xs text-[#6B7280]">{fmtDateTime(note.created_at)}</p>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => startEdit(note)}
-                            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+                            className="text-xs text-[#6B7280] hover:text-[#1A1A2E] transition-colors"
                           >
                             Edit
                           </button>
                           <button
                             onClick={() => handleDelete(note.id)}
                             disabled={deletingId === note.id}
-                            className="text-xs text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
+                            className="text-xs text-[#EF4444]/70 hover:text-[#EF4444] transition-colors disabled:opacity-50"
                           >
                             {deletingId === note.id ? 'Deleting…' : 'Delete'}
                           </button>
@@ -505,8 +488,8 @@ export default function JobTabs({
       {activeTab === 'activity' && (
         <div className="tab-fade-in">
           {timeline.length === 0 ? (
-            <div className="rounded-lg border border-gray-100 bg-gray-50 py-10 text-center">
-              <p className="text-sm text-gray-400">No activity recorded</p>
+            <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
+              <p className="text-sm text-[#6B7280]">No activity recorded</p>
             </div>
           ) : (
             <div className="relative pl-6">
@@ -519,8 +502,8 @@ export default function JobTabs({
                       style={{ background: entry.dotColor }}
                     />
                     <div>
-                      <p className="text-sm font-medium text-gray-900">{entry.label}</p>
-                      <p className="text-xs text-gray-400 mt-0.5">
+                      <p className="text-sm font-medium text-[#1A1A2E]">{entry.label}</p>
+                      <p className="text-xs text-[#6B7280] mt-0.5">
                         {new Date(entry.date).toLocaleDateString('en-NZ', {
                           day: 'numeric', month: 'long', year: 'numeric',
                         })}
