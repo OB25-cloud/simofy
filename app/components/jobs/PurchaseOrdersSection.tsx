@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { PurchaseOrder, PurchaseOrderStatus } from '@/lib/types'
+import { StatusBadge, statusLabel } from '@/app/components/ui/Badge'
 
 function fmtCurrency(n: number) {
   return new Intl.NumberFormat('en-NZ', { style: 'currency', currency: 'NZD' }).format(n)
@@ -12,23 +13,15 @@ function fmtDate(s: string) {
   return new Date(s).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
 }
 
-const STATUS_CONFIG: Record<PurchaseOrderStatus, { bg: string; text: string; dot: string; label: string }> = {
-  pending:   { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'   },
-  approved:  { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Approved'  },
-  received:  { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Received' },
-  cancelled: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'},
-}
-
 const STATUS_OPTIONS: PurchaseOrderStatus[] = ['pending', 'approved', 'received', 'cancelled']
 
-function StatusBadge({ status }: { status: PurchaseOrderStatus }) {
-  const c = STATUS_CONFIG[status]
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ background: c.bg, color: c.text }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
+// Same palette as the shared StatusBadge, expressed as classes so the
+// admin-only inline <select> below can look like a badge.
+const STATUS_SELECT_CLASS: Record<PurchaseOrderStatus, string> = {
+  pending: 'bg-amber-100 text-amber-700',
+  approved: 'bg-green-100 text-green-700',
+  received: 'bg-green-100 text-green-700',
+  cancelled: 'bg-red-100 text-red-700',
 }
 
 interface Props {
@@ -224,11 +217,10 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                         value={po.status}
                         onChange={e => handleStatusChange(po, e.target.value as PurchaseOrderStatus)}
                         disabled={updatingId === po.id}
-                        className="text-xs rounded-full px-2.5 py-0.5 font-medium border-0 focus:outline-none focus:ring-1 disabled:opacity-50"
-                        style={{ background: STATUS_CONFIG[po.status].bg, color: STATUS_CONFIG[po.status].text }}
+                        className={`text-xs rounded-full px-2.5 py-0.5 font-medium border-0 focus:outline-none focus:ring-1 focus:ring-[#C9A84C] disabled:opacity-50 ${STATUS_SELECT_CLASS[po.status]}`}
                       >
                         {STATUS_OPTIONS.map(s => (
-                          <option key={s} value={s}>{STATUS_CONFIG[s].label}</option>
+                          <option key={s} value={s}>{statusLabel(s)}</option>
                         ))}
                       </select>
                     ) : (
