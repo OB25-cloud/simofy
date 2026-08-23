@@ -6,7 +6,7 @@ import StaffActions from '@/app/components/staff/StaffActions'
 import StaffDetailTabs from '@/app/components/staff/StaffDetailTabs'
 
 const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: '#fdf8ee', text: '#B8922A', label: 'Admin' },
+  admin: { bg: '#fdf8ee', text: '#C9A84C', label: 'Admin' },
   field: { bg: '#eff6ff', text: '#1d4ed8', label: 'Field' },
 }
 
@@ -61,13 +61,13 @@ export default async function StaffDetailPage({
               className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
               style={
                 typedStaff.is_active
-                  ? { background: '#fdf8ee', color: '#B8922A' }
+                  ? { background: '#fdf8ee', color: '#C9A84C' }
                   : { background: '#f3f4f6', color: '#9ca3af' }
               }
             >
               <span
                 className="w-1.5 h-1.5 rounded-full"
-                style={{ background: typedStaff.is_active ? '#B8922A' : '#d1d5db' }}
+                style={{ background: typedStaff.is_active ? '#C9A84C' : '#d1d5db' }}
               />
               {typedStaff.is_active ? 'Active' : 'Inactive'}
             </span>

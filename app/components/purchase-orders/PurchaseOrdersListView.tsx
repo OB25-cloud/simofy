@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -107,7 +107,7 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
         {stats.map(s => (
           <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.danger ? '#dc2626' : s.accent ? '#B8922A' : '#111827' }}>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.danger ? '#dc2626' : s.accent ? '#C9A84C' : '#111827' }}>
               {s.value}
             </p>
           </div>
@@ -123,13 +123,13 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
             placeholder="Search by supplier, description, job or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A] text-gray-600"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-gray-600"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -170,7 +170,7 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
                   </td>
                   <td className="px-4 py-3 max-w-[140px]">
                     {po.job_id ? (
-                      <Link href={`/jobs/${po.job_id}`} className="block truncate hover:underline" style={{ color: '#B8922A' }}>
+                      <Link href={`/jobs/${po.job_id}`} className="block truncate hover:underline" style={{ color: '#C9A84C' }}>
                         {po.jobs?.title ?? po.jobs?.job_type ?? 'View job'}
                       </Link>
                     ) : (

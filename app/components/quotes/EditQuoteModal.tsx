@@ -12,8 +12,8 @@ const STATUS_OPTIONS = [
   { value: 'expired',  label: 'Expired' },
 ]
 
-const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white'
-const numClass   = 'w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#B8922A] bg-white text-right'
+const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white'
+const numClass   = 'w-full border border-gray-200 rounded-md px-2 py-2 text-sm text-gray-900 focus:outline-none focus:border-[#C9A84C] bg-white text-right'
 
 type LineItem = { id: string; description: string; quantity: string; unit_price: string }
 
@@ -153,7 +153,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                  Client <span style={{ color: '#B8922A' }}>*</span>
+                  Client <span style={{ color: '#C9A84C' }}>*</span>
                 </label>
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
                   <option value="">Select client…</option>
@@ -195,7 +195,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
             <div>
               <div className="flex items-center justify-between mb-2">
                 <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Line Items</p>
-                <button type="button" onClick={addItem} className="flex items-center gap-1 text-xs font-medium transition-opacity hover:opacity-70" style={{ color: '#B8922A' }}>
+                <button type="button" onClick={addItem} className="flex items-center gap-1 text-xs font-medium transition-opacity hover:opacity-70" style={{ color: '#C9A84C' }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                     <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
@@ -250,7 +250,7 @@ export default function EditQuoteModal({ quote, clients, jobs, onClose }: Props)
             <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading || loadingItems} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
+            <button type="submit" disabled={loading || loadingItems} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
               {loading ? 'Saving…' : 'Save Changes'}
             </button>
           </div>

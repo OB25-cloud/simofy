@@ -12,7 +12,7 @@ const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Cancelled' },
 ]
 
-const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white'
+const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white'
 
 function invoiceNumber(id: string) {
   return `Q-${id.slice(0, 6).toUpperCase()}`
@@ -100,7 +100,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                  Client <span style={{ color: '#B8922A' }}>*</span>
+                  Client <span style={{ color: '#C9A84C' }}>*</span>
                 </label>
                 <select
                   value={form.client_id}
@@ -149,7 +149,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                Amount (excl. GST) <span style={{ color: '#B8922A' }}>*</span>
+                Amount (excl. GST) <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none">$</span>
@@ -193,7 +193,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
             <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
+            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
               {loading ? 'Saving…' : 'Add Invoice'}
             </button>
           </div>

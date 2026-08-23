@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -29,7 +29,7 @@ export default function QuoteActions({ quote, clients, jobs }: Props) {
         <button
           onClick={() => setShowEdit(true)}
           className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#B8922A' }}
+          style={{ background: '#C9A84C' }}
         >
           Edit Quote
         </button>

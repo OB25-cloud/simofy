@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import Link from 'next/link'
@@ -12,7 +12,7 @@ type NotifSetting = { notification_type: string; enabled: boolean }
 const JOB_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
   scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#B8922A', dot: '#B8922A', label: 'In Progress' },
+  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
   complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
   invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
   cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
@@ -120,8 +120,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#B8922A' : '#9ca3af',
-                  borderBottom: active ? '2px solid #B8922A' : '2px solid transparent',
+                  color: active ? '#C9A84C' : '#9ca3af',
+                  borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
                 }}
               >
                 {tab.label}
@@ -157,7 +157,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   <dt className="text-xs text-gray-400 mb-0.5">Email</dt>
                   <dd className="text-sm text-gray-900">
                     {client.email ? (
-                      <a href={`mailto:${client.email}`} className="hover:underline" style={{ color: '#B8922A' }}>
+                      <a href={`mailto:${client.email}`} className="hover:underline" style={{ color: '#C9A84C' }}>
                         {client.email}
                       </a>
                     ) : (
@@ -169,7 +169,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   <dt className="text-xs text-gray-400 mb-0.5">Phone</dt>
                   <dd className="text-sm text-gray-900">
                     {client.phone ? (
-                      <a href={`tel:${client.phone}`} className="hover:underline" style={{ color: '#B8922A' }}>
+                      <a href={`tel:${client.phone}`} className="hover:underline" style={{ color: '#C9A84C' }}>
                         {client.phone}
                       </a>
                     ) : (
@@ -236,7 +236,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                         <Link
                           href={`/jobs/${job.id}`}
                           className="font-medium hover:underline"
-                          style={{ color: '#B8922A' }}
+                          style={{ color: '#C9A84C' }}
                         >
                           {job.title ?? job.job_type ?? <span className="text-gray-300">Untitled</span>}
                         </Link>
@@ -286,7 +286,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                         <Link
                           href={`/quotes/${q.id}`}
                           className="font-medium hover:underline"
-                          style={{ color: '#B8922A' }}
+                          style={{ color: '#C9A84C' }}
                         >
                           Q-{q.id.slice(0, 6).toUpperCase()}
                         </Link>
@@ -337,7 +337,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                         <Link
                           href={`/invoices/${inv.id}`}
                           className="font-medium hover:underline"
-                          style={{ color: '#B8922A' }}
+                          style={{ color: '#C9A84C' }}
                         >
                           INV-{inv.id.slice(0, 6).toUpperCase()}
                         </Link>

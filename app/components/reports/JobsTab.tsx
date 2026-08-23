@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import ChartCard from './ChartCard'
@@ -9,7 +9,7 @@ import type { JobsStatsData } from './types'
 const STATUS_COLOR: Record<string, string> = {
   pending: '#9ca3af',
   scheduled: '#3b82f6',
-  in_progress: '#B8922A',
+  in_progress: '#C9A84C',
   complete: '#22c55e',
   invoiced: '#8b5cf6',
   cancelled: '#ef4444',

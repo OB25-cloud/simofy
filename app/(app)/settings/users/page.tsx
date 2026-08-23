@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { getSupabaseAdmin } from '@/lib/supabaseAdmin'
 import UsersView from '@/app/components/settings/UsersView'
@@ -50,7 +50,7 @@ export default async function UsersSettingsPage() {
   return (
     <div className="h-full flex flex-col">
       <div className="px-6 py-5 border-b border-gray-100 shrink-0">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#B8922A' }}>Settings</p>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>Settings</p>
         <h1 className="text-xl font-bold text-gray-900">Users & Permissions</h1>
         <p className="text-sm text-gray-400 mt-0.5">Manage user roles and granular module permissions.</p>
       </div>

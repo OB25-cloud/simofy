@@ -55,13 +55,13 @@ export default async function ClientDetailPage({
             className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
             style={
               client.is_active
-                ? { background: '#fdf8ee', color: '#B8922A' }
+                ? { background: '#fdf8ee', color: '#C9A84C' }
                 : { background: '#f3f4f6', color: '#9ca3af' }
             }
           >
             <span
               className="w-1.5 h-1.5 rounded-full"
-              style={{ background: client.is_active ? '#B8922A' : '#d1d5db' }}
+              style={{ background: client.is_active ? '#C9A84C' : '#d1d5db' }}
             />
             {client.is_active ? 'Active' : 'Inactive'}
           </span>

@@ -19,7 +19,7 @@ const SOURCE_OPTIONS = [
   'Other',
 ]
 
-const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white'
+const inputClass = 'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white'
 
 interface Props {
   onClose: () => void
@@ -81,7 +81,7 @@ export default function AddLeadModal({ onClose }: Props) {
 
             <div>
               <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                Name <span style={{ color: '#B8922A' }}>*</span>
+                Name <span style={{ color: '#C9A84C' }}>*</span>
               </label>
               <input type="text" value={form.name} onChange={setField('name')} placeholder="Full name…" className={inputClass} />
             </div>
@@ -130,7 +130,7 @@ export default function AddLeadModal({ onClose }: Props) {
             <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#B8922A' }}>
+            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
               {loading ? 'Saving…' : 'Add Lead'}
             </button>
           </div>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { MODULES, ACTIONS, ROLE_DEFAULTS, buildPermissionMap } from '@/lib/permissions'
@@ -28,7 +28,7 @@ const ROLE_LABELS: Record<string, string> = {
 const ROLES = ['admin', 'supervisor', 'field'] as const
 
 function roleBadgeStyle(role: string) {
-  if (role === 'admin')      return { background: 'rgba(184,146,42,0.12)', color: '#B8922A' }
+  if (role === 'admin')      return { background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }
   if (role === 'supervisor') return { background: '#eff6ff', color: '#1d4ed8' }
   return { background: '#f3f4f6', color: '#6b7280' }
 }
@@ -199,13 +199,13 @@ export default function UsersView({
                 onClick={() => selectUser(user)}
                 className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-gray-50"
                 style={{
-                  background:  isSelected ? 'rgba(184,146,42,0.04)' : 'transparent',
-                  borderLeft:  isSelected ? '3px solid #B8922A'     : '3px solid transparent',
+                  background:  isSelected ? 'rgba(201, 168, 76,0.04)' : 'transparent',
+                  borderLeft:  isSelected ? '3px solid #C9A84C'     : '3px solid transparent',
                 }}
               >
                 <div
                   className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold text-white"
-                  style={{ background: '#B8922A' }}
+                  style={{ background: '#C9A84C' }}
                 >
                   {initials}
                 </div>
@@ -235,7 +235,7 @@ export default function UsersView({
           <div className="flex items-center gap-3 mb-6">
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-              style={{ background: '#B8922A' }}
+              style={{ background: '#C9A84C' }}
             >
               {(selectedUser.name ?? selectedUser.email).slice(0, 2).toUpperCase()}
             </div>
@@ -284,9 +284,9 @@ export default function UsersView({
             {selectedUser.role === 'admin' ? (
               <div
                 className="rounded-lg border px-5 py-4 flex items-center gap-3"
-                style={{ background: 'rgba(184,146,42,0.04)', borderColor: 'rgba(184,146,42,0.2)' }}
+                style={{ background: 'rgba(201, 168, 76,0.04)', borderColor: 'rgba(201, 168, 76,0.2)' }}
               >
-                <span className="text-sm font-semibold" style={{ color: '#B8922A' }}>Full Access</span>
+                <span className="text-sm font-semibold" style={{ color: '#C9A84C' }}>Full Access</span>
                 <span className="text-xs text-gray-400">— Admins have unrestricted access to all modules</span>
               </div>
             ) : (
@@ -318,7 +318,7 @@ export default function UsersView({
                                 checked={permMap?.[module]?.[action] ?? false}
                                 onChange={e => handlePermissionToggle(module, action, e.target.checked)}
                                 className="w-4 h-4 rounded cursor-pointer"
-                                style={{ accentColor: '#B8922A' }}
+                                style={{ accentColor: '#C9A84C' }}
                               />
                             </td>
                           ))}
@@ -338,7 +338,7 @@ export default function UsersView({
                     onClick={handleSavePermissions}
                     disabled={!isDirty || saving}
                     className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: '#B8922A' }}
+                    style={{ background: '#C9A84C' }}
                   >
                     {saving ? 'Saving…' : 'Save Changes'}
                   </button>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useCallback, useState } from 'react'
 import type { Quote, QuoteLineItem } from '@/lib/types'
@@ -23,7 +23,7 @@ function fmtAmt(n: number | null | undefined) {
 
 // Colour helpers
 const DARK: [number, number, number]  = [17, 17, 17]
-const GOLD: [number, number, number]  = [184, 146, 42]
+const GOLD: [number, number, number]  = [201, 168, 76]
 const GRAY: [number, number, number]  = [107, 114, 128]
 const LGRAY: [number, number, number] = [243, 244, 246]
 const WHITE: [number, number, number] = [255, 255, 255]
@@ -240,7 +240,7 @@ export default function QuotePDFButton({ quote, lineItems }: Props) {
       onClick={handleDownload}
       disabled={busy}
       className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-      style={{ background: '#111111', color: '#B8922A', border: '1px solid #B8922A' }}
+      style={{ background: '#111111', color: '#C9A84C', border: '1px solid #C9A84C' }}
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

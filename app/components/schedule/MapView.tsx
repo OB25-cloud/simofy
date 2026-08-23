@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useEffect, useRef, useState } from 'react'
 import Script from 'next/script'
@@ -18,7 +18,7 @@ const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 const STATUS_COLOR: Record<string, string> = {
   pending: '#9ca3af',
   scheduled: '#3b82f6',
-  in_progress: '#B8922A',
+  in_progress: '#C9A84C',
   complete: '#22c55e',
   invoiced: '#8b5cf6',
   cancelled: '#ef4444',
@@ -156,7 +156,7 @@ export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
           <p style="font-size:12px;color:#6b7280;margin:0 0 2px;">${escapeHtml(job.clients?.name ?? 'No client')}</p>
           <p style="font-size:12px;color:#6b7280;margin:0 0 2px;">${escapeHtml(job.staff?.name ?? 'Unassigned')}</p>
           <p style="font-size:11px;color:#9ca3af;margin:0 0 8px;">${escapeHtml(dateLabel)}</p>
-          <a href="/jobs/${job.id}" style="font-size:12px;font-weight:600;color:#B8922A;text-decoration:none;">View Job →</a>
+          <a href="/jobs/${job.id}" style="font-size:12px;font-weight:600;color:#C9A84C;text-decoration:none;">View Job →</a>
         </div>
       `.trim()
 

@@ -15,10 +15,7 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       disabled={pending}
-      className="flex items-center gap-3 w-full px-3 py-3 md:py-2.5 rounded-md text-sm font-medium transition-colors duration-150 disabled:opacity-50"
-      style={{ color: 'rgba(255,255,255,0.35)' }}
-      onMouseEnter={e => { if (!pending) e.currentTarget.style.color = 'rgba(255,255,255,0.7)' }}
-      onMouseLeave={e => { if (!pending) e.currentTarget.style.color = 'rgba(255,255,255,0.35)' }}
+      className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm transition-colors duration-150 disabled:opacity-50 text-[#9CA3AF] hover:text-white hover:bg-[#2A2A3E]"
     >
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
         <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

@@ -1,9 +1,24 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #111111;
-  --gold: #B8922A;
+  /* Simofy design system tokens */
+  --page-bg: #F4F5F7;
+  --surface: #FFFFFF;
+  --sidebar-bg: #1E1E2E;
+  --sidebar-active-bg: #2A2A3E;
+  --gold: #C9A84C;
+  --text-primary: #1A1A2E;
+  --text-secondary: #6B7280;
+  --border: #E5E7EB;
+  --success: #22C55E;
+  --warning: #F59E0B;
+  --error: #EF4444;
+  --info: #3B82F6;
+  --dark-panel: #1A1A2E;
+  --dark-panel-text: #F5F5F5;
+
+  --background: var(--page-bg);
+  --foreground: var(--text-primary);
 }
 
 @theme inline {
@@ -15,8 +30,8 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--page-bg);
+  color: var(--text-primary);
 }
 
 .scrollbar-hidden {
@@ -32,4 +47,12 @@ body {
 }
 .tab-fade-in {
   animation: tab-fade-in 150ms ease-in;
+}
+
+@keyframes page-fade-in {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.page-fade-in {
+  animation: page-fade-in 200ms ease-out;
 }

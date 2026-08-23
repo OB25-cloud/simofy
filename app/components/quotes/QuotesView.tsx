@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -117,7 +117,7 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#B8922A' }}
+          style={{ background: '#C9A84C' }}
         >
           <PlusIcon />
           Add Quote
@@ -129,7 +129,7 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
         {stats.map(s => (
           <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#B8922A' : '#111827' }}>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#111827' }}>
               {s.value}
             </p>
           </div>
@@ -145,13 +145,13 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
             placeholder="Search by quote ID, client, job or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A] text-gray-600"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-gray-600"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -230,7 +230,7 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                     {new Date(quote.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-gray-300 group-hover:text-[#B8922A] transition-colors text-base">→</span>
+                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors text-base">→</span>
                   </td>
                 </tr>
               ))}

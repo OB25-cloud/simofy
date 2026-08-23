@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import type { Staff } from '@/lib/types'
 
 const inputClass =
-  'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white'
+  'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white'
 
 interface Props {
   staff: Staff
@@ -76,7 +76,7 @@ export default function EditStaffModal({ staff, onClose }: Props) {
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              Name <span style={{ color: '#B8922A' }}>*</span>
+              Name <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input type="text" value={form.name} onChange={set('name')} className={inputClass} autoFocus />
           </div>
@@ -123,7 +123,7 @@ export default function EditStaffModal({ staff, onClose }: Props) {
               type="button"
               onClick={() => setForm((prev) => ({ ...prev, is_active: !prev.is_active }))}
               className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200"
-              style={{ background: form.is_active ? '#B8922A' : '#e5e7eb' }}
+              style={{ background: form.is_active ? '#C9A84C' : '#e5e7eb' }}
               aria-label="Toggle active status"
             >
               <span
@@ -143,7 +143,7 @@ export default function EditStaffModal({ staff, onClose }: Props) {
               type="submit"
               disabled={loading}
               className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#B8922A' }}
+              style={{ background: '#C9A84C' }}
             >
               {loading ? 'Saving…' : 'Save Changes'}
             </button>

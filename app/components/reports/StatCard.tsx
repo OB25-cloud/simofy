@@ -1,4 +1,4 @@
-export default function StatCard({
+﻿export default function StatCard({
   label, value, sub, accent, danger,
 }: {
   label: string
@@ -7,7 +7,7 @@ export default function StatCard({
   accent?: boolean
   danger?: boolean
 }) {
-  const color = danger ? '#dc2626' : accent ? '#B8922A' : '#111827'
+  const color = danger ? '#dc2626' : accent ? '#C9A84C' : '#111827'
   return (
     <div className="rounded-lg border border-gray-100 bg-white p-4">
       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{label}</p>

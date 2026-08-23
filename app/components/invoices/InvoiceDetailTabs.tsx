@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -8,7 +8,7 @@ import type { Invoice } from '@/lib/types'
 const TABS = ['Overview', 'Payment', 'Activity'] as const
 type Tab = typeof TABS[number]
 
-const GOLD = '#B8922A'
+const GOLD = '#C9A84C'
 
 function fmt(n: number | null | undefined) {
   return n != null ? `$${n.toFixed(2)}` : '—'

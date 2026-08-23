@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useRef } from 'react'
 
@@ -39,9 +39,9 @@ export default function AiSearchBar() {
       <form onSubmit={handleSubmit} className="relative">
         <div
           className="flex items-center rounded-lg overflow-hidden"
-          style={{ background: '#111', border: '1px solid rgba(184,146,42,0.3)' }}
+          style={{ background: '#111', border: '1px solid rgba(201, 168, 76,0.3)' }}
         >
-          <div className="pl-4 pr-2 shrink-0" style={{ color: 'rgba(184,146,42,0.7)' }}>
+          <div className="pl-4 pr-2 shrink-0" style={{ color: 'rgba(201, 168, 76,0.7)' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
@@ -61,9 +61,9 @@ export default function AiSearchBar() {
             disabled={!question.trim() || loading}
             className="px-4 py-3 text-xs font-semibold shrink-0 transition-opacity"
             style={{
-              background: 'rgba(184,146,42,0.15)',
-              color: '#B8922A',
-              borderLeft: '1px solid rgba(184,146,42,0.2)',
+              background: 'rgba(201, 168, 76,0.15)',
+              color: '#C9A84C',
+              borderLeft: '1px solid rgba(201, 168, 76,0.2)',
               opacity: !question.trim() || loading ? 0.4 : 1,
             }}
           >
@@ -75,12 +75,12 @@ export default function AiSearchBar() {
       {(answer || error) && (
         <div
           className="mt-3 rounded-lg p-4"
-          style={{ background: '#111', border: '1px solid rgba(184,146,42,0.25)' }}
+          style={{ background: '#111', border: '1px solid rgba(201, 168, 76,0.25)' }}
         >
           <div className="flex items-center gap-2 mb-2.5">
             <span
               className="text-[10px] font-bold px-1.5 py-0.5 rounded"
-              style={{ background: 'rgba(184,146,42,0.2)', color: '#B8922A', letterSpacing: '0.1em' }}
+              style={{ background: 'rgba(201, 168, 76,0.2)', color: '#C9A84C', letterSpacing: '0.1em' }}
             >
               AI
             </span>

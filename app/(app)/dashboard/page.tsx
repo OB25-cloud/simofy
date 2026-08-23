@@ -1,4 +1,4 @@
-import { createServerSupabase } from '@/lib/supabaseServer'
+﻿import { createServerSupabase } from '@/lib/supabaseServer'
 import { paginateAll } from '@/lib/supabasePaginate'
 import Link from 'next/link'
 import type { Lead } from '@/lib/types'
@@ -32,7 +32,7 @@ type OverdueInvoice = {
 const JOB_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
   scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#B8922A', dot: '#B8922A', label: 'In Progress' },
+  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
   complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
   invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
   cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
@@ -88,22 +88,22 @@ function PipelineStage({ label, value, icon }: { label: string; value: number; i
   return (
     <div
       className="flex-1 min-w-[140px] rounded-xl px-5 py-4"
-      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(184,146,42,0.15)' }}
+      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15)' }}
     >
       <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(184,146,42,0.7)' }}>
+        <span className="text-[10px] font-bold uppercase tracking-wider" style={{ color: 'rgba(201, 168, 76,0.7)' }}>
           {label}
         </span>
-        <span style={{ color: 'rgba(184,146,42,0.5)' }}>{icon}</span>
+        <span style={{ color: 'rgba(201, 168, 76,0.5)' }}>{icon}</span>
       </div>
-      <p className="text-3xl font-bold tabular-nums leading-none" style={{ color: '#B8922A' }}>{value}</p>
+      <p className="text-3xl font-bold tabular-nums leading-none" style={{ color: '#C9A84C' }}>{value}</p>
     </div>
   )
 }
 
 function PipelineArrow() {
   return (
-    <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(184,146,42,0.35)' }}>
+    <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(201, 168, 76,0.35)' }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
       </svg>
@@ -124,9 +124,9 @@ function StatCard({
   accentValue?: boolean
   danger?: boolean
 }) {
-  const valueColor = danger ? '#dc2626' : accentValue ? '#B8922A' : '#111827'
-  const iconBg     = danger ? '#fef2f2' : 'rgba(184,146,42,0.08)'
-  const iconColor  = danger ? '#dc2626' : '#B8922A'
+  const valueColor = danger ? '#dc2626' : accentValue ? '#C9A84C' : '#111827'
+  const iconBg     = danger ? '#fef2f2' : 'rgba(201, 168, 76,0.08)'
+  const iconColor  = danger ? '#dc2626' : '#C9A84C'
   return (
     <div className="rounded-lg border border-gray-100 bg-white p-4">
       <div className="flex items-start justify-between mb-3">
@@ -366,33 +366,33 @@ export default async function DashboardPage() {
   // ── Insight icons ─────────────────────────────────────────────────────────────
 
   const AlertIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
       <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
     </svg>
   )
   const TrendIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
     </svg>
   )
   const StarIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
   )
   const RevenueIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>
   )
   const BellIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
     </svg>
   )
   const PctIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#B8922A" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
     </svg>
   )
@@ -561,7 +561,7 @@ export default async function DashboardPage() {
             key={href}
             href={href}
             className="px-3.5 py-3.5 sm:py-1.5 rounded-md text-xs font-semibold transition-colors hover:bg-amber-50"
-            style={{ border: '1px solid rgba(184,146,42,0.45)', color: '#B8922A' }}
+            style={{ border: '1px solid rgba(201, 168, 76,0.45)', color: '#C9A84C' }}
           >
             {label}
           </Link>
@@ -583,12 +583,12 @@ export default async function DashboardPage() {
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Jobs Today</p>
               <span
                 className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold"
-                style={{ background: 'rgba(184,146,42,0.1)', color: '#B8922A' }}
+                style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}
               >
                 {jobsToday.length}
               </span>
             </div>
-            <Link href="/jobs" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#B8922A' }}>
+            <Link href="/jobs" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#C9A84C' }}>
               View all →
             </Link>
           </div>
@@ -635,7 +635,7 @@ export default async function DashboardPage() {
                         <StatusBadge status={job.status} />
                       </td>
                       <td className="px-4 py-2.5 text-right">
-                        <Link href={`/jobs/${job.id}`} className="text-gray-300 hover:text-[#B8922A] transition-colors text-sm">→</Link>
+                        <Link href={`/jobs/${job.id}`} className="text-gray-300 hover:text-[#C9A84C] transition-colors text-sm">→</Link>
                       </td>
                     </tr>
                   ))}
@@ -652,7 +652,7 @@ export default async function DashboardPage() {
           <div className="rounded-lg border border-gray-100 bg-white overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100" style={{ background: '#fafafa' }}>
               <p className="text-xs font-bold text-gray-500 uppercase tracking-wider">Recent Activity</p>
-              <Link href="/jobs" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#B8922A' }}>
+              <Link href="/jobs" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#C9A84C' }}>
                 View all →
               </Link>
             </div>
@@ -669,7 +669,7 @@ export default async function DashboardPage() {
                     className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#B8922A] transition-colors">
+                      <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#C9A84C] transition-colors">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
                       <p className="text-[11px] text-gray-400 truncate mt-0.5">
@@ -694,13 +694,13 @@ export default async function DashboardPage() {
                 {leads.length > 0 && (
                   <span
                     className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
-                    style={{ background: '#B8922A' }}
+                    style={{ background: '#C9A84C' }}
                   >
                     {leads.length}
                   </span>
                 )}
               </div>
-              <Link href="/leads" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#B8922A' }}>
+              <Link href="/leads" className="text-xs font-medium hover:opacity-60 transition-opacity" style={{ color: '#C9A84C' }}>
                 View all →
               </Link>
             </div>
@@ -717,14 +717,14 @@ export default async function DashboardPage() {
                     className="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#B8922A] transition-colors">
+                      <p className="text-xs font-semibold text-gray-900 truncate group-hover:text-[#C9A84C] transition-colors">
                         {lead.name ?? 'Unnamed Lead'}
                       </p>
                       <p className="text-[11px] text-gray-400 truncate mt-0.5">
                         {lead.email ?? lead.phone ?? (lead as unknown as { source?: string }).source ?? '—'}
                       </p>
                     </div>
-                    <span className="text-gray-300 group-hover:text-[#B8922A] transition-colors shrink-0 text-sm">→</span>
+                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors shrink-0 text-sm">→</span>
                   </Link>
                 ))}
               </div>

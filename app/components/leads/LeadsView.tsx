@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -6,7 +6,7 @@ import type { Lead } from '@/lib/types'
 import AddLeadModal from './AddLeadModal'
 
 export const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  new:       { bg: '#fdf8ee', text: '#B8922A', dot: '#B8922A', label: 'New'       },
+  new:       { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'New'       },
   contacted: { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Contacted' },
   converted: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Converted' },
   lost:      { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Lost'      },
@@ -86,7 +86,7 @@ export default function LeadsView({ leads, openModal }: Props) {
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#B8922A' }}
+          style={{ background: '#C9A84C' }}
         >
           <PlusIcon />
           Add Lead
@@ -98,7 +98,7 @@ export default function LeadsView({ leads, openModal }: Props) {
         {stats.map(s => (
           <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#B8922A' : '#111827' }}>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#111827' }}>
               {s.value}
             </p>
           </div>
@@ -114,13 +114,13 @@ export default function LeadsView({ leads, openModal }: Props) {
             placeholder="Search by name, email, phone, source or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A] text-gray-600"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-gray-600"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -191,7 +191,7 @@ export default function LeadsView({ leads, openModal }: Props) {
                     <StatusBadge status={lead.status} />
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-gray-300 group-hover:text-[#B8922A] transition-colors text-base">→</span>
+                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors text-base">→</span>
                   </td>
                 </tr>
               ))}

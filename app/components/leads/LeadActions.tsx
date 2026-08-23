@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -6,7 +6,7 @@ import type { Lead } from '@/lib/types'
 import EditLeadModal from './EditLeadModal'
 
 const STATUS_OPTIONS: { value: string; label: string; color: string; active: string }[] = [
-  { value: 'new',       label: 'New',       color: '#B8922A', active: '#fdf8ee' },
+  { value: 'new',       label: 'New',       color: '#C9A84C', active: '#fdf8ee' },
   { value: 'contacted', label: 'Contacted', color: '#1d4ed8', active: '#eff6ff' },
   { value: 'converted', label: 'Converted', color: '#15803d', active: '#f0fdf4' },
   { value: 'lost',      label: 'Lost',      color: '#6b7280', active: '#f3f4f6' },
@@ -73,7 +73,7 @@ export default function LeadActions({ lead }: Props) {
           <button
             onClick={() => setShowEdit(true)}
             className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
-            style={{ background: '#B8922A' }}
+            style={{ background: '#C9A84C' }}
           >
             Edit Lead
           </button>

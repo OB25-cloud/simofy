@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -145,7 +145,7 @@ export default function ChecklistSection({
               <select
                 value={selectedTemplate}
                 onChange={e => setSelectedTemplate(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:border-[#B8922A] text-gray-700"
+                className="px-3 py-2 text-sm border border-gray-200 rounded-md bg-white focus:outline-none focus:border-[#C9A84C] text-gray-700"
               >
                 <option value="">Select a checklist…</option>
                 {templates.map(t => (
@@ -156,7 +156,7 @@ export default function ChecklistSection({
                 onClick={handleAssign}
                 disabled={!selectedTemplate || assigning}
                 className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
-                style={{ background: '#B8922A' }}
+                style={{ background: '#C9A84C' }}
               >
                 {assigning ? 'Assigning…' : 'Assign Checklist'}
               </button>
@@ -175,12 +175,12 @@ export default function ChecklistSection({
         <p className="text-sm font-medium text-gray-700">
           {completedCount} of {totalCount} item{totalCount !== 1 ? 's' : ''} complete
         </p>
-        <p className="text-xs font-semibold" style={{ color: '#B8922A' }}>{progressPct}%</p>
+        <p className="text-xs font-semibold" style={{ color: '#C9A84C' }}>{progressPct}%</p>
       </div>
       <div className="w-full h-1.5 rounded-full bg-gray-100 overflow-hidden mb-5">
         <div
           className="h-full rounded-full transition-all duration-300"
-          style={{ width: `${progressPct}%`, background: '#B8922A' }}
+          style={{ width: `${progressPct}%`, background: '#C9A84C' }}
         />
       </div>
 
@@ -204,7 +204,7 @@ export default function ChecklistSection({
               onChange={() => handleToggle(item)}
               disabled={togglingId === item.id}
               className="mt-0.5 w-4 h-4 rounded cursor-pointer shrink-0"
-              style={{ accentColor: '#B8922A' }}
+              style={{ accentColor: '#C9A84C' }}
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
@@ -217,7 +217,7 @@ export default function ChecklistSection({
                 {item.required && (
                   <span
                     className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
-                    style={{ background: 'rgba(184,146,42,0.1)', color: '#B8922A' }}
+                    style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}
                   >
                     Required
                   </span>

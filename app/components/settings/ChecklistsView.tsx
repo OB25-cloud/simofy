@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -178,7 +178,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
                   placeholder="e.g. Standard Lawn Mow"
-                  className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#B8922A]"
+                  className="w-full px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#C9A84C]"
                 />
               </div>
               {newError && (
@@ -190,7 +190,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   type="submit"
                   disabled={creating}
                   className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
-                  style={{ background: '#B8922A' }}
+                  style={{ background: '#C9A84C' }}
                 >
                   {creating ? 'Creating…' : 'Create Template'}
                 </button>
@@ -238,7 +238,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
           <button
             onClick={() => setShowNew(true)}
             className="w-full flex items-center justify-center gap-1.5 px-3 py-3 sm:py-2 text-sm font-medium text-white rounded-md"
-            style={{ background: '#B8922A' }}
+            style={{ background: '#C9A84C' }}
           >
             <span className="text-base leading-none font-bold">+</span>
             New Template
@@ -258,8 +258,8 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   onClick={() => selectTemplate(t)}
                   className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-gray-50"
                   style={{
-                    background: isSelected ? 'rgba(184,146,42,0.04)' : 'transparent',
-                    borderLeft: isSelected ? '3px solid #B8922A' : '3px solid transparent',
+                    background: isSelected ? 'rgba(201, 168, 76,0.04)' : 'transparent',
+                    borderLeft: isSelected ? '3px solid #C9A84C' : '3px solid transparent',
                   }}
                 >
                   <div className="min-w-0 flex-1">
@@ -291,13 +291,13 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   value={nameValue}
                   onChange={e => setNameValue(e.target.value)}
                   autoFocus
-                  className="text-xl font-semibold text-gray-900 px-2 py-1 rounded-md border border-gray-200 focus:outline-none focus:border-[#B8922A] flex-1"
+                  className="text-xl font-semibold text-gray-900 px-2 py-1 rounded-md border border-gray-200 focus:outline-none focus:border-[#C9A84C] flex-1"
                 />
                 <button
                   onClick={handleSaveName}
                   disabled={savingName || !nameValue.trim()}
                   className="px-3 py-3 sm:py-1.5 text-sm font-medium text-white rounded-md disabled:opacity-50"
-                  style={{ background: '#B8922A' }}
+                  style={{ background: '#C9A84C' }}
                 >
                   {savingName ? 'Saving…' : 'Save'}
                 </button>
@@ -335,7 +335,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                         value={editItemText}
                         onChange={e => setEditItemText(e.target.value)}
                         autoFocus
-                        className="flex-1 px-2 py-1.5 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#B8922A]"
+                        className="flex-1 px-2 py-1.5 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#C9A84C]"
                       />
                       <label className="flex items-center gap-1.5 text-xs text-gray-500 shrink-0">
                         <input
@@ -343,7 +343,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                           checked={editItemRequired}
                           onChange={e => setEditItemRequired(e.target.checked)}
                           className="w-3.5 h-3.5"
-                          style={{ accentColor: '#B8922A' }}
+                          style={{ accentColor: '#C9A84C' }}
                         />
                         Required
                       </label>
@@ -351,7 +351,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                         onClick={() => handleSaveItem(item.id)}
                         disabled={savingItemId === item.id || !editItemText.trim()}
                         className="px-3 py-1.5 text-xs font-medium text-white rounded-md disabled:opacity-50 shrink-0"
-                        style={{ background: '#B8922A' }}
+                        style={{ background: '#C9A84C' }}
                       >
                         {savingItemId === item.id ? 'Saving…' : 'Save'}
                       </button>
@@ -364,7 +364,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                         {item.required && (
                           <span
                             className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
-                            style={{ background: 'rgba(184,146,42,0.1)', color: '#B8922A' }}
+                            style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}
                           >
                             Required
                           </span>
@@ -394,7 +394,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
               value={newItemText}
               onChange={e => setNewItemText(e.target.value)}
               placeholder="Add a checklist item…"
-              className="flex-1 px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#B8922A]"
+              className="flex-1 px-3 py-2 rounded-md border border-gray-200 text-sm focus:outline-none focus:border-[#C9A84C]"
             />
             <label className="flex items-center gap-1.5 text-xs text-gray-500 shrink-0">
               <input
@@ -402,7 +402,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 checked={newItemRequired}
                 onChange={e => setNewItemRequired(e.target.checked)}
                 className="w-3.5 h-3.5"
-                style={{ accentColor: '#B8922A' }}
+                style={{ accentColor: '#C9A84C' }}
               />
               Required
             </label>
@@ -410,7 +410,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
               type="submit"
               disabled={addingItem || !newItemText.trim()}
               className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50 shrink-0"
-              style={{ background: '#B8922A' }}
+              style={{ background: '#C9A84C' }}
             >
               {addingItem ? 'Adding…' : 'Add Item'}
             </button>

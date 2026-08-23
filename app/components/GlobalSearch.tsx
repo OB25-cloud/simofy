@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
@@ -202,16 +202,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
       {/* Sidebar trigger button */}
       <button
         onClick={openModal}
-        className="w-full flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
-        style={{ color: 'rgba(255,255,255,0.45)', background: 'transparent', borderLeft: '2px solid transparent' }}
-        onMouseEnter={e => {
-          e.currentTarget.style.color      = 'rgba(255,255,255,0.9)'
-          e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-        }}
-        onMouseLeave={e => {
-          e.currentTarget.style.color      = 'rgba(255,255,255,0.45)'
-          e.currentTarget.style.background = 'transparent'
-        }}
+        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors duration-150 text-[#9CA3AF] hover:text-white hover:bg-[#2A2A3E]/60"
       >
         <SearchIcon />
         Search
@@ -226,14 +217,14 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
         >
           <div
             className="w-full max-w-xl rounded-xl overflow-hidden shadow-2xl"
-            style={{ background: '#111', border: '1px solid rgba(184,146,42,0.25)' }}
+            style={{ background: '#1A1A2E', border: '1px solid rgba(201, 168, 76,0.25)' }}
           >
             {/* Input row */}
             <div
               className="flex items-center gap-3 px-4 py-3.5 border-b"
-              style={{ borderColor: 'rgba(184,146,42,0.15)' }}
+              style={{ borderColor: 'rgba(201, 168, 76,0.15)' }}
             >
-              <span style={{ color: 'rgba(184,146,42,0.7)', flexShrink: 0 }}>
+              <span style={{ color: 'rgba(201, 168, 76,0.7)', flexShrink: 0 }}>
                 <SearchIcon />
               </span>
               <input
@@ -263,7 +254,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
                   <div key={group.type}>
                     <p
                       className="px-4 pt-3 pb-1 text-[10px] font-bold tracking-[0.15em]"
-                      style={{ color: 'rgba(184,146,42,0.55)' }}
+                      style={{ color: 'rgba(201, 168, 76,0.55)' }}
                     >
                       {group.label}
                     </p>
@@ -275,7 +266,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
                         style={{ borderLeft: '3px solid transparent' }}
                         onMouseEnter={e => {
                           e.currentTarget.style.background      = 'rgba(255,255,255,0.04)'
-                          e.currentTarget.style.borderLeftColor = '#B8922A'
+                          e.currentTarget.style.borderLeftColor = '#C9A84C'
                         }}
                         onMouseLeave={e => {
                           e.currentTarget.style.background      = 'transparent'
@@ -292,7 +283,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
                             </p>
                           )}
                         </div>
-                        <span className="text-sm shrink-0" style={{ color: 'rgba(184,146,42,0.5)' }}>→</span>
+                        <span className="text-sm shrink-0" style={{ color: 'rgba(201, 168, 76,0.5)' }}>→</span>
                       </button>
                     ))}
                   </div>

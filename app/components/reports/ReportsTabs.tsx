@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import RevenueTab from './RevenueTab'
@@ -37,8 +37,8 @@ export default function ReportsTabs({ revenue, jobsStats, staffPerformance, prof
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#B8922A' : '#9ca3af',
-                  borderBottom: active ? '2px solid #B8922A' : '2px solid transparent',
+                  color: active ? '#C9A84C' : '#9ca3af',
+                  borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
                 }}
               >
                 {tab.label}

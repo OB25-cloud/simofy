@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -6,7 +6,7 @@ import type { Staff } from '@/lib/types'
 import AddStaffModal from './AddStaffModal'
 
 const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: '#fdf8ee', text: '#B8922A', label: 'Admin' },
+  admin: { bg: '#fdf8ee', text: '#C9A84C', label: 'Admin' },
   field: { bg: '#eff6ff', text: '#1d4ed8', label: 'Field' },
 }
 
@@ -76,7 +76,7 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#B8922A' }}
+          style={{ background: '#C9A84C' }}
         >
           <PlusIcon />
           Add Staff
@@ -88,7 +88,7 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
         {stats.map(s => (
           <div key={s.label} className="rounded-lg border border-gray-100 bg-white p-4">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#B8922A' : '#111827' }}>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#111827' }}>
               {s.value}
             </p>
           </div>
@@ -104,13 +104,13 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
             placeholder="Search by name, email, phone or role…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#B8922A] text-gray-600"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-gray-600"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Staff</option>
@@ -171,15 +171,15 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
                     <span
                       className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
                       style={member.is_active
-                        ? { background: '#fdf8ee', color: '#B8922A' }
+                        ? { background: '#fdf8ee', color: '#C9A84C' }
                         : { background: '#f3f4f6', color: '#9ca3af' }}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: member.is_active ? '#B8922A' : '#d1d5db' }} />
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: member.is_active ? '#C9A84C' : '#d1d5db' }} />
                       {member.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-gray-300 group-hover:text-[#B8922A] transition-colors text-base">→</span>
+                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors text-base">→</span>
                   </td>
                 </tr>
               ))}

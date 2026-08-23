@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -143,7 +143,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                       onChange={e => setReviewDelayHours(Number(e.target.value))}
                       onBlur={e => saveReviewDelay(Number(e.target.value))}
                       disabled={savingDelay}
-                      className="w-16 border border-gray-200 rounded px-2 py-0.5 text-xs text-gray-900 focus:outline-none focus:border-[#B8922A] disabled:opacity-50"
+                      className="w-16 border border-gray-200 rounded px-2 py-0.5 text-xs text-gray-900 focus:outline-none focus:border-[#C9A84C] disabled:opacity-50"
                     />
                     <span className="text-xs text-gray-400">hours after job completion</span>
                   </div>
@@ -156,7 +156,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                 onClick={() => toggleDefault(type.key)}
                 disabled={isSaving}
                 className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 disabled:opacity-50 focus:outline-none"
-                style={{ background: enabled ? '#B8922A' : '#e5e7eb' }}
+                style={{ background: enabled ? '#C9A84C' : '#e5e7eb' }}
               >
                 <span
                   className="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200"

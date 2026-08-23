@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useRef, useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -131,7 +131,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
               value={supplier}
               onChange={e => setSupplier(e.target.value)}
               placeholder="e.g. Bunnings Warehouse"
-              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#B8922A]"
+              className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#C9A84C]"
             />
           </div>
           <div>
@@ -145,7 +145,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-md border border-gray-200 pl-7 pr-3 py-2 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#B8922A]"
+                className="w-full rounded-md border border-gray-200 pl-7 pr-3 py-2 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#C9A84C]"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="What's being ordered…"
-            className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#B8922A]"
+            className="w-full rounded-md border border-gray-200 px-3 py-2 text-sm text-gray-900 placeholder-gray-300 focus:outline-none focus:border-[#C9A84C]"
           />
         </div>
 
@@ -178,7 +178,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
             onClick={handleAdd}
             disabled={adding || !supplier.trim() || !amount || parseFloat(amount) <= 0}
             className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-            style={{ background: '#B8922A' }}
+            style={{ background: '#C9A84C' }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -242,7 +242,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs hover:underline"
-                        style={{ color: '#B8922A' }}
+                        style={{ color: '#C9A84C' }}
                       >
                         View
                       </a>

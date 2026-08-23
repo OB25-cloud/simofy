@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import type { Site } from '@/lib/types'
@@ -70,7 +70,7 @@ export default function SitesSection({
         <button
           onClick={() => setShowModal(true)}
           className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#B8922A' }}
+          style={{ background: '#C9A84C' }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19" />

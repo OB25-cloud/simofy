@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
@@ -36,11 +36,11 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
           fontSize={9}
           fontWeight={700}
           letterSpacing={0.6}
-          fill="#B8922A"
+          fill="#C9A84C"
         >
           PEAK
         </text>
-        <circle cx={cx} cy={cy} r={6} fill="#B8922A" stroke="#1a1a1a" strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={6} fill="#C9A84C" stroke="#1a1a1a" strokeWidth={2} />
       </g>
     )
   }
@@ -48,19 +48,19 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
   return (
     <div
       className="rounded-xl overflow-hidden"
-      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(184,146,42,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}
+      style={{ background: '#111', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}
     >
-      <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(184,146,42,0.2)' }}>
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#B8922A' }}>{title}</span>
-        <span className="ml-auto text-[10px]" style={{ color: 'rgba(184,146,42,0.4)' }}>{periodLabel}</span>
+      <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(201, 168, 76,0.2)' }}>
+        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#C9A84C' }}>{title}</span>
+        <span className="ml-auto text-[10px]" style={{ color: 'rgba(201, 168, 76,0.4)' }}>{periodLabel}</span>
       </div>
       <div className="px-4 py-4" style={{ height: 260 }}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 24, right: 16, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#B8922A" stopOpacity={0.45} />
-                <stop offset="95%" stopColor="#B8922A" stopOpacity={0} />
+                <stop offset="5%" stopColor="#C9A84C" stopOpacity={0.45} />
+                <stop offset="95%" stopColor="#C9A84C" stopOpacity={0} />
               </linearGradient>
             </defs>
             <CartesianGrid stroke="#2a2a2a" vertical={false} />
@@ -68,7 +68,7 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
               dataKey="month"
               tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: 'rgba(184,146,42,0.2)' }}
+              axisLine={{ stroke: 'rgba(201, 168, 76,0.2)' }}
             />
             <YAxis
               tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
@@ -80,23 +80,23 @@ export default function RevenueTrendChart({ data, title = 'Revenue Trend', perio
             <Tooltip
               contentStyle={{
                 background: '#1a1a1a',
-                border: '1px solid rgba(184,146,42,0.3)',
+                border: '1px solid rgba(201, 168, 76,0.3)',
                 borderRadius: 8,
                 boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
               }}
               labelStyle={{ color: '#fff', fontWeight: 600, marginBottom: 2 }}
-              itemStyle={{ color: '#B8922A', fontWeight: 600 }}
+              itemStyle={{ color: '#C9A84C', fontWeight: 600 }}
               formatter={(value) => [tooltipFormatter.format(Number(value)), 'Revenue']}
             />
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#B8922A"
+              stroke="#C9A84C"
               strokeWidth={2.5}
               fill="url(#revenueGradient)"
               dot={renderDot}
-              activeDot={{ r: 6, fill: '#B8922A', stroke: '#1a1a1a', strokeWidth: 2 }}
-              style={{ filter: 'drop-shadow(0 0 6px rgba(184,146,42,0.5))' }}
+              activeDot={{ r: 6, fill: '#C9A84C', stroke: '#1a1a1a', strokeWidth: 2 }}
+              style={{ filter: 'drop-shadow(0 0 6px rgba(201, 168, 76,0.5))' }}
             />
           </AreaChart>
         </ResponsiveContainer>

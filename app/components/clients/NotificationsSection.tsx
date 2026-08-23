@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
@@ -86,9 +86,9 @@ export default function NotificationsSection({ clientId, initialSettings }: Prop
                 disabled={isSaving}
                 className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 disabled:opacity-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 style={{
-                  background: enabled ? '#B8922A' : '#e5e7eb',
+                  background: enabled ? '#C9A84C' : '#e5e7eb',
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  '--tw-ring-color': '#B8922A',
+                  '--tw-ring-color': '#C9A84C',
                 } as any}
               >
                 <span

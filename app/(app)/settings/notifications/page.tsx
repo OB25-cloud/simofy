@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase'
+﻿import { supabase } from '@/lib/supabase'
 import GlobalNotificationDefaults from '@/app/components/settings/GlobalNotificationDefaults'
 
 export const dynamic = 'force-dynamic'
@@ -16,7 +16,7 @@ export default async function NotificationSettingsPage() {
     <div className="p-4 md:p-8 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#B8922A' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
           Settings
         </p>
         <h1 className="text-2xl font-semibold text-gray-900">Notification Defaults</h1>

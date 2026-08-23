@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation'
+﻿import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { supabase as db } from '@/lib/supabase'
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
   scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
-  in_progress: { bg: '#fdf8ee', text: '#B8922A', dot: '#B8922A', label: 'In Progress' },
+  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
   complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
   invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced'    },
   cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'   },
@@ -97,7 +97,7 @@ export default async function MyJobsPage() {
                     style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#B8922A] transition-colors truncate">
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#C9A84C] transition-colors truncate">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">
@@ -126,7 +126,7 @@ export default async function MyJobsPage() {
                     style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#B8922A] transition-colors truncate">
+                      <p className="text-sm font-medium text-gray-900 group-hover:text-[#C9A84C] transition-colors truncate">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
                       <p className="text-xs text-gray-400 mt-0.5">

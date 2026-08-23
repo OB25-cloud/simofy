@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import React from 'react'
 import Link from 'next/link'
@@ -90,6 +90,13 @@ function UsersIcon() {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
       <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" />
       <path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" />
+    </svg>
+  )
+}
+function ChevronLeftIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="15 18 9 12 15 6" />
     </svg>
   )
 }
@@ -205,6 +212,7 @@ interface Props {
   userEmail?: string | null
   permissions?: PermissionMap | null
   onNavigate?: () => void
+  onCollapse?: () => void
 }
 
 const ROLE_DISPLAY: Record<string, string> = {
@@ -213,7 +221,7 @@ const ROLE_DISPLAY: Record<string, string> = {
   field:      'Field Staff',
 }
 
-export default function Sidebar({ role, userName, userEmail, permissions, onNavigate }: Props) {
+export default function Sidebar({ role, userName, userEmail, permissions, onNavigate, onCollapse }: Props) {
   const pathname = usePathname()
   const sections = role === 'admin' ? ADMIN_SECTIONS : buildDynamicSections(role, permissions ?? null)
 
@@ -225,35 +233,36 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
   const displayName = userName ?? userEmail ?? 'User'
 
   return (
-    <aside className="w-64 shrink-0 bg-black h-full flex flex-col">
+    <aside className="w-full h-full bg-[#1E1E2E] flex flex-col">
       {/* Logo */}
-      <div className="px-6 pt-7 pb-5">
-        <Link href="/dashboard" className="text-xl font-bold tracking-[0.25em]" style={{ color: '#B8922A' }}>
+      <div className="px-6 py-6 flex items-center justify-between">
+        <Link href="/dashboard" className="text-lg font-bold tracking-widest text-[#C9A84C]">
           SIMOFY
         </Link>
+        {onCollapse && (
+          <button
+            onClick={onCollapse}
+            className="hidden md:flex items-center justify-center w-7 h-7 -mr-1.5 rounded-md text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+            aria-label="Collapse sidebar"
+          >
+            <ChevronLeftIcon />
+          </button>
+        )}
       </div>
 
-      <div className="h-px mx-4 mb-4" style={{ background: 'rgba(255,255,255,0.08)' }} />
-
       {/* Nav sections */}
-      <nav className="flex-1 px-3 pb-4 overflow-y-auto scrollbar-hidden">
+      <nav className="flex-1 px-2 pb-4 overflow-y-auto scrollbar-hidden">
         {/* Global search */}
-        <div className="mb-4">
-          <p
-            className="px-3 mb-1.5 text-[10px] font-bold tracking-[0.18em]"
-            style={{ color: 'rgba(184,146,42,0.65)' }}
-          >
-            SEARCH
+        <div className="mb-4 px-2">
+          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-2 mb-2">
+            Search
           </p>
           <GlobalSearch onNavigate={onNavigate} />
         </div>
 
         {sections.map((section, si) => (
-          <div key={section.label} className={si > 0 ? 'mt-5' : ''}>
-            <p
-              className="px-3 mb-1.5 text-[10px] font-bold tracking-[0.18em]"
-              style={{ color: 'rgba(184,146,42,0.65)' }}
-            >
+          <div key={section.label} className={si > 0 ? 'mt-6' : ''}>
+            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 mb-2">
               {section.label}
             </p>
             {section.items.map(({ name, href, Icon }) => {
@@ -263,24 +272,12 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
                   key={href}
                   href={href}
                   onClick={onNavigate}
-                  className="flex items-center gap-3 px-3 py-3 md:py-2.5 rounded-md mb-0.5 text-sm font-medium transition-colors duration-150"
-                  style={{
-                    color:      isActive ? '#B8922A'                : 'rgba(255,255,255,0.45)',
-                    background: isActive ? 'rgba(255,255,255,0.05)' : 'transparent',
-                    borderLeft: isActive ? '2px solid #B8922A' : '2px solid transparent',
-                  }}
-                  onMouseEnter={e => {
-                    if (!isActive) {
-                      e.currentTarget.style.color      = 'rgba(255,255,255,0.9)'
-                      e.currentTarget.style.background = 'rgba(255,255,255,0.04)'
-                    }
-                  }}
-                  onMouseLeave={e => {
-                    if (!isActive) {
-                      e.currentTarget.style.color      = 'rgba(255,255,255,0.45)'
-                      e.currentTarget.style.background = 'transparent'
-                    }
-                  }}
+                  className={[
+                    'flex items-center gap-3 px-4 py-2.5 md:py-2.5 rounded-lg mx-2 mb-0.5 text-sm transition-colors duration-150 border-l-2',
+                    isActive
+                      ? 'bg-[#2A2A3E] text-[#C9A84C] border-[#C9A84C] font-medium'
+                      : 'text-[#9CA3AF] border-transparent hover:bg-[#2A2A3E]/60 hover:text-white',
+                  ].join(' ')}
                 >
                   <Icon />
                   {name}
@@ -291,29 +288,24 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
         ))}
       </nav>
 
-      <div className="h-px mx-4" style={{ background: 'rgba(255,255,255,0.08)' }} />
-
-      {/* User profile */}
-      <div className="px-4 pt-3 pb-2">
-        <div className="flex items-center gap-3">
+      <div className="border-t border-[#2A2A3E] p-4">
+        {/* User profile */}
+        <div className="flex items-center gap-3 mb-3">
           <div
             className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold"
-            style={{ background: '#B8922A', color: '#fff' }}
+            style={{ background: '#C9A84C', color: '#1A1A2E' }}
           >
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold truncate" style={{ color: 'rgba(255,255,255,0.85)' }}>
+            <p className="text-xs font-semibold truncate text-white">
               {displayName}
             </p>
-            <p className="text-[10px] truncate mt-px" style={{ color: 'rgba(255,255,255,0.35)' }}>
+            <p className="text-[10px] truncate mt-px text-[#9CA3AF]">
               {displayRole}
             </p>
           </div>
         </div>
-      </div>
-
-      <div className="px-3 pb-3 pt-1">
         <LogoutButton />
       </div>
     </aside>

@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { useActionState } from 'react'
 import { login } from '@/app/actions/auth'
@@ -12,7 +12,7 @@ export default function LoginPage() {
       <div className="mb-8 text-center">
         <span
           className="text-3xl font-bold tracking-[0.3em]"
-          style={{ color: '#B8922A' }}
+          style={{ color: '#C9A84C' }}
         >
           SIMOFY
         </span>
@@ -34,7 +34,7 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white"
+              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white"
               placeholder="you@example.com"
             />
           </div>
@@ -49,7 +49,7 @@ export default function LoginPage() {
               type="password"
               autoComplete="current-password"
               required
-              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A] bg-white"
+              className="w-full border border-gray-200 rounded-md px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C] bg-white"
               placeholder="••••••••"
             />
           </div>
@@ -64,7 +64,7 @@ export default function LoginPage() {
             type="submit"
             disabled={pending}
             className="w-full py-2.5 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60 mt-2"
-            style={{ background: '#B8922A' }}
+            style={{ background: '#C9A84C' }}
           >
             {pending ? 'Signing in…' : 'Sign in'}
           </button>

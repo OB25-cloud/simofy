@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const inputClass =
-  'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#B8922A]'
+  'w-full border border-gray-200 rounded-md px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-[#C9A84C]'
 
 export default function AddSiteModal({
   clientId,
@@ -82,7 +82,7 @@ export default function AddSiteModal({
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              Address <span style={{ color: '#B8922A' }}>*</span>
+              Address <span style={{ color: '#C9A84C' }}>*</span>
             </label>
             <input
               type="text"
@@ -147,7 +147,7 @@ export default function AddSiteModal({
               type="submit"
               disabled={loading}
               className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#B8922A' }}
+              style={{ background: '#C9A84C' }}
             >
               {loading ? 'Saving…' : 'Add Site'}
             </button>

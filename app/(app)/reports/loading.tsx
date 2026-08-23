@@ -1,4 +1,4 @@
-export default function Loading() {
+﻿export default function Loading() {
   return (
     <div className="p-4 md:p-8">
       {/* Header */}
@@ -27,8 +27,8 @@ export default function Loading() {
 
       {/* Dark chart card */}
       <div className="rounded-xl overflow-hidden mb-5" style={{ background: '#111' }}>
-        <div className="flex items-center px-6 py-4 border-b" style={{ borderColor: 'rgba(184,146,42,0.2)' }}>
-          <div className="h-3 w-28 rounded animate-pulse" style={{ background: 'rgba(184,146,42,0.2)' }} />
+        <div className="flex items-center px-6 py-4 border-b" style={{ borderColor: 'rgba(201, 168, 76,0.2)' }}>
+          <div className="h-3 w-28 rounded animate-pulse" style={{ background: 'rgba(201, 168, 76,0.2)' }} />
         </div>
         <div className="px-4 py-4" style={{ height: 260 }}>
           <div className="w-full h-full rounded animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
@@ -39,8 +39,8 @@ export default function Loading() {
       <div className="grid grid-cols-2 gap-5">
         {[...Array(2)].map((_, i) => (
           <div key={i} className="rounded-xl overflow-hidden" style={{ background: '#111' }}>
-            <div className="flex items-center px-6 py-4 border-b" style={{ borderColor: 'rgba(184,146,42,0.2)' }}>
-              <div className="h-3 w-24 rounded animate-pulse" style={{ background: 'rgba(184,146,42,0.2)' }} />
+            <div className="flex items-center px-6 py-4 border-b" style={{ borderColor: 'rgba(201, 168, 76,0.2)' }}>
+              <div className="h-3 w-24 rounded animate-pulse" style={{ background: 'rgba(201, 168, 76,0.2)' }} />
             </div>
             <div className="px-4 py-4" style={{ height: 280 }}>
               <div className="w-full h-full rounded animate-pulse" style={{ background: 'rgba(255,255,255,0.04)' }} />
