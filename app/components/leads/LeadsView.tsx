@@ -4,24 +4,10 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import type { Lead } from '@/lib/types'
 import AddLeadModal from './AddLeadModal'
-
-export const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  new:       { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'New'       },
-  contacted: { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Contacted' },
-  converted: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Converted' },
-  lost:      { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Lost'      },
-}
-
-export function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const c = STATUS_CONFIG[status] ?? STATUS_CONFIG.new
-  return (
-    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium" style={{ background: c.bg, color: c.text }}>
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: c.dot }} />
-      {c.label}
-    </span>
-  )
-}
+import { StatusBadge } from '@/app/components/ui/Badge'
+import { StatCard } from '@/app/components/ui/StatCard'
+import Button from '@/app/components/ui/Button'
+import { inputClass } from '@/app/components/ui/input'
 
 function SearchIcon() {
   return (
@@ -81,27 +67,18 @@ export default function LeadsView({ leads, openModal }: Props) {
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#1A1A2E]">Leads</h1>
-          <p className="mt-0.5 text-sm text-gray-500">{leads.length} {leads.length === 1 ? 'lead' : 'leads'} total</p>
+          <p className="mt-1 text-xs text-[#6B7280]">{leads.length} {leads.length === 1 ? 'lead' : 'leads'} total</p>
         </div>
-        <button
-          onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#C9A84C' }}
-        >
+        <Button onClick={() => setShowModal(true)} variant="primary">
           <PlusIcon />
           Add Lead
-        </button>
+        </Button>
       </div>
 
       {/* Stats bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {stats.map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#1A1A2E' }}>
-              {s.value}
-            </p>
-          </div>
+          <StatCard key={s.label} label={s.label} value={s.value} />
         ))}
       </div>
 
@@ -114,13 +91,13 @@ export default function LeadsView({ leads, openModal }: Props) {
             placeholder="Search by name, email, phone, source or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
+            className={`pl-9 pr-4 py-2.5 ${inputClass}`}
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent text-[#6B7280]"
+          className={inputClass}
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>
@@ -142,36 +119,35 @@ export default function LeadsView({ leads, openModal }: Props) {
         <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Name</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Email</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Phone</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Message</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Notes</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Source</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Received</th>
-                <th className="text-left px-4 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">Status</th>
-                <th className="px-4 py-3 w-8" />
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Name</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Email</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Phone</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Message</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Notes</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Source</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Received</th>
+                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
+                <th className="px-4 py-3 w-8 bg-[#F4F5F7]" />
               </tr>
             </thead>
             <tbody>
-              {filtered.map((lead, i) => (
+              {filtered.map(lead => (
                 <tr
                   key={lead.id}
                   onClick={() => router.push(`/leads/${lead.id}`)}
-                  className="cursor-pointer hover:bg-[#F9FAFB] transition-colors group"
-                  style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                  className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
                 >
-                  <td className="px-4 py-3 font-medium text-[#1A1A2E]">
+                  <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">
                     {lead.name ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3 text-sm text-[#6B7280]">
                     {lead.email ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3 text-sm text-[#6B7280]">
                     {lead.phone ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500 max-w-[160px]">
+                  <td className="px-4 py-3 text-sm text-[#6B7280] max-w-[160px]">
                     {lead.message
                       ? <span className="block truncate">{lead.message}</span>
                       : <span className="text-gray-300">—</span>}
@@ -181,7 +157,7 @@ export default function LeadsView({ leads, openModal }: Props) {
                       ? <span className="block truncate">{lead.notes}</span>
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-gray-500">
+                  <td className="px-4 py-3 text-sm text-[#6B7280]">
                     {lead.source ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 text-[#6B7280] text-xs">

@@ -156,7 +156,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                     className="px-4 py-1.5 rounded-md text-xs font-medium border transition-all disabled:opacity-50"
                     style={
                       isActive
-                        ? { background: GOLD, color: '#fff', borderColor: GOLD }
+                        ? { background: GOLD, color: '#1A1A2E', borderColor: GOLD, fontWeight: 600 }
                         : { background: '#fff', color: GOLD, borderColor: GOLD }
                     }
                   >
@@ -172,8 +172,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                 <button
                   onClick={handleConvertToClient}
                   disabled={converting}
-                  className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-                  style={{ background: '#15803d' }}
+                  className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50 bg-[#22C55E] hover:bg-green-600"
                 >
                   {converting ? 'Creating client…' : 'Convert to Client'}
                 </button>
@@ -210,7 +209,7 @@ export default function LeadDetailTabs({ lead }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#3b82f6' }}
+                  style={{ background: '#3B82F6' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Lead contacted</p>
                 <p className="text-xs text-[#6B7280] mt-0.5">Date not recorded</p>
@@ -222,7 +221,7 @@ export default function LeadDetailTabs({ lead }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#22c55e' }}
+                  style={{ background: '#22C55E' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Lead converted</p>
               </li>
