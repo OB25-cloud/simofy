@@ -192,7 +192,7 @@ export default function WeekGrid({
   }
 
   return (
-    <div className="h-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
+    <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 min-h-0 flex">
           {weekDays.map(day => {

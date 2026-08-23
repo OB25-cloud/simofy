@@ -275,8 +275,8 @@ function UnassignedStrip({
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: UNASSIGNED_KEY })
   return (
-    <div className="shrink-0 mt-3 rounded-lg" style={{ background: '#1A1A2E' }}>
-      <div className="flex items-center gap-2 px-4 pt-3 pb-1.5">
+    <div className="shrink-0 mt-3 h-20 rounded-lg flex flex-col" style={{ background: '#1A1A2E' }}>
+      <div className="shrink-0 flex items-center gap-2 px-4 pt-2 pb-1">
         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Unassigned</span>
         {jobs.length > 0 && (
           <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: 'rgba(107,114,128,0.3)', color: '#9CA3AF' }}>
@@ -292,11 +292,11 @@ function UnassignedStrip({
       </div>
       <div
         ref={setNodeRef}
-        className="flex gap-2 px-4 pb-3 overflow-x-auto min-h-[52px]"
+        className="flex-1 min-h-0 flex items-center gap-2 px-4 pb-2 overflow-x-auto"
         style={{ background: isOver ? 'rgba(201,168,76,0.08)' : 'transparent' }}
       >
         {jobs.length === 0 ? (
-          <p className="text-xs text-gray-600 py-2.5">No unassigned jobs today</p>
+          <p className="text-xs text-gray-600">No unassigned jobs today</p>
         ) : (
           jobs.map(job => <UnassignedCard key={job.id} job={job} onOpen={onOpen} onReschedule={onReschedule} />)
         )}
@@ -385,7 +385,7 @@ export default function DayTimeGrid({
   const nowPct = nowMin != null && nowMin >= VIEW_START_MIN && nowMin <= VIEW_END_MIN ? pctOf(nowMin) : null
 
   return (
-    <div className="h-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
+    <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
       <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 min-h-0 flex flex-col">
           {/* Header row */}

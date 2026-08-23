@@ -197,7 +197,7 @@ export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
   const selectClass = 'border border-[#E5E7EB] rounded-lg px-2.5 py-1.5 text-xs text-[#1A1A2E] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent'
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="flex-1 min-h-0 w-full flex flex-col">
       <link rel="stylesheet" href={LEAFLET_CSS} />
       <Script src={LEAFLET_JS} strategy="afterInteractive" onLoad={() => setLeafletReady(true)} />
 

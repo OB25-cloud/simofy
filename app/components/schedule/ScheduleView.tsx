@@ -720,7 +720,7 @@ export default function ScheduleView() {
       {/* Desktop grid / week / map — hidden on mobile in favour of the simple list below */}
       <div className="hidden md:flex flex-1 min-h-0 flex-col">
         {/* Day grid */}
-        <div className="flex-1 min-h-0" style={{ display: view === 'day' ? 'flex' : 'none' }}>
+        <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'day' ? 'flex' : 'none' }}>
           {loading ? (
             <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
               <p className="text-sm text-gray-500">Loading schedule…</p>
@@ -741,7 +741,7 @@ export default function ScheduleView() {
         </div>
 
         {/* Week grid */}
-        <div className="flex-1 min-h-0" style={{ display: view === 'week' ? 'flex' : 'none' }}>
+        <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'week' ? 'flex' : 'none' }}>
           {loading ? (
             <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
               <p className="text-sm text-gray-500">Loading schedule…</p>
@@ -765,7 +765,7 @@ export default function ScheduleView() {
             Leaflet's CDN script and the map instance are never torn down and
             reinitialized; markers just update via the jobs prop instead */}
         {mapEverShown && (
-          <div className="flex-1 min-h-0" style={{ display: view === 'map' ? 'flex' : 'none' }}>
+          <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'map' ? 'flex' : 'none' }}>
             <MapView jobs={jobs} />
           </div>
         )}
