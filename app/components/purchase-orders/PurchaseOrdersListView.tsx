@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import type { PurchaseOrder, PurchaseOrderStatus } from '@/lib/types'
 
 const STATUS_CONFIG: Record<PurchaseOrderStatus, { bg: string; text: string; dot: string; label: string }> = {
-  pending:   { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'    },
+  pending:   { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'    },
   approved:  { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Approved'   },
   received:  { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Received'  },
   cancelled: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled' },
@@ -107,7 +107,7 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
         {stats.map(s => (
           <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
             <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.danger ? '#dc2626' : s.accent ? '#C9A84C' : '#111827' }}>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.danger ? '#dc2626' : s.accent ? '#C9A84C' : '#1A1A2E' }}>
               {s.value}
             </p>
           </div>

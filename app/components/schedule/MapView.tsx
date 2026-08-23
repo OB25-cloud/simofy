@@ -16,7 +16,7 @@ const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 
 const STATUS_COLOR: Record<string, string> = {
-  pending: '#9ca3af',
+  pending: '#6B7280',
   scheduled: '#3b82f6',
   in_progress: '#C9A84C',
   complete: '#22c55e',
@@ -152,10 +152,10 @@ export default function MapView({ jobs }: { jobs: ScheduleJob[] }) {
 
       const popupHtml = `
         <div style="font-family:inherit;min-width:170px;">
-          <p style="font-weight:600;font-size:13px;color:#111827;margin:0 0 4px;">${escapeHtml(job.title ?? job.job_type ?? 'Untitled')}</p>
-          <p style="font-size:12px;color:#6b7280;margin:0 0 2px;">${escapeHtml(job.clients?.name ?? 'No client')}</p>
-          <p style="font-size:12px;color:#6b7280;margin:0 0 2px;">${escapeHtml(job.staff?.name ?? 'Unassigned')}</p>
-          <p style="font-size:11px;color:#9ca3af;margin:0 0 8px;">${escapeHtml(dateLabel)}</p>
+          <p style="font-weight:600;font-size:13px;color:#1A1A2E;margin:0 0 4px;">${escapeHtml(job.title ?? job.job_type ?? 'Untitled')}</p>
+          <p style="font-size:12px;color:#6B7280;margin:0 0 2px;">${escapeHtml(job.clients?.name ?? 'No client')}</p>
+          <p style="font-size:12px;color:#6B7280;margin:0 0 2px;">${escapeHtml(job.staff?.name ?? 'Unassigned')}</p>
+          <p style="font-size:11px;color:#6B7280;margin:0 0 8px;">${escapeHtml(dateLabel)}</p>
           <a href="/jobs/${job.id}" style="font-size:12px;font-weight:600;color:#C9A84C;text-decoration:none;">View Job →</a>
         </div>
       `.trim()

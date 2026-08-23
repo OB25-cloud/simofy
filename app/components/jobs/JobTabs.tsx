@@ -163,7 +163,7 @@ export default function JobTabs({
   type TimelineEntry = { label: string; date: string; dotColor: string }
   const timeline: TimelineEntry[] = []
   if (job.created_at) {
-    timeline.push({ label: 'Job Created', date: job.created_at, dotColor: '#9ca3af' })
+    timeline.push({ label: 'Job Created', date: job.created_at, dotColor: '#6B7280' })
   }
   if (job.scheduled_date) {
     timeline.push({ label: 'Scheduled', date: job.scheduled_date, dotColor: '#3b82f6' })
@@ -186,7 +186,7 @@ export default function JobTabs({
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#C9A84C' : '#9ca3af',
+                  color: active ? '#C9A84C' : '#6B7280',
                   borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
                 }}
               >

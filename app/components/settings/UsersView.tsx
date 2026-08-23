@@ -30,7 +30,7 @@ const ROLES = ['admin', 'supervisor', 'field'] as const
 function roleBadgeStyle(role: string) {
   if (role === 'admin')      return { background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }
   if (role === 'supervisor') return { background: '#eff6ff', color: '#1d4ed8' }
-  return { background: '#f3f4f6', color: '#6b7280' }
+  return { background: '#F4F5F7', color: '#6B7280' }
 }
 
 export default function UsersView({

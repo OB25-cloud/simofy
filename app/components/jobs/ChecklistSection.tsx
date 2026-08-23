@@ -210,7 +210,7 @@ export default function ChecklistSection({
               <div className="flex items-center gap-2">
                 <span
                   className="text-sm"
-                  style={{ color: item.completed ? '#9ca3af' : '#111827', textDecoration: item.completed ? 'line-through' : 'none' }}
+                  style={{ color: item.completed ? '#6B7280' : '#1A1A2E', textDecoration: item.completed ? 'line-through' : 'none' }}
                 >
                   {item.item_text}
                 </span>

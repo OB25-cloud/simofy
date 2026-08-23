@@ -77,7 +77,7 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
-            style={{ color: activeTab === tab ? '#111827' : '#6b7280' }}
+            style={{ color: activeTab === tab ? '#1A1A2E' : '#6B7280' }}
           >
             {tab}
             {activeTab === tab && (

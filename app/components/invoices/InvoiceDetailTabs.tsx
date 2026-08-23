@@ -81,7 +81,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
-            style={{ color: activeTab === tab ? '#111827' : '#6b7280' }}
+            style={{ color: activeTab === tab ? '#1A1A2E' : '#6B7280' }}
           >
             {tab}
             {activeTab === tab && (
@@ -223,7 +223,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
                 style={
                   reminderSent
                     ? { background: '#f0fdf4', color: '#15803d', borderColor: '#bbf7d0' }
-                    : { background: '#f9fafb', color: '#374151', borderColor: '#e5e7eb' }
+                    : { background: '#F9FAFB', color: '#1A1A2E', borderColor: '#E5E7EB' }
                 }
               >
                 {sendingReminder ? 'Sending…' : reminderSent ? 'Reminder queued' : 'Send Reminder'}
@@ -289,7 +289,7 @@ export default function InvoiceDetailTabs({ invoice }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#6b7280' }}
+                  style={{ background: '#6B7280' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Invoice cancelled</p>
               </li>

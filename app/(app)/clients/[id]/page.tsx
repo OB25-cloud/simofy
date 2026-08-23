@@ -56,12 +56,12 @@ export default async function ClientDetailPage({
             style={
               client.is_active
                 ? { background: '#fdf8ee', color: '#C9A84C' }
-                : { background: '#f3f4f6', color: '#9ca3af' }
+                : { background: '#F4F5F7', color: '#6B7280' }
             }
           >
             <span
               className="w-1.5 h-1.5 rounded-full"
-              style={{ background: client.is_active ? '#C9A84C' : '#d1d5db' }}
+              style={{ background: client.is_active ? '#C9A84C' : '#E5E7EB' }}
             />
             {client.is_active ? 'Active' : 'Inactive'}
           </span>

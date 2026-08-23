@@ -37,7 +37,7 @@ export default function ReportsTabs({ revenue, jobsStats, staffPerformance, prof
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#C9A84C' : '#9ca3af',
+                  color: active ? '#C9A84C' : '#6B7280',
                   borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
                 }}
               >

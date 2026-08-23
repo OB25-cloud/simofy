@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import ChartCard from './ChartCard'
@@ -7,7 +7,7 @@ import { axisTick, axisLine, gridStroke, tooltipContentStyle, tooltipLabelStyle,
 import type { JobsStatsData } from './types'
 
 const STATUS_COLOR: Record<string, string> = {
-  pending: '#9ca3af',
+  pending: '#6B7280',
   scheduled: '#3b82f6',
   in_progress: '#C9A84C',
   complete: '#22c55e',
@@ -73,7 +73,7 @@ export default function JobsTab({ data }: { data: JobsStatsData }) {
             />
             <Bar dataKey="count" radius={[4, 4, 0, 0]}>
               {statusData.map(entry => (
-                <Cell key={entry.status} fill={STATUS_COLOR[entry.status] ?? '#9ca3af'} />
+                <Cell key={entry.status} fill={STATUS_COLOR[entry.status] ?? '#6B7280'} />
               ))}
             </Bar>
           </BarChart>

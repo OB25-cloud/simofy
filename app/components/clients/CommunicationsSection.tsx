@@ -16,14 +16,14 @@ function typeLabel(type: string): string {
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
   sent:     { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Sent'     },
-  pending:  { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'  },
+  pending:  { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'  },
   queued:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Queued'   },
   failed:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Failed'   },
-  cancelled:{ bg: '#f9fafb', text: '#374151', dot: '#6b7280', label: 'Cancelled'},
+  cancelled:{ bg: '#F9FAFB', text: '#1A1A2E', dot: '#6B7280', label: 'Cancelled'},
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const c = STATUS_CONFIG[status] ?? { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: status }
+  const c = STATUS_CONFIG[status] ?? { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: status }
   return (
     <span
       className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium shrink-0"

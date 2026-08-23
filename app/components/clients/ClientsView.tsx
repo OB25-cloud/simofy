@@ -75,7 +75,7 @@ export default function ClientsView({ clients, openModal }: { clients: Client[];
         {stats.map(s => (
           <div key={s.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
             <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">{s.label}</p>
-            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#111827' }}>
+            <p className="text-2xl font-bold tabular-nums leading-none" style={{ color: s.accent ? '#C9A84C' : '#1A1A2E' }}>
               {s.value}
             </p>
           </div>
@@ -159,9 +159,9 @@ export default function ClientsView({ clients, openModal }: { clients: Client[];
                       className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
                       style={client.is_active
                         ? { background: '#fdf8ee', color: '#C9A84C' }
-                        : { background: '#f3f4f6', color: '#9ca3af' }}
+                        : { background: '#F4F5F7', color: '#6B7280' }}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: client.is_active ? '#C9A84C' : '#d1d5db' }} />
+                      <span className="w-1.5 h-1.5 rounded-full" style={{ background: client.is_active ? '#C9A84C' : '#E5E7EB' }} />
                       {client.is_active ? 'Active' : 'Inactive'}
                     </span>
                   </td>

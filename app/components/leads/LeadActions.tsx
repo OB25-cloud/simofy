@@ -9,7 +9,7 @@ const STATUS_OPTIONS: { value: string; label: string; color: string; active: str
   { value: 'new',       label: 'New',       color: '#C9A84C', active: '#fdf8ee' },
   { value: 'contacted', label: 'Contacted', color: '#1d4ed8', active: '#eff6ff' },
   { value: 'converted', label: 'Converted', color: '#15803d', active: '#f0fdf4' },
-  { value: 'lost',      label: 'Lost',      color: '#6b7280', active: '#f3f4f6' },
+  { value: 'lost',      label: 'Lost',      color: '#6B7280', active: '#F4F5F7' },
 ]
 
 interface Props {
@@ -55,7 +55,7 @@ export default function LeadActions({ lead }: Props) {
                   className="px-3 py-1.5 rounded-md text-xs font-medium border transition-all disabled:opacity-50"
                   style={isActive
                     ? { background: opt.active, color: opt.color, borderColor: opt.color, opacity: 1 }
-                    : { background: 'white', color: '#9ca3af', borderColor: '#e5e7eb' }
+                    : { background: 'white', color: '#6B7280', borderColor: '#E5E7EB' }
                   }
                 >
                   {opt.label}

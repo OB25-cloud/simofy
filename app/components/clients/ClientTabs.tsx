@@ -10,7 +10,7 @@ import CommunicationsSection from './CommunicationsSection'
 type NotifSetting = { notification_type: string; enabled: boolean }
 
 const JOB_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'     },
+  pending:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'     },
   scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled'   },
   in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
   complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete'     },
@@ -19,7 +19,7 @@ const JOB_STATUS: Record<string, { bg: string; text: string; dot: string; label:
 }
 
 const QUOTE_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:    { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Draft'    },
+  draft:    { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Draft'    },
   sent:     { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Sent'     },
   accepted: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Accepted' },
   declined: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Declined' },
@@ -27,11 +27,11 @@ const QUOTE_STATUS: Record<string, { bg: string; text: string; dot: string; labe
 }
 
 const INV_STATUS: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Draft'     },
+  draft:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Draft'     },
   sent:      { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Sent'      },
   paid:      { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Paid'      },
   overdue:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Overdue'   },
-  cancelled: { bg: '#f9fafb', text: '#374151', dot: '#6b7280', label: 'Cancelled' },
+  cancelled: { bg: '#F9FAFB', text: '#1A1A2E', dot: '#6B7280', label: 'Cancelled' },
 }
 
 function StatusBadge({
@@ -42,7 +42,7 @@ function StatusBadge({
   config: Record<string, { bg: string; text: string; dot: string; label: string }>
 }) {
   if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const c = config[status] ?? { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: status }
+  const c = config[status] ?? { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: status }
   return (
     <span
       className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
@@ -120,7 +120,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#C9A84C' : '#9ca3af',
+                  color: active ? '#C9A84C' : '#6B7280',
                   borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
                 }}
               >

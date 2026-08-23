@@ -8,11 +8,11 @@ import InvoiceDetailTabs from '@/app/components/invoices/InvoiceDetailTabs'
 export const dynamic = 'force-dynamic'
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  draft:     { bg: '#f3f4f6', text: '#6b7280',  dot: '#d1d5db', label: 'Draft'     },
+  draft:     { bg: '#F4F5F7', text: '#6B7280',  dot: '#E5E7EB', label: 'Draft'     },
   sent:      { bg: '#eff6ff', text: '#1d4ed8',  dot: '#3b82f6', label: 'Sent'      },
   paid:      { bg: '#f0fdf4', text: '#15803d',  dot: '#22c55e', label: 'Paid'      },
   overdue:   { bg: '#fef2f2', text: '#dc2626',  dot: '#ef4444', label: 'Overdue'   },
-  cancelled: { bg: '#f9fafb', text: '#374151',  dot: '#6b7280', label: 'Cancelled' },
+  cancelled: { bg: '#F9FAFB', text: '#1A1A2E',  dot: '#6B7280', label: 'Cancelled' },
 }
 
 function invoiceNumber(id: string) {

@@ -7,7 +7,7 @@ export default function StatCard({
   accent?: boolean
   danger?: boolean
 }) {
-  const color = danger ? '#dc2626' : accent ? '#C9A84C' : '#111827'
+  const color = danger ? '#dc2626' : accent ? '#C9A84C' : '#1A1A2E'
   return (
     <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
       <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">{label}</p>

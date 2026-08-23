@@ -13,7 +13,7 @@ function fmtDate(s: string) {
 }
 
 const STATUS_CONFIG: Record<PurchaseOrderStatus, { bg: string; text: string; dot: string; label: string }> = {
-  pending:   { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending'   },
+  pending:   { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'   },
   approved:  { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Approved'  },
   received:  { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Received' },
   cancelled: { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled'},

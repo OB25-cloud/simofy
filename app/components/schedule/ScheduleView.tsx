@@ -13,7 +13,7 @@ import { UNASSIGNED_KEY } from './scheduleColors'
 // ─── status colours (hover-tooltip status badge only) ────────────────────────
 
 const STATUS_BADGE: Record<string, { bg: string; text: string }> = {
-  pending:     { bg: '#f3f4f6', text: '#4b5563' },
+  pending:     { bg: '#F4F5F7', text: '#6B7280' },
   scheduled:   { bg: '#dbeafe', text: '#1e40af' },
   in_progress: { bg: '#fdf0d5', text: '#92400e' },
   complete:    { bg: '#dcfce7', text: '#15803d' },

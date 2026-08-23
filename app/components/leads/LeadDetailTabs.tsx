@@ -79,7 +79,7 @@ export default function LeadDetailTabs({ lead }: Props) {
             key={tab}
             onClick={() => setActiveTab(tab)}
             className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
-            style={{ color: activeTab === tab ? '#111827' : '#6b7280' }}
+            style={{ color: activeTab === tab ? '#1A1A2E' : '#6B7280' }}
           >
             {tab}
             {activeTab === tab && (
@@ -233,7 +233,7 @@ export default function LeadDetailTabs({ lead }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#d1d5db' }}
+                  style={{ background: '#E5E7EB' }}
                 />
                 <p className="text-xs font-medium text-[#6B7280]">Lead marked as lost</p>
               </li>
