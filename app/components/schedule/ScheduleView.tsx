@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Job, Staff, Client } from '@/lib/types'
 import { DEFAULT_START_TIME, DEFAULT_END_TIME, TIME_OPTIONS, formatTime } from '@/lib/timeOptions'
@@ -264,6 +264,39 @@ function Toast({ message, onUndo }: { message: string; onUndo?: () => void }) {
   )
 }
 
+// ─── grid loading / error states ───────────────────────────────────────────────
+// Shared by the Day grid, Week grid and mobile list so a slow or failed fetch
+// always shows something intentional instead of an empty/half-built layout.
+
+function GridLoading() {
+  return (
+    <div className="flex-1 flex flex-col items-center justify-center gap-3 rounded-lg" style={{ background: '#1A1A2E' }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" className="animate-spin">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
+      </svg>
+      <p className="text-sm text-gray-500">Loading schedule…</p>
+    </div>
+  )
+}
+
+function GridError({ onRetry }: { onRetry: () => void }) {
+  return (
+    <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
+      <button
+        onClick={onRetry}
+        className="flex flex-col items-center gap-2 px-6 py-4 text-center hover:opacity-90 transition-opacity"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+        <span className="text-sm font-medium text-white">Something went wrong — click to refresh</span>
+      </button>
+    </div>
+  )
+}
+
 // ─── mobile list view ─────────────────────────────────────────────────────────
 // "On mobile switch to a simple list view of today's jobs sorted by time" —
 // always today, regardless of which day/week is selected in the desktop grid.
@@ -334,6 +367,8 @@ export default function ScheduleView() {
   const [staffList, setStaffList] = useState<Pick<Staff, 'id' | 'name'>[]>([])
   const [clients, setClients] = useState<Pick<Client, 'id' | 'name' | 'business_name'>[]>([])
   const [loading, setLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [retryTick, setRetryTick] = useState(0)
   const [todayKey, setTodayKey] = useState('')
   useEffect(() => { setTodayKey(toDateKey(new Date())) }, [])
 
@@ -351,45 +386,66 @@ export default function ScheduleView() {
     return () => clearTimeout(t)
   }, [toast])
 
-  useEffect(() => {
-    async function loadStaffAndClients() {
-      const [{ data: staffData }, { data: clientData }] = await Promise.all([
-        supabase.from('staff').select('id, name').eq('is_active', true).order('name'),
-        supabase.from('clients').select('id, name, business_name').order('name'),
-      ])
-      setStaffList(staffData ?? [])
-      setClients(clientData ?? [])
-    }
-    loadStaffAndClients()
-  }, [])
-
   const isDayMode = view === 'map' ? gridMode === 'day' : view === 'day'
   const dayKey = toDateKey(dayDate)
   const weekKey = toDateKey(weekStart)
+
+  // Staff + clients rarely change and don't depend on the selected
+  // day/week, so they're only fetched once — but that fetch is folded into
+  // the same effect/load cycle as the jobs query (via Promise.all) rather
+  // than living in its own separate effect. Two independent effects
+  // resolving at different times was exactly the "half-loaded" bug: the
+  // jobs fetch could finish (loading -> false, grid renders) while
+  // staff/clients were still in flight, or either fetch's error was
+  // silently swallowed (data defaulted to []), rendering an empty-looking
+  // grid with no indication anything had gone wrong.
+  const staffClientsLoadedRef = useRef(false)
 
   useEffect(() => {
     let cancelled = false
     async function load() {
       setLoading(true)
+      setLoadError(false)
       const rangeStart = isDayMode ? dayKey : weekKey
       const rangeEnd = isDayMode ? addDays(dayDate, 1) : addDays(weekStart, 7)
+      const needsStaffClients = !staffClientsLoadedRef.current
 
-      const { data } = await supabase
-        .from('jobs')
-        .select('id, title, job_type, status, scheduled_date, start_time, end_time, location, client_id, staff_id, staff(name), clients(name), sites(address)')
-        .gte('scheduled_date', rangeStart)
-        .lt('scheduled_date', toDateKey(rangeEnd))
-        .order('scheduled_date')
+      const [jobsResult, staffResult, clientResult] = await Promise.all([
+        supabase
+          .from('jobs')
+          .select('id, title, job_type, status, scheduled_date, start_time, end_time, location, client_id, staff_id, staff(name), clients(name), sites(address)')
+          .gte('scheduled_date', rangeStart)
+          .lt('scheduled_date', toDateKey(rangeEnd))
+          .order('scheduled_date'),
+        needsStaffClients
+          ? supabase.from('staff').select('id, name').eq('is_active', true).order('name')
+          : Promise.resolve(null),
+        needsStaffClients
+          ? supabase.from('clients').select('id, name, business_name').order('name')
+          : Promise.resolve(null),
+      ])
 
-      if (!cancelled) {
-        setJobs((data as unknown as ScheduleJob[]) ?? [])
+      if (cancelled) return
+
+      if (jobsResult.error || staffResult?.error || clientResult?.error) {
+        console.error('[Schedule] load failed:', jobsResult.error ?? staffResult?.error ?? clientResult?.error)
+        setLoadError(true)
         setLoading(false)
+        return
       }
+
+      setJobs((jobsResult.data as unknown as ScheduleJob[]) ?? [])
+      if (needsStaffClients) {
+        setStaffList(staffResult?.data ?? [])
+        setClients(clientResult?.data ?? [])
+        staffClientsLoadedRef.current = true
+      }
+      setLoading(false)
     }
     load()
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDayMode, dayKey, weekKey])
+  }, [isDayMode, dayKey, weekKey, retryTick])
 
   const weekDays = buildWeekDays(weekStart)
 
@@ -413,6 +469,10 @@ export default function ScheduleView() {
   function resolveStaffKey(key: string): { id: string | null; name: string } {
     if (key === UNASSIGNED_KEY) return { id: null, name: 'Unassigned' }
     return { id: key, name: staffRows.find(s => s.id === key)?.name ?? 'Unassigned' }
+  }
+
+  function handleRetry() {
+    setRetryTick(t => t + 1)
   }
 
   function goPrev() {
@@ -638,11 +698,16 @@ export default function ScheduleView() {
         {/* Day grid */}
         <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'day' ? 'flex' : 'none' }}>
           {loading ? (
-            <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
-              <p className="text-sm text-gray-500">Loading schedule…</p>
-            </div>
+            <GridLoading />
+          ) : loadError ? (
+            <GridError onRetry={handleRetry} />
           ) : (
             <DayTimeGrid
+              // Remounts on date navigation so all of the grid's internal
+              // state — staff column pagination, hover card, active drag —
+              // starts clean rather than carrying over stale state (e.g. a
+              // staff page index) from whatever day was viewed before.
+              key={dayKey}
               jobs={dayJobs}
               staffRows={staffRows}
               isToday={dayKey === todayKey}
@@ -659,9 +724,9 @@ export default function ScheduleView() {
         {/* Week grid */}
         <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'week' ? 'flex' : 'none' }}>
           {loading ? (
-            <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
-              <p className="text-sm text-gray-500">Loading schedule…</p>
-            </div>
+            <GridLoading />
+          ) : loadError ? (
+            <GridError onRetry={handleRetry} />
           ) : (
             <WeekGrid
               jobs={jobs}
@@ -688,8 +753,14 @@ export default function ScheduleView() {
       </div>
 
       {/* Mobile — simple list of today's jobs, sorted by time */}
-      <div className="md:hidden flex-1 min-h-0 overflow-y-auto">
-        <MobileJobList jobs={jobs} todayKey={todayKey} onOpen={setDetailJob} />
+      <div className="md:hidden flex-1 min-h-0 overflow-y-auto flex flex-col">
+        {loading ? (
+          <GridLoading />
+        ) : loadError ? (
+          <GridError onRetry={handleRetry} />
+        ) : (
+          <MobileJobList jobs={jobs} todayKey={todayKey} onOpen={setDetailJob} />
+        )}
       </div>
 
       {addJobPrefill && (
