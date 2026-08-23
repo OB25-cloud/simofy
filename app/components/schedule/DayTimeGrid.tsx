@@ -101,15 +101,22 @@ function hourLabel(mins: number): string {
 
 // ─── hover card ─────────────────────────────────────────────────────────────
 
+const HOVER_CARD_WIDTH = 288 // w-72
+
 function JobHoverCard({ job, x, y }: { job: Job; x: number; y: number }) {
   const color = colorForStatus(job.status)
   const statusLabel = STATUS_LABELS[job.status ?? ''] ?? job.status ?? 'Pending'
   const address = jobAddress(job)
 
+  // Flip to the cursor's left once the card would run off the right edge of
+  // the viewport — same threshold either way (card width + the 16px offset).
+  const overflowsRight = typeof window !== 'undefined' && x > window.innerWidth - 300
+  const left = overflowsRight ? x - 16 - HOVER_CARD_WIDTH : x + 16
+
   return (
     <div
       className="fixed z-[70] pointer-events-none w-72 rounded-xl bg-white shadow-xl p-4 text-sm"
-      style={{ left: x + 16, top: y + 16 }}
+      style={{ left, top: y + 16 }}
     >
       <p className="font-semibold text-[#1A1A2E] mb-1.5 truncate">{job.title ?? job.job_type ?? 'Untitled job'}</p>
       <span
@@ -425,12 +432,25 @@ export default function DayTimeGrid({
   const [staffPage, setStaffPage] = useState(0)
   const [hoverJob, setHoverJob] = useState<{ job: Job; x: number; y: number } | null>(null)
 
+  // staffRows is the whole active roster, not just staff working this day —
+  // with more than MAX_VISIBLE_STAFF active staff, alphabetical pagination
+  // could put a staff member with a job today on a page that isn't shown by
+  // default, making that job silently disappear from the grid. Put staff who
+  // have a job on the visible day first (alphabetically within each group)
+  // so today's jobs always land on page one whenever they'd fit.
+  const orderedStaffRows = useMemo(() => {
+    const staffWithJobs = new Set(jobs.filter(j => j.staff_id).map(j => j.staff_id))
+    const withJobs = staffRows.filter(s => staffWithJobs.has(s.id))
+    const withoutJobs = staffRows.filter(s => !staffWithJobs.has(s.id))
+    return [...withJobs, ...withoutJobs]
+  }, [staffRows, jobs])
+
   // Clamp rather than correct via effect — staffRows can shrink (e.g. a
   // staff member's last job today gets reassigned away) leaving staffPage
   // pointing past the new last page.
-  const pageCount = Math.max(1, Math.ceil(staffRows.length / MAX_VISIBLE_STAFF))
+  const pageCount = Math.max(1, Math.ceil(orderedStaffRows.length / MAX_VISIBLE_STAFF))
   const safeStaffPage = Math.min(staffPage, pageCount - 1)
-  const visibleStaff = staffRows.slice(safeStaffPage * MAX_VISIBLE_STAFF, safeStaffPage * MAX_VISIBLE_STAFF + MAX_VISIBLE_STAFF)
+  const visibleStaff = orderedStaffRows.slice(safeStaffPage * MAX_VISIBLE_STAFF, safeStaffPage * MAX_VISIBLE_STAFF + MAX_VISIBLE_STAFF)
 
   const jobsByStaff: Record<string, Job[]> = {}
   const unassignedJobs: Job[] = []
