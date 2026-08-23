@@ -116,7 +116,7 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
         </div>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
+          className="flex items-center gap-2 px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90"
           style={{ background: '#C9A84C' }}
         >
           <PlusIcon />

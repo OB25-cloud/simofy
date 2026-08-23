@@ -337,7 +337,7 @@ export default function UsersView({
                   <button
                     onClick={handleSavePermissions}
                     disabled={!isDirty || saving}
-                    className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{ background: '#C9A84C' }}
                   >
                     {saving ? 'Saving…' : 'Save Changes'}

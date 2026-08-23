@@ -190,7 +190,7 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
             style={{ background: '#C9A84C' }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

@@ -254,7 +254,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
               style={{ background: '#C9A84C' }}
             >
               {loading ? 'Saving…' : 'Add Quote'}

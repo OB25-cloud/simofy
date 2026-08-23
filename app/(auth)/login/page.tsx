@@ -63,7 +63,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full py-2.5 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60 mt-2"
+            className="w-full py-2.5 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60 mt-2"
             style={{ background: '#C9A84C' }}
           >
             {pending ? 'Signing in…' : 'Sign in'}

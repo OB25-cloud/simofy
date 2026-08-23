@@ -177,7 +177,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
           <button
             onClick={handleAdd}
             disabled={adding || !supplier.trim() || !amount || parseFloat(amount) <= 0}
-            className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
             style={{ background: '#C9A84C' }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">

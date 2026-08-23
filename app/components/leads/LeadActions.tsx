@@ -72,7 +72,7 @@ export default function LeadActions({ lead }: Props) {
         <div className="flex items-center gap-2">
           <button
             onClick={() => setShowEdit(true)}
-            className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90"
+            className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90"
             style={{ background: '#C9A84C' }}
           >
             Edit Lead

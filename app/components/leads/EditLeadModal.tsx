@@ -141,7 +141,7 @@ export default function EditLeadModal({ lead, onClose }: Props) {
             <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
+            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
               {loading ? 'Saving…' : 'Save Changes'}
             </button>
           </div>

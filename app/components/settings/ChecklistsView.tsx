@@ -189,7 +189,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 <button
                   type="submit"
                   disabled={creating}
-                  className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                  className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-50"
                   style={{ background: '#C9A84C' }}
                 >
                   {creating ? 'Creating…' : 'Create Template'}
@@ -237,7 +237,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
         <div className="px-4 py-3 border-b border-[#E5E7EB] shrink-0">
           <button
             onClick={() => setShowNew(true)}
-            className="w-full flex items-center justify-center gap-1.5 px-3 py-3 sm:py-2 text-sm font-medium text-white rounded-md"
+            className="w-full flex items-center justify-center gap-1.5 px-3 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md"
             style={{ background: '#C9A84C' }}
           >
             <span className="text-base leading-none font-bold">+</span>
@@ -296,7 +296,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                 <button
                   onClick={handleSaveName}
                   disabled={savingName || !nameValue.trim()}
-                  className="px-3 py-3 sm:py-1.5 text-sm font-medium text-white rounded-md disabled:opacity-50"
+                  className="px-3 py-3 sm:py-1.5 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-50"
                   style={{ background: '#C9A84C' }}
                 >
                   {savingName ? 'Saving…' : 'Save'}
@@ -350,7 +350,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                       <button
                         onClick={() => handleSaveItem(item.id)}
                         disabled={savingItemId === item.id || !editItemText.trim()}
-                        className="px-3 py-1.5 text-xs font-medium text-white rounded-md disabled:opacity-50 shrink-0"
+                        className="px-3 py-1.5 text-xs font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-50 shrink-0"
                         style={{ background: '#C9A84C' }}
                       >
                         {savingItemId === item.id ? 'Saving…' : 'Save'}
@@ -409,7 +409,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
             <button
               type="submit"
               disabled={addingItem || !newItemText.trim()}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md disabled:opacity-50 shrink-0"
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-50 shrink-0"
               style={{ background: '#C9A84C' }}
             >
               {addingItem ? 'Adding…' : 'Add Item'}
