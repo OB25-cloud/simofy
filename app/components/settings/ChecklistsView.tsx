@@ -178,7 +178,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   value={newName}
                   onChange={e => setNewName(e.target.value)}
                   placeholder="e.g. Standard Lawn Mow"
-                  className="w-full px-3 py-2 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:border-[#C9A84C]"
+                  className="w-full px-3 py-2 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
                 />
               </div>
               {newError && (
@@ -291,7 +291,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                   value={nameValue}
                   onChange={e => setNameValue(e.target.value)}
                   autoFocus
-                  className="text-xl font-semibold text-[#1A1A2E] px-2 py-1 rounded-md border border-[#E5E7EB] focus:outline-none focus:border-[#C9A84C] flex-1"
+                  className="text-xl font-semibold text-[#1A1A2E] px-2 py-1 rounded-md border border-[#E5E7EB] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent flex-1"
                 />
                 <button
                   onClick={handleSaveName}
@@ -335,7 +335,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
                         value={editItemText}
                         onChange={e => setEditItemText(e.target.value)}
                         autoFocus
-                        className="flex-1 px-2 py-1.5 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:border-[#C9A84C]"
+                        className="flex-1 px-2 py-1.5 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
                       />
                       <label className="flex items-center gap-1.5 text-xs text-gray-500 shrink-0">
                         <input
@@ -394,7 +394,7 @@ export default function ChecklistsView({ initialTemplates }: { initialTemplates:
               value={newItemText}
               onChange={e => setNewItemText(e.target.value)}
               placeholder="Add a checklist item…"
-              className="flex-1 px-3 py-2 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:border-[#C9A84C]"
+              className="flex-1 px-3 py-2 rounded-md border border-[#E5E7EB] text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
             />
             <label className="flex items-center gap-1.5 text-xs text-gray-500 shrink-0">
               <input

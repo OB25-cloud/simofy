@@ -302,7 +302,7 @@ function ReschedulePickerModal({
               type="date"
               value={dateKey}
               onChange={(e) => setDateKey(e.target.value)}
-              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:border-[#C9A84C] bg-white"
+              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
             />
           </div>
 
@@ -313,7 +313,7 @@ function ReschedulePickerModal({
                 <select
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:border-[#C9A84C] bg-white"
+                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
                 >
                   {TIME_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
@@ -323,7 +323,7 @@ function ReschedulePickerModal({
                 <select
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:border-[#C9A84C] bg-white"
+                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
                 >
                   {TIME_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>

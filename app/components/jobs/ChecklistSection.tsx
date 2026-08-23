@@ -145,7 +145,7 @@ export default function ChecklistSection({
               <select
                 value={selectedTemplate}
                 onChange={e => setSelectedTemplate(e.target.value)}
-                className="px-3 py-2 text-sm border border-[#E5E7EB] rounded-md bg-white focus:outline-none focus:border-[#C9A84C] text-[#6B7280]"
+                className="px-3 py-2 text-sm border border-[#E5E7EB] rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent text-[#6B7280]"
               >
                 <option value="">Select a checklist…</option>
                 {templates.map(t => (

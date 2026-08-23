@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const inputClass =
-  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C]'
+  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent'
 
 export default function AddSiteModal({
   clientId,
@@ -139,7 +139,7 @@ export default function AddSiteModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+              className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors"
             >
               Cancel
             </button>

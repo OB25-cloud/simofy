@@ -131,7 +131,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
               value={supplier}
               onChange={e => setSupplier(e.target.value)}
               placeholder="e.g. Bunnings Warehouse"
-              className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:border-[#C9A84C]"
+              className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
             />
           </div>
           <div>
@@ -145,7 +145,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-md border border-[#E5E7EB] pl-7 pr-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:border-[#C9A84C]"
+                className="w-full rounded-md border border-[#E5E7EB] pl-7 pr-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
               />
             </div>
           </div>
@@ -158,7 +158,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="What's being ordered…"
-            className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:border-[#C9A84C]"
+            className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
           />
         </div>
 

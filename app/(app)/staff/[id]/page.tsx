@@ -4,10 +4,11 @@ import Link from 'next/link'
 import type { Staff, Job } from '@/lib/types'
 import StaffActions from '@/app/components/staff/StaffActions'
 import StaffDetailTabs from '@/app/components/staff/StaffDetailTabs'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: '#fdf8ee', text: '#C9A84C', label: 'Admin' },
-  field: { bg: '#eff6ff', text: '#1d4ed8', label: 'Field' },
+  admin: { bg: 'rgba(201, 168, 76,0.12)', text: '#C9A84C', label: 'Admin' },
+  field: { bg: '#DBEAFE', text: '#3B82F6', label: 'Field' },
 }
 
 export default async function StaffDetailPage({
@@ -57,20 +58,7 @@ export default async function StaffDetailPage({
                 {roleConfig.label}
               </span>
             )}
-            <span
-              className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-              style={
-                typedStaff.is_active
-                  ? { background: '#fdf8ee', color: '#C9A84C' }
-                  : { background: '#f3f4f6', color: '#9ca3af' }
-              }
-            >
-              <span
-                className="w-1.5 h-1.5 rounded-full"
-                style={{ background: typedStaff.is_active ? '#C9A84C' : '#d1d5db' }}
-              />
-              {typedStaff.is_active ? 'Active' : 'Inactive'}
-            </span>
+            <StatusBadge status={typedStaff.is_active ? 'active' : 'inactive'} />
           </div>
         </div>
         <StaffActions staff={typedStaff} />

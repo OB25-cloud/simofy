@@ -3,6 +3,7 @@
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import type { Staff, Job } from '@/lib/types'
+import { StatusBadge } from '@/app/components/ui/Badge'
 
 const TABS = ['Overview', 'Jobs', 'Performance'] as const
 type Tab = typeof TABS[number]
@@ -10,31 +11,18 @@ type Tab = typeof TABS[number]
 const GOLD = '#C9A84C'
 
 const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: '#fdf8ee', text: '#C9A84C', label: 'Admin' },
-  field: { bg: '#eff6ff', text: '#1d4ed8', label: 'Field' },
+  admin: { bg: 'rgba(201, 168, 76,0.12)', text: '#C9A84C', label: 'Admin' },
+  field: { bg: '#DBEAFE', text: '#3B82F6', label: 'Field' },
 }
 
-const JOB_STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: 'Pending' },
-  scheduled:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6', label: 'Scheduled' },
-  in_progress: { bg: '#fdf8ee', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
-  complete:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e', label: 'Complete' },
-  invoiced:    { bg: '#faf5ff', text: '#7c3aed', dot: '#8b5cf6', label: 'Invoiced' },
-  cancelled:   { bg: '#fef2f2', text: '#dc2626', dot: '#ef4444', label: 'Cancelled' },
-}
-
-function StatusBadge({ status }: { status: string | null }) {
-  if (!status) return <span className="text-gray-300 text-xs">—</span>
-  const cfg = JOB_STATUS_CONFIG[status] ?? { bg: '#f3f4f6', text: '#6b7280', dot: '#d1d5db', label: status }
-  return (
-    <span
-      className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium"
-      style={{ background: cfg.bg, color: cfg.text }}
-    >
-      <span className="w-1.5 h-1.5 rounded-full" style={{ background: cfg.dot }} />
-      {cfg.label}
-    </span>
-  )
+// Used only for the "All Jobs by Status" breakdown chart's progress-bar dot colours.
+const JOB_STATUS_CONFIG: Record<string, { dot: string; label: string }> = {
+  pending:     { dot: '#9CA3AF', label: 'Pending' },
+  scheduled:   { dot: '#3B82F6', label: 'Scheduled' },
+  in_progress: { dot: '#F59E0B', label: 'In Progress' },
+  complete:    { dot: '#22C55E', label: 'Complete' },
+  invoiced:    { dot: '#22C55E', label: 'Invoiced' },
+  cancelled:   { dot: '#EF4444', label: 'Cancelled' },
 }
 
 function fmtDate(s: string | null | undefined) {
@@ -174,20 +162,7 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
               <div>
                 <dt className="text-xs text-[#6B7280] mb-0.5">Status</dt>
                 <dd className="mt-1">
-                  <span
-                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium"
-                    style={
-                      staff.is_active
-                        ? { background: '#fdf8ee', color: GOLD }
-                        : { background: '#f3f4f6', color: '#9ca3af' }
-                    }
-                  >
-                    <span
-                      className="w-1.5 h-1.5 rounded-full"
-                      style={{ background: staff.is_active ? GOLD : '#d1d5db' }}
-                    />
-                    {staff.is_active ? 'Active' : 'Inactive'}
-                  </span>
+                  <StatusBadge status={staff.is_active ? 'active' : 'inactive'} />
                 </dd>
               </div>
             </dl>
@@ -218,11 +193,10 @@ export default function StaffDetailTabs({ staff, jobs }: Props) {
                   </tr>
                 </thead>
                 <tbody>
-                  {jobs.map((job, i) => (
+                  {jobs.map(job => (
                     <tr
                       key={job.id}
-                      className="hover:bg-[#F9FAFB] transition-colors group"
-                      style={{ borderTop: i === 0 ? undefined : '1px solid #f3f4f6' }}
+                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
                     >
                       <td className="px-5 py-3.5 font-medium text-[#1A1A2E]">
                         <Link href={`/jobs/${job.id}`} className="hover:underline" style={{ color: 'inherit' }}>

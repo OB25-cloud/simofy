@@ -24,7 +24,7 @@ export default function AppError({ error, reset }: { error: Error & { digest?: s
           </button>
           <a
             href="/dashboard"
-            className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors"
           >
             Back to dashboard
           </a>

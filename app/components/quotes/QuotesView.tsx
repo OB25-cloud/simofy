@@ -145,13 +145,13 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
             placeholder="Search by quote ID, client, job or status…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:border-[#C9A84C]"
+            className="w-full pl-9 pr-4 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
           />
         </div>
         <select
           value={statusFilter}
           onChange={e => setStatusFilter(e.target.value)}
-          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:border-[#C9A84C] text-[#6B7280]"
+          className="px-3 py-3 sm:py-2.5 text-sm border border-[#E5E7EB] rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent text-[#6B7280]"
           style={{ minWidth: 150 }}
         >
           <option value="all">All Statuses</option>

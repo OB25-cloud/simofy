@@ -143,7 +143,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                       onChange={e => setReviewDelayHours(Number(e.target.value))}
                       onBlur={e => saveReviewDelay(Number(e.target.value))}
                       disabled={savingDelay}
-                      className="w-16 border border-[#E5E7EB] rounded px-2 py-0.5 text-xs text-[#1A1A2E] focus:outline-none focus:border-[#C9A84C] disabled:opacity-50"
+                      className="w-16 border border-[#E5E7EB] rounded px-2 py-0.5 text-xs text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent disabled:opacity-50"
                     />
                     <span className="text-xs text-[#6B7280]">hours after job completion</span>
                   </div>

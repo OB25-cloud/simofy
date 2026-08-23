@@ -34,7 +34,7 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C] bg-white"
+              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
               placeholder="you@example.com"
             />
           </div>
@@ -49,7 +49,7 @@ export default function LoginPage() {
               type="password"
               autoComplete="current-password"
               required
-              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C] bg-white"
+              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
               placeholder="••••••••"
             />
           </div>

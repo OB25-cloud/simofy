@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import type { Staff } from '@/lib/types'
 
 const inputClass =
-  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:border-[#C9A84C] bg-white'
+  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white'
 
 interface Props {
   staff: Staff
@@ -136,7 +136,7 @@ export default function EditStaffModal({ staff, onClose }: Props) {
           {error && <p className="text-xs text-[#EF4444]">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-1">
-            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium text-[#6B7280] bg-gray-100 rounded-md hover:bg-gray-200 transition-colors">
+            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors">
               Cancel
             </button>
             <button
