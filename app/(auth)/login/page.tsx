@@ -14,14 +14,14 @@ export default function LoginPage() {
           className="text-3xl font-bold tracking-[0.3em]"
           style={{ color: '#C9A84C' }}
         >
-          SIMOFY
+          OPERIFY
         </span>
-        <p className="mt-2 text-sm text-[#6B7280]">Queenstown, NZ — Landscaping CRM</p>
+        <p className="mt-2 text-sm text-[#6B7280]">Welcome to Operify</p>
       </div>
 
       {/* Card */}
       <div className="bg-white rounded-xl shadow-sm border border-[#E5E7EB] px-8 py-8">
-        <h1 className="text-base font-semibold text-[#1A1A2E] mb-6">Sign in to your account</h1>
+        <h1 className="text-base font-semibold text-[#1A1A2E] mb-6">Sign in to your Operify account</h1>
 
         <form action={action} className="space-y-4">
           <div>

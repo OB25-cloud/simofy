@@ -237,7 +237,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
       {/* Logo */}
       <div className="px-6 py-6 flex items-center justify-between">
         <Link href="/dashboard" className="text-lg font-bold tracking-widest text-[#C9A84C]">
-          SIMOFY
+          OPERIFY
         </Link>
         {onCollapse && (
           <button

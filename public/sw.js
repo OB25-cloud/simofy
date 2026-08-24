@@ -1,4 +1,4 @@
-const CACHE = 'simofy-v2'
+const CACHE = 'operify-v1'
 
 self.addEventListener('install', event => {
   self.skipWaiting()

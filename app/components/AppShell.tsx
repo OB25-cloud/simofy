@@ -22,7 +22,7 @@ function ChevronRightIcon() {
   )
 }
 
-const COLLAPSE_KEY = 'simofy:sidebar-collapsed'
+const COLLAPSE_KEY = 'operify:sidebar-collapsed'
 
 interface Props {
   role: string
@@ -58,7 +58,7 @@ export default function AppShell({ role, userName, userEmail, permissions, child
           <HamburgerIcon />
         </button>
         <span className="text-lg font-bold tracking-widest text-[#C9A84C]">
-          SIMOFY
+          OPERIFY
         </span>
       </div>
 

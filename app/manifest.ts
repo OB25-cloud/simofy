@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Simofy',
-    short_name: 'Simofy',
-    description: 'Landscaping CRM — Queenstown, NZ',
+    name: 'Operify',
+    short_name: 'Operify',
+    description: 'Operify — field service management for trades businesses.',
     start_url: '/',
     display: 'standalone',
     background_color: '#1E1E2E',

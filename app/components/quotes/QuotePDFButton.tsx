@@ -54,7 +54,7 @@ export default function QuotePDFButton({ quote, lineItems }: Props) {
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(22)
       doc.setTextColor(...WHITE)
-      doc.text('SIMOFY', M, 17)
+      doc.text('OPERIFY', M, 17)
 
       // Tagline
       doc.setFont('helvetica', 'normal')
@@ -66,7 +66,7 @@ export default function QuotePDFButton({ quote, lineItems }: Props) {
       doc.setTextColor(...MUTED)
       doc.setFontSize(7.5)
       doc.text('Queenstown, New Zealand', M, 29)
-      doc.text('info@simofy.co.nz  ·  +64 21 000 0000', M, 34.5)
+      doc.text('info@operify.co.nz  ·  +64 21 000 0000', M, 34.5)
 
       // QUOTE label
       doc.setFont('helvetica', 'bold')
@@ -224,9 +224,9 @@ export default function QuotePDFButton({ quote, lineItems }: Props) {
       doc.setFontSize(7.5)
       doc.setTextColor(...MUTED)
       doc.text('Payment due within 14 days of invoice date. Prices include GST.', M, H - 15)
-      doc.text('Thank you for choosing Simofy — Wakatipu Landscaping.', M, H - 9.5)
+      doc.text('Thank you for choosing Operify — Wakatipu Landscaping.', M, H - 9.5)
       doc.setTextColor(...GOLD)
-      doc.text('info@simofy.co.nz  ·  simofy.co.nz', W - M, H - 15, { align: 'right' })
+      doc.text('info@operify.co.nz  ·  operify.co.nz', W - M, H - 15, { align: 'right' })
       doc.text('+64 21 000 0000', W - M, H - 9.5, { align: 'right' })
 
       doc.save(`${qNum(quote.id)}.pdf`)
