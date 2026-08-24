@@ -17,6 +17,11 @@
   --dark-panel: #1A1A2E;
   --dark-panel-text: #F5F5F5;
 
+  /* Set (and reset) by DemoBanner — 0px everywhere in the real app, so this
+     is a no-op outside /demo. Lets viewport-anchored layouts (schedule)
+     subtract the banner's real height rather than overflow beneath it. */
+  --demo-banner-h: 0px;
+
   --background: var(--page-bg);
   --foreground: var(--text-primary);
 }

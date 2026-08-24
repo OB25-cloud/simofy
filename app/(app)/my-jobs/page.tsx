@@ -2,28 +2,37 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { createServerSupabase } from '@/lib/supabaseServer'
 import { supabase as db } from '@/lib/supabase'
+import { isDemoRequest } from '@/lib/demoHeader'
 import { StatusBadge } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
 
 export default async function MyJobsPage() {
-  const authSupabase = await createServerSupabase()
-  const { data: { user } } = await authSupabase.auth.getUser()
-  if (!user) redirect('/login')
+  const isDemo = await isDemoRequest()
+  let userEmail: string | null = null
 
-  // Find this user's staff record by matching email
-  const { data: staffRecord } = await db
-    .from('staff')
-    .select('id, name')
-    .eq('email', user.email!)
-    .single()
+  if (!isDemo) {
+    const authSupabase = await createServerSupabase()
+    const { data: { user } } = await authSupabase.auth.getUser()
+    if (!user) redirect('/login')
+    userEmail = user.email ?? null
+  }
+
+  // Find this user's staff record by matching email. In demo mode there's
+  // no real user to match — fall back to any one active staff member so
+  // the page still shows something real rather than an empty state.
+  const { data: staffRecord } = isDemo
+    ? await db.from('staff').select('id, name').eq('is_active', true).order('name').limit(1).single()
+    : await db.from('staff').select('id, name').eq('email', userEmail!).single()
 
   if (!staffRecord) {
     return (
       <div className="p-4 md:p-8">
         <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">My Jobs</h1>
         <p className="text-sm text-[#6B7280]">
-          No staff record found for your account ({user.email}). Contact your administrator.
+          {isDemo
+            ? 'No active staff records to show in this demo.'
+            : `No staff record found for your account (${userEmail}). Contact your administrator.`}
         </p>
       </div>
     )

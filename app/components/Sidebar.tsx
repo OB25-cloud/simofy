@@ -213,6 +213,8 @@ interface Props {
   permissions?: PermissionMap | null
   onNavigate?: () => void
   onCollapse?: () => void
+  demoMode?: boolean
+  companyName?: string
 }
 
 const ROLE_DISPLAY: Record<string, string> = {
@@ -221,9 +223,13 @@ const ROLE_DISPLAY: Record<string, string> = {
   field:      'Field Staff',
 }
 
-export default function Sidebar({ role, userName, userEmail, permissions, onNavigate, onCollapse }: Props) {
+export default function Sidebar({ role, userName, userEmail, permissions, onNavigate, onCollapse, demoMode, companyName }: Props) {
   const pathname = usePathname()
   const sections = role === 'admin' ? ADMIN_SECTIONS : buildDynamicSections(role, permissions ?? null)
+  // Every nav href above is written as a real, unprefixed app route
+  // ('/jobs', '/schedule', ...) — prefixed here rather than in the nav
+  // config so the same config works for both the real app and demo.
+  const basePath = demoMode ? '/demo' : ''
 
   const initials = userName
     ? userName.split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2)
@@ -236,7 +242,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
     <aside className="w-full h-full bg-[#1E1E2E] flex flex-col">
       {/* Logo */}
       <div className="px-6 py-6 flex items-center justify-between">
-        <Link href="/dashboard" className="text-lg font-bold tracking-widest text-[#C9A84C]">
+        <Link href={`${basePath}/dashboard`} className="text-lg font-bold tracking-widest text-[#C9A84C]">
           OPERIFY
         </Link>
         {onCollapse && (
@@ -257,7 +263,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
           <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-2 mb-2">
             Search
           </p>
-          <GlobalSearch onNavigate={onNavigate} />
+          <GlobalSearch onNavigate={onNavigate} basePath={basePath} />
         </div>
 
         {sections.map((section, si) => (
@@ -266,11 +272,11 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
               {section.label}
             </p>
             {section.items.map(({ name, href, Icon }) => {
-              const isActive = pathname === href || pathname.startsWith(href + '/')
+              const isActive = pathname === `${basePath}${href}` || pathname.startsWith(`${basePath}${href}/`)
               return (
                 <Link
                   key={href}
-                  href={href}
+                  href={`${basePath}${href}`}
                   onClick={onNavigate}
                   className={[
                     'flex items-center gap-3 px-4 py-2.5 md:py-2.5 rounded-lg mx-2 mb-0.5 text-sm transition-colors duration-150 border-l-2',
@@ -289,6 +295,11 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
       </nav>
 
       <div className="border-t border-[#2A2A3E] p-4">
+        {companyName && (
+          <p className="text-xs font-semibold text-white truncate mb-3">
+            {companyName}
+          </p>
+        )}
         {/* User profile */}
         <div className="flex items-center gap-3 mb-3">
           <div
@@ -298,15 +309,37 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
             {initials}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold truncate text-white">
-              {displayName}
-            </p>
-            <p className="text-[10px] truncate mt-px text-[#9CA3AF]">
-              {displayRole}
-            </p>
+            {demoMode ? (
+              <p className="text-xs font-semibold truncate text-white">
+                Demo User — Admin
+              </p>
+            ) : (
+              <>
+                <p className="text-xs font-semibold truncate text-white">
+                  {displayName}
+                </p>
+                <p className="text-[10px] truncate mt-px text-[#9CA3AF]">
+                  {displayRole}
+                </p>
+              </>
+            )}
           </div>
         </div>
-        <LogoutButton />
+        {demoMode ? (
+          <Link
+            href="/demo"
+            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm transition-colors duration-150 text-[#9CA3AF] hover:text-white hover:bg-[#2A2A3E]"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            Exit demo
+          </Link>
+        ) : (
+          <LogoutButton />
+        )}
       </div>
     </aside>
   )

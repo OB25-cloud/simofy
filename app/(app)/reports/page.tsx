@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabaseServer'
+import { isDemoRequest } from '@/lib/demoHeader'
 import { paginateAll } from '@/lib/supabasePaginate'
 import { matchTownName } from '@/lib/townMatch'
 import ReportsTabs from '@/app/components/reports/ReportsTabs'
@@ -59,12 +60,16 @@ function monthKey(dateStr: string) {
 
 export default async function ReportsPage() {
   // Auth must always be checked against a live session — never cached.
+  // Demo mode (proxy.ts rewrote /demo/reports here) has no session and
+  // needs none: it's read-only seed data, skip straight past this gate.
   const supabase = await createServerSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!(await isDemoRequest())) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) redirect('/login')
 
-  const { data: myProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  if (myProfile?.role !== 'admin') redirect('/dashboard')
+    const { data: myProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    if (myProfile?.role !== 'admin') redirect('/dashboard')
+  }
 
   // Separate client for the actual report data — this one caches for 5
   // minutes (see createServerSupabase) so repeat visits don't re-run the

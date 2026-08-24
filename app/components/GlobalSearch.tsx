@@ -139,7 +139,7 @@ async function runSearch(query: string): Promise<SearchResult[]> {
   return results
 }
 
-export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }) {
+export default function GlobalSearch({ onNavigate, basePath = '' }: { onNavigate?: () => void; basePath?: string }) {
   const [open, setOpen]       = useState(false)
   const [query, setQuery]     = useState('')
   const [results, setResults] = useState<SearchResult[]>([])
@@ -188,7 +188,7 @@ export default function GlobalSearch({ onNavigate }: { onNavigate?: () => void }
   }
 
   function navigate(href: string) {
-    router.push(href)
+    router.push(`${basePath}${href}`)
     close()
     onNavigate?.()
   }

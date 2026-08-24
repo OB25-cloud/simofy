@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createServerSupabase } from '@/lib/supabaseServer'
+import { isDemoRequest } from '@/lib/demoHeader'
 import ChecklistsView from '@/app/components/settings/ChecklistsView'
 import type { ChecklistTemplate, ChecklistTemplateItem } from '@/lib/types'
 
@@ -7,11 +8,13 @@ export const dynamic = 'force-dynamic'
 
 export default async function ChecklistsSettingsPage() {
   const supabase = await createServerSupabase()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  if (!(await isDemoRequest())) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) redirect('/login')
 
-  const { data: myProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
-  if (myProfile?.role !== 'admin') redirect('/dashboard')
+    const { data: myProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    if (myProfile?.role !== 'admin') redirect('/dashboard')
+  }
 
   const [{ data: templates }, { data: items }] = await Promise.all([
     supabase.from('checklist_templates').select('*').order('created_at', { ascending: true }),

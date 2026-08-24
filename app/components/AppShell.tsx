@@ -29,10 +29,12 @@ interface Props {
   userName?: string | null
   userEmail?: string | null
   permissions?: PermissionMap | null
+  demoMode?: boolean
+  companyName?: string
   children: React.ReactNode
 }
 
-export default function AppShell({ role, userName, userEmail, permissions, children }: Props) {
+export default function AppShell({ role, userName, userEmail, permissions, demoMode, companyName, children }: Props) {
   const [open, setOpen] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
 
@@ -88,6 +90,8 @@ export default function AppShell({ role, userName, userEmail, permissions, child
               userName={userName}
               userEmail={userEmail}
               permissions={permissions}
+              demoMode={demoMode}
+              companyName={companyName}
               onNavigate={() => setOpen(false)}
               onCollapse={() => setCollapsed(true)}
             />

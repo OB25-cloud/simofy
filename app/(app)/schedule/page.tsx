@@ -5,9 +5,10 @@ export default function SchedulePage() {
   // flex-1/min-h-0 chain below has a guaranteed-definite height to resolve
   // against — matches AppShell's real available height exactly: main has no
   // padding, and on desktop there's no chrome above it (the mobile top bar,
-  // subtracted below, is md:hidden).
+  // subtracted below, is md:hidden) other than the demo banner, accounted
+  // for via --demo-banner-h (0px outside /demo, see globals.css).
   return (
-    <div className="flex flex-col h-[calc(100vh-56px)] md:h-screen p-4 md:p-8 md:pb-4">
+    <div className="flex flex-col h-[calc(100vh-56px-var(--demo-banner-h))] md:h-[calc(100vh-var(--demo-banner-h))] p-4 md:p-8 md:pb-4">
       <ScheduleView />
     </div>
   )
