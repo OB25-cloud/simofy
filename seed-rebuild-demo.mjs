@@ -1,4 +1,4 @@
-// Full demo data rebuild for Wakatipu Landscaping — DESTRUCTIVE.
+// Full demo data rebuild for Green & Co Landscaping — DESTRUCTIVE.
 // Anchored on Tuesday 23 June 2026 as "today" (hardcoded, not derived from
 // the system clock, so re-running this script later doesn't shift the
 // dataset). Deletes all rows from the operational tables listed below
@@ -107,7 +107,7 @@ const TITLE_TEMPLATES = {
 }
 
 async function run() {
-  console.log('=== Wakatipu Landscaping — full demo rebuild ===\n')
+  console.log('=== Green & Co Landscaping — full demo rebuild ===\n')
   console.log(`Anchor "today": ${dateStr(TODAY)} (Tuesday, per request)`)
   console.log(`This week:   ${dateStr(THIS_WEEK_START)} -> ${dateStr(THIS_WEEK_END)}`)
   console.log(`Past 6wk:    ${dateStr(PAST_START)} -> ${dateStr(addDays(TODAY, -1))}`)
@@ -129,14 +129,14 @@ async function run() {
 
   // ── 2. Staff (8) — 2 admin, 6 field ─────────────────────────────────────────
   const staff = await insertBatched('staff', [
-    { name: 'Simon Paterson',    email: 'simon@wakatipulandscaping.co.nz',    phone: '021 234 5678', role: 'admin', pay_rate: 98, is_active: true },
-    { name: 'Charmila Paterson', email: 'charmila@wakatipulandscaping.co.nz', phone: '021 345 6789', role: 'admin', pay_rate: 95, is_active: true },
-    { name: 'Jake Tindall',      email: 'jake@wakatipulandscaping.co.nz',     phone: '021 456 7890', role: 'field', pay_rate: 38, is_active: true },
-    { name: 'Liam Foster',       email: 'liam@wakatipulandscaping.co.nz',     phone: '027 567 8901', role: 'field', pay_rate: 29, is_active: true },
-    { name: 'Cody Marsh',        email: 'cody@wakatipulandscaping.co.nz',     phone: '021 222 3333', role: 'field', pay_rate: 39, is_active: true },
-    { name: 'Emma Bright',       email: 'emma@wakatipulandscaping.co.nz',     phone: '021 333 4444', role: 'field', pay_rate: 31, is_active: true },
-    { name: 'Ben Hawke',         email: 'ben@wakatipulandscaping.co.nz',      phone: '021 444 5555', role: 'field', pay_rate: 30, is_active: true },
-    { name: 'Mia Chen',          email: 'mia@wakatipulandscaping.co.nz',      phone: '021 555 6666', role: 'field', pay_rate: 32, is_active: true },
+    { name: 'Sam Mitchell',    email: 'sam@greenandco.co.nz',    phone: '021 234 5678', role: 'admin', pay_rate: 98, is_active: true },
+    { name: 'Claire Mitchell', email: 'claire@greenandco.co.nz', phone: '021 345 6789', role: 'admin', pay_rate: 95, is_active: true },
+    { name: 'Jake Tindall',      email: 'jake@greenandco.co.nz',     phone: '021 456 7890', role: 'field', pay_rate: 38, is_active: true },
+    { name: 'Liam Foster',       email: 'liam@greenandco.co.nz',     phone: '027 567 8901', role: 'field', pay_rate: 29, is_active: true },
+    { name: 'Cody Marsh',        email: 'cody@greenandco.co.nz',     phone: '021 222 3333', role: 'field', pay_rate: 39, is_active: true },
+    { name: 'Emma Bright',       email: 'emma@greenandco.co.nz',     phone: '021 333 4444', role: 'field', pay_rate: 31, is_active: true },
+    { name: 'Ben Hawke',         email: 'ben@greenandco.co.nz',      phone: '021 444 5555', role: 'field', pay_rate: 30, is_active: true },
+    { name: 'Mia Chen',          email: 'mia@greenandco.co.nz',      phone: '021 555 6666', role: 'field', pay_rate: 32, is_active: true },
   ])
   const fieldStaff = staff.filter(s => s.role === 'field')
 
@@ -428,7 +428,7 @@ async function run() {
   })
   await insertBatched('job_photos', jobPhotoRows, false)
 
-  console.log('\n✓ Demo rebuild complete — Wakatipu Landscaping data loaded.')
+  console.log('\n✓ Demo rebuild complete — Green & Co Landscaping data loaded.')
   console.log(`  staff: ${staff.length} | clients: ${clients.length} | sites: ${sites.length} | jobs: ${jobs.length}`)
   console.log(`  quotes: ${quotes.length} | invoices: ${invoiceRows.length} | leads: 8`)
 }

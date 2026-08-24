@@ -1,6 +1,6 @@
 // Bulk seed script — ADDITIVE (does not delete existing data).
 // Generates ~6 months of realistic job/quote/invoice/notification volume
-// for Wakatipu Landscaping, with seasonal variation (fewer jobs in NZ
+// for Green & Co Landscaping, with seasonal variation (fewer jobs in NZ
 // winter months June/July) and 5-6 active days per week.
 //
 // Run: node seed-bulk-data.js
@@ -61,7 +61,7 @@ function monthMultiplierFor(month) {
 }
 
 const FIRST_NAMES = ['Margaret','David','Rachel','Claire','Tom','Steph','Ben','Sarah','Mark','Jess','Liam','Olivia','Noah','Emma','James','Grace','Henry','Chloe','Jack','Mia','Sam','Lucy','Ethan','Sophie','Oliver','Ruby','Daniel','Holly','Matt','Anna','Ryan','Kate','Josh','Megan','Nathan','Zoe','Adam','Ella','Connor','Maya']
-const LAST_NAMES = ['Thompson','Ng','Sorenson','Hurst','Hargreaves','Mannering','Whitfield','Patel','Robertson','Mitchell','Fraser','Calder','Burnett','Stace','Holloway','Anderson','Cooper','Reid','Stewart','Walsh','Henderson','Marsh','Tindall','Frost','Paterson','Gallagher','Webb','Sinclair','Lowe','Bishop']
+const LAST_NAMES = ['Thompson','Ng','Sorenson','Hurst','Hargreaves','Mannering','Whitfield','Patel','Robertson','Mitchell','Fraser','Calder','Burnett','Stace','Holloway','Anderson','Cooper','Reid','Stewart','Walsh','Henderson','Marsh','Tindall','Frost','Grant','Gallagher','Webb','Sinclair','Lowe','Bishop']
 const BUSINESS_NAMES = ['Frankton Park School','Cardrona Alpine Resort','Remarkables Lodge','Lake Hayes Estate','Queenstown Gardens Trust','Wanaka Medical Centre','Shotover Primary School','Arrowtown Retirement Village','Five Mile Holdings','Glenorchy Lodge','Millbrook Resort','Coronet Peak Holdings','Kelvin Heights Golf Club','Jacks Point Residents Assoc','Hawea Flat Vineyard']
 const STREETS = ['Panorama Terrace','Aubrey Road','School Road','Hallenstein Street','Gorge Road','Frankton Road','Lake Esplanade','Malaghans Road','Lower Shotover Road','Centennial Avenue','Brownston Street','Cardrona Valley Road','Plantation Road','Littles Road','Suburb Street','Robins Road','Speargrass Flat Road']
 const SUBURBS = ['Queenstown 9300', 'Wanaka 9305', 'Arrowtown 9302', 'Frankton, Queenstown 9300', 'Lake Hayes 9371']
@@ -79,7 +79,7 @@ const TITLE_TEMPLATES = {
 }
 
 async function run() {
-  console.log('=== Bulk seed: Wakatipu Landscaping (additive) ===\n')
+  console.log('=== Bulk seed: Green & Co Landscaping (additive) ===\n')
   console.log(`Range: ${dateStr(RANGE_START)} -> ${dateStr(RANGE_END)} (today: ${dateStr(TODAY)})\n`)
 
   // ── 1. Ensure enough staff exist ──────────────────────────────────────────
@@ -87,11 +87,11 @@ async function run() {
   const existingStaffEmails = new Set((existingStaff ?? []).map(s => s.email))
 
   const newStaffCandidates = [
-    { name: 'Jordan Reeve',  email: 'jordan@wakatipulandscaping.co.nz',  phone: '021 111 2222', role: 'field', pay_rate: 30, is_active: true },
-    { name: 'Cody Marsh',    email: 'cody@wakatipulandscaping.co.nz',    phone: '021 222 3333', role: 'field', pay_rate: 29, is_active: true },
-    { name: 'Briar Holland', email: 'briar@wakatipulandscaping.co.nz',   phone: '021 333 4444', role: 'field', pay_rate: 31, is_active: true },
-    { name: 'Toby Sinclair', email: 'toby@wakatipulandscaping.co.nz',    phone: '021 444 5555', role: 'field', pay_rate: 27, is_active: true },
-    { name: 'Hana Wills',    email: 'hana@wakatipulandscaping.co.nz',    phone: '021 555 6666', role: 'field', pay_rate: 33, is_active: true },
+    { name: 'Jordan Reeve',  email: 'jordan@greenandco.co.nz',  phone: '021 111 2222', role: 'field', pay_rate: 30, is_active: true },
+    { name: 'Cody Marsh',    email: 'cody@greenandco.co.nz',    phone: '021 222 3333', role: 'field', pay_rate: 29, is_active: true },
+    { name: 'Briar Holland', email: 'briar@greenandco.co.nz',   phone: '021 333 4444', role: 'field', pay_rate: 31, is_active: true },
+    { name: 'Toby Sinclair', email: 'toby@greenandco.co.nz',    phone: '021 444 5555', role: 'field', pay_rate: 27, is_active: true },
+    { name: 'Hana Wills',    email: 'hana@greenandco.co.nz',    phone: '021 555 6666', role: 'field', pay_rate: 33, is_active: true },
   ].filter(s => !existingStaffEmails.has(s.email))
 
   let insertedStaff = []

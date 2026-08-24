@@ -31,7 +31,7 @@ async function runSearch(query: string): Promise<SearchResult[]> {
   const stripped     = raw.replace(/^(QUO|INV)-/i, '')
   const firstStrip   = stripped.split(/\s+/)[0] ?? stripped
 
-  // Split into words so "charmila paterson" matches across separate name fields.
+  // Split into words so "claire mitchell" matches across separate name fields.
   // Each word is ANDed — every word must match at least one column.
   const words = raw.split(/\s+/).filter(Boolean)
 

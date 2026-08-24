@@ -6,7 +6,7 @@ const SUPABASE_ANON_KEY = 'sb_publishable_-60ItyYDk4f_HQIWax989A_SxcpEBkK'
 const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 async function run() {
-  console.log('=== Wakatipu Landscaping Seed ===\n')
+  console.log('=== Green & Co Landscaping Seed ===\n')
 
   // ── 1. Delete existing data (FK-safe order) ──────────────────────────────
   const deleteTables = ['leads', 'invoices', 'quotes', 'job_notes', 'job_photos', 'job_staff', 'jobs', 'sites', 'clients', 'staff']
@@ -23,8 +23,8 @@ async function run() {
   // ── 2. Staff ──────────────────────────────────────────────────────────────
   const { data: staff, error: staffErr } = await sb.from('staff').insert([
     {
-      name: 'Charmila Paterson',
-      email: 'charmila@wakatipulandscaping.co.nz',
+      name: 'Claire Mitchell',
+      email: 'claire@greenandco.co.nz',
       phone: '021 345 6789',
       role: 'admin',
       pay_rate: 95,
@@ -32,7 +32,7 @@ async function run() {
     },
     {
       name: 'Jake Tindall',
-      email: 'jake@wakatipulandscaping.co.nz',
+      email: 'jake@greenandco.co.nz',
       phone: '021 456 7890',
       role: 'field',
       pay_rate: 32,
@@ -40,7 +40,7 @@ async function run() {
     },
     {
       name: 'Liam Frost',
-      email: 'liam@wakatipulandscaping.co.nz',
+      email: 'liam@greenandco.co.nz',
       phone: '027 567 8901',
       role: 'field',
       pay_rate: 28,
@@ -50,7 +50,7 @@ async function run() {
   if (staffErr) throw new Error(`staff insert: ${staffErr.message}`)
   console.log(`  inserted ${staff.length} staff`)
 
-  const charmila = staff.find(s => s.name === 'Charmila Paterson')
+  const charmila = staff.find(s => s.name === 'Claire Mitchell')
   const jake  = staff.find(s => s.name === 'Jake Tindall')
   const liam  = staff.find(s => s.name === 'Liam Frost')
 
@@ -438,7 +438,7 @@ async function run() {
   if (leadErr) throw new Error(`leads insert: ${leadErr.message}`)
   console.log(`  inserted 3 leads`)
 
-  console.log('\n✓ Seed complete — Wakatipu Landscaping data loaded.')
+  console.log('\n✓ Seed complete — Green & Co Landscaping data loaded.')
 }
 
 run().catch(err => {
