@@ -162,19 +162,19 @@ const ADMIN_SECTIONS: Section[] = [
     ],
   },
   {
+    label: 'CLIENTS',
+    items: [
+      { name: 'Clients', href: '/clients', Icon: ClientsIcon },
+      { name: 'Leads',   href: '/leads',   Icon: LeadsIcon   },
+    ],
+  },
+  {
     label: 'FINANCE',
     items: [
       { name: 'Quotes',          href: '/quotes',          Icon: QuotesIcon       },
       { name: 'Invoices',       href: '/invoices',         Icon: InvoicesIcon     },
       { name: 'Purchase Orders', href: '/purchase-orders', Icon: PurchaseOrderIcon },
       { name: 'Reports',        href: '/reports',          Icon: ReportsIcon      },
-    ],
-  },
-  {
-    label: 'CLIENTS',
-    items: [
-      { name: 'Clients', href: '/clients', Icon: ClientsIcon },
-      { name: 'Leads',   href: '/leads',   Icon: LeadsIcon   },
     ],
   },
   {
@@ -204,17 +204,17 @@ function buildDynamicSections(role: string, permissions: PermissionMap | null): 
   ].filter(Boolean) as NavItem[]
   if (opItems.length > 0) sections.push({ label: 'OPERATIONS', items: opItems })
 
-  const finItems: NavItem[] = [
-    can(permissions, 'quotes')   ? { name: 'Quotes',   href: '/quotes',   Icon: QuotesIcon   } : null,
-    can(permissions, 'invoices') ? { name: 'Invoices', href: '/invoices', Icon: InvoicesIcon } : null,
-  ].filter(Boolean) as NavItem[]
-  if (finItems.length > 0) sections.push({ label: 'FINANCE', items: finItems })
-
   const clientItems: NavItem[] = [
     can(permissions, 'clients') ? { name: 'Clients', href: '/clients', Icon: ClientsIcon } : null,
     can(permissions, 'leads')   ? { name: 'Leads',   href: '/leads',   Icon: LeadsIcon   } : null,
   ].filter(Boolean) as NavItem[]
   if (clientItems.length > 0) sections.push({ label: 'CLIENTS', items: clientItems })
+
+  const finItems: NavItem[] = [
+    can(permissions, 'quotes')   ? { name: 'Quotes',   href: '/quotes',   Icon: QuotesIcon   } : null,
+    can(permissions, 'invoices') ? { name: 'Invoices', href: '/invoices', Icon: InvoicesIcon } : null,
+  ].filter(Boolean) as NavItem[]
+  if (finItems.length > 0) sections.push({ label: 'FINANCE', items: finItems })
 
   const settingsItems: NavItem[] = [
     can(permissions, 'staff')    ? { name: 'Staff',         href: '/staff',                  Icon: StaffIcon } : null,
