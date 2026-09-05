@@ -132,14 +132,14 @@ function SupportStat({ label, value, sub, icon, tone = 'accent' }: { label: stri
   const bar = tone === 'warning' ? 'bg-warning' : tone === 'muted' ? 'bg-line' : 'bg-accent'
   const tile = tone === 'warning' ? 'bg-amber-50 text-amber-700' : 'bg-accent-soft text-accent'
   return (
-    <div className="relative bg-surface rounded-xl border border-line shadow-card px-4 py-3.5 overflow-hidden min-w-0">
+    <div className="relative h-[116px] bg-surface rounded-xl border border-line shadow-card pl-4 pr-3 py-3 overflow-hidden min-w-0 flex flex-col">
       <span aria-hidden className={['absolute inset-y-0 left-0 w-[3px]', bar].join(' ')} />
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4 pt-0.5">{label}</p>
-        <span className={['shrink-0 flex items-center justify-center w-7 h-7 rounded-lg', tile].join(' ')}>{icon}</span>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4 truncate">{label}</p>
+        <span className={['shrink-0 flex items-center justify-center w-6 h-6 rounded-md', tile].join(' ')}>{icon}</span>
       </div>
-      <p className={['mt-1 text-[26px] leading-none font-bold tracking-tight tabular-nums', tone === 'warning' ? 'text-amber-700' : 'text-ink'].join(' ')}>{value}</p>
-      {sub && <p className="mt-1.5 text-[11px] text-ink-muted truncate">{sub}</p>}
+      <p className={['mt-auto text-[26px] leading-none font-bold tracking-tight tabular-nums', tone === 'warning' ? 'text-amber-700' : 'text-ink'].join(' ')}>{value}</p>
+      <p className="mt-1.5 text-[11px] text-ink-muted truncate leading-4 h-4">{sub ?? ''}</p>
     </div>
   )
 }
@@ -227,29 +227,26 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
       </div>
 
       {/* ── Hero stat strip ── */}
-      <div className={['grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4 mb-5', hasFollowUp ? 'xl:grid-cols-7' : 'xl:grid-cols-6'].join(' ')}>
-        <div className="col-span-2 relative bg-surface rounded-xl border border-line shadow-card px-5 py-4 overflow-hidden">
+      <div className={['grid grid-cols-2 gap-3 mb-5', hasFollowUp ? 'md:grid-cols-[minmax(0,2fr)_repeat(5,minmax(0,1fr))]' : 'md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))]'].join(' ')}>
+        {/* Hero: total quotes + accepted value — wider, same height as the rest */}
+        <div className="col-span-2 md:col-span-1 relative h-[116px] bg-surface rounded-xl border border-line shadow-card pl-4 pr-3 py-3 overflow-hidden flex flex-col min-w-0">
           <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4 pt-0.5">Total quotes</p>
-            <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(17,24,39,0.15)]">{I.quotes}</span>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4">Total quotes</p>
+            <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-md bg-accent text-white">{I.quotes}</span>
           </div>
-          <div className="mt-1 flex items-end justify-between gap-4 flex-wrap">
-            <div>
-              <p className="text-[44px] leading-none font-bold tracking-tight tabular-nums text-ink">{quotes.length}</p>
-              <p className="mt-2 text-[12px] text-ink-muted">
-                {h.thisMonth.length > 0 ? `${h.thisMonth.length} raised this month` : 'None raised this month'}
-                {h.acceptedThisMonth.length > 0 && <> · <span className="text-ink font-medium">{h.acceptedThisMonth.length} won</span></>}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-accent leading-4">Accepted value</p>
-              <p className="text-[30px] leading-none font-bold tracking-tight tabular-nums text-accent mt-1">{fmtShort(h.acceptedValue)}</p>
-              <p className="mt-1.5 text-[11px] text-ink-muted tabular-nums">
-                {h.accepted.length > 0 ? `${h.accepted.length} won · avg ${fmtFull(h.avgAccepted)}` : 'Nothing accepted yet'}
-              </p>
+          <div className="mt-auto flex items-end justify-between gap-4 min-w-0">
+            <p className="text-[34px] leading-none font-bold tracking-tight tabular-nums text-ink">{quotes.length}</p>
+            <div className="text-right min-w-0">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-accent leading-3">Accepted value</p>
+              <p className="text-[26px] leading-none font-bold tracking-tight tabular-nums text-accent mt-1">{fmtShort(h.acceptedValue)}</p>
             </div>
           </div>
+          <p className="mt-1.5 text-[11px] text-ink-muted truncate leading-4 h-4 tabular-nums">
+            {h.thisMonth.length > 0 ? `${h.thisMonth.length} raised this month` : 'None raised this month'}
+            {h.acceptedThisMonth.length > 0 && <> · <span className="text-ink font-medium">{h.acceptedThisMonth.length} won</span></>}
+            {h.accepted.length > 0 && <> · {h.accepted.length} won all time · avg {fmtFull(h.avgAccepted)}</>}
+          </p>
         </div>
 
         <SupportStat label="Draft" value={String(h.draft.length)} icon={I.draft} tone="muted" sub={h.draftValue > 0 ? `${fmtShort(h.draftValue)} not yet sent` : 'Nothing waiting to go out'} />

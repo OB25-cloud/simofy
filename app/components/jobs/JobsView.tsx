@@ -327,14 +327,14 @@ function SupportStat({ label, value, sub, icon, tone = 'accent' }: { label: stri
   const bar = tone === 'danger' ? 'bg-error' : tone === 'muted' ? 'bg-line' : 'bg-accent'
   const tile = tone === 'danger' ? 'bg-red-50 text-error' : 'bg-accent-soft text-accent'
   return (
-    <div className="relative bg-surface rounded-xl border border-line shadow-card px-4 py-3.5 overflow-hidden min-w-0">
+    <div className="relative h-[116px] bg-surface rounded-xl border border-line shadow-card pl-4 pr-3 py-3 overflow-hidden min-w-0 flex flex-col">
       <span aria-hidden className={['absolute inset-y-0 left-0 w-[3px]', bar].join(' ')} />
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4 pt-0.5">{label}</p>
-        <span className={['shrink-0 flex items-center justify-center w-7 h-7 rounded-lg', tile].join(' ')}>{icon}</span>
+      <div className="flex items-center justify-between gap-2">
+        <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4 truncate">{label}</p>
+        <span className={['shrink-0 flex items-center justify-center w-6 h-6 rounded-md', tile].join(' ')}>{icon}</span>
       </div>
-      <p className={['mt-1 text-[26px] leading-none font-bold tracking-tight tabular-nums', tone === 'danger' ? 'text-error' : 'text-ink'].join(' ')}>{value}</p>
-      {sub && <p className="mt-1.5 text-[11px] text-ink-muted truncate">{sub}</p>}
+      <p className={['mt-auto text-[26px] leading-none font-bold tracking-tight tabular-nums', tone === 'danger' ? 'text-error' : 'text-ink'].join(' ')}>{value}</p>
+      <p className="mt-1.5 text-[11px] text-ink-muted truncate leading-4 h-4">{sub ?? ''}</p>
     </div>
   )
 }
@@ -570,35 +570,35 @@ export default function JobsView({ jobs, quoteTotals = {}, clients, staff, openM
       </div>
 
       {/* ── Hero stat strip ── */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 md:gap-4 mb-5">
-        {/* Hero: jobs today */}
-        <div className="col-span-2 relative bg-surface rounded-xl border border-line shadow-card px-5 py-4 overflow-hidden">
+      <div className="grid grid-cols-2 md:grid-cols-[minmax(0,2fr)_repeat(4,minmax(0,1fr))] gap-3 mb-5">
+        {/* Hero: jobs today — wider, same height as the supporting cards */}
+        <div className="col-span-2 md:col-span-1 relative h-[116px] bg-surface rounded-xl border border-line shadow-card pl-4 pr-3 py-3 overflow-hidden flex flex-col min-w-0">
           <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
-          <div className="flex items-start justify-between gap-3">
-            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4 pt-0.5">Jobs today</p>
-            <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(17,24,39,0.15)]">{I.calendar}</span>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4">Jobs today</p>
+            <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-md bg-accent text-white">{I.calendar}</span>
           </div>
-          <div className="mt-1 flex items-end gap-3 flex-wrap">
-            <p className="text-[44px] leading-none font-bold tracking-tight tabular-nums text-ink">{h.todayJobs.length}</p>
-            <div className="pb-1.5 flex items-center gap-1.5 flex-wrap">
+          <div className="mt-auto flex items-end gap-3 min-w-0">
+            <p className="text-[34px] leading-none font-bold tracking-tight tabular-nums text-ink">{h.todayJobs.length}</p>
+            <div className="pb-0.5 flex items-center gap-1.5 overflow-hidden whitespace-nowrap">
               {h.todayJobs.filter(j => j.status === 'in_progress').length > 0 && (
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/25">
+                <span className="text-[10.5px] font-semibold px-1.5 py-px rounded-full bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/25">
                   {h.todayJobs.filter(j => j.status === 'in_progress').length} in progress
                 </span>
               )}
               {h.todayJobs.filter(j => isDone(j.status)).length > 0 && (
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-green-50 text-green-800 ring-1 ring-inset ring-green-600/20">
+                <span className="text-[10.5px] font-semibold px-1.5 py-px rounded-full bg-green-50 text-green-800 ring-1 ring-inset ring-green-600/20">
                   {h.todayJobs.filter(j => isDone(j.status)).length} done
                 </span>
               )}
               {h.todayJobs.filter(j => !j.staff_id && !isDone(j.status)).length > 0 && (
-                <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-red-50 text-red-800 ring-1 ring-inset ring-red-600/20">
+                <span className="text-[10.5px] font-semibold px-1.5 py-px rounded-full bg-red-50 text-red-800 ring-1 ring-inset ring-red-600/20">
                   {h.todayJobs.filter(j => !j.staff_id && !isDone(j.status)).length} unassigned
                 </span>
               )}
             </div>
           </div>
-          <p className="mt-2 text-[12px] text-ink-muted">
+          <p className="mt-1.5 text-[11px] text-ink-muted truncate leading-4 h-4">
             {h.todayJobs.length === 0
               ? 'Nothing on the board today.'
               : <>
