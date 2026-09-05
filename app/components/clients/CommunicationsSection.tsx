@@ -24,33 +24,33 @@ function fmtDateTime(s: string): string {
 export default function CommunicationsSection({ notifications }: { notifications: Notification[] }) {
   if (notifications.length === 0) {
     return (
-      <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-        <p className="text-sm text-[#6B7280]">No notifications sent to this client yet</p>
+      <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+        <p className="text-sm text-ink-muted">No notifications sent to this client yet</p>
       </div>
     )
   }
 
   return (
     <div>
-      <p className="text-xs text-[#6B7280] mb-4">
+      <p className="text-xs text-ink-muted mb-4">
         {notifications.length} notification{notifications.length !== 1 ? 's' : ''}
       </p>
       <div className="relative">
         {notifications.map((n, i) => (
           <div key={n.id} className="relative flex gap-4 pb-6 last:pb-0">
             {i < notifications.length - 1 && (
-              <span className="absolute left-[5px] top-3 bottom-0 w-px bg-[#E5E7EB]" />
+              <span className="absolute left-[5px] top-3 bottom-0 w-px bg-line" />
             )}
             <span
               className="mt-1.5 w-[11px] h-[11px] rounded-full shrink-0 z-10"
               style={{ background: statusDot(n.status) }}
             />
-            <div className="min-w-0 flex-1 rounded-lg border border-[#E5E7EB] px-4 py-3">
+            <div className="min-w-0 flex-1 rounded-lg border border-line px-4 py-3">
               <div className="flex items-center justify-between gap-3 mb-1">
-                <p className="text-sm font-semibold text-[#1A1A2E]">{typeLabel(n.type)}</p>
+                <p className="text-sm font-semibold text-ink">{typeLabel(n.type)}</p>
                 <StatusBadge status={n.status} />
               </div>
-              <p className="text-xs text-[#6B7280]">
+              <p className="text-xs text-ink-muted">
                 {n.sent_at
                   ? `Sent ${fmtDateTime(n.sent_at)}`
                   : n.scheduled_for

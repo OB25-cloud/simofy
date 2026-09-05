@@ -202,7 +202,7 @@ export default function GlobalSearch({ onNavigate, basePath = '' }: { onNavigate
       {/* Sidebar trigger button */}
       <button
         onClick={openModal}
-        className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-colors duration-150 text-[#9CA3AF] hover:text-white hover:bg-[#2A2A3E]/60"
+        className="w-full flex items-center gap-3 px-4 py-2 rounded-lg text-[13.5px] transition-colors duration-150 text-[var(--sidebar-text)] hover:text-white hover:bg-[var(--sidebar-hover)]"
       >
         <SearchIcon />
         Search
@@ -217,14 +217,14 @@ export default function GlobalSearch({ onNavigate, basePath = '' }: { onNavigate
         >
           <div
             className="w-full max-w-xl rounded-xl overflow-hidden shadow-2xl"
-            style={{ background: '#1A1A2E', border: '1px solid rgba(201, 168, 76,0.25)' }}
+            style={{ background: 'var(--charcoal)', border: '1px solid rgba(74, 222, 128,0.25)' }}
           >
             {/* Input row */}
             <div
               className="flex items-center gap-3 px-4 py-3.5 border-b"
-              style={{ borderColor: 'rgba(201, 168, 76,0.15)' }}
+              style={{ borderColor: 'rgba(74, 222, 128,0.15)' }}
             >
-              <span style={{ color: 'rgba(201, 168, 76,0.7)', flexShrink: 0 }}>
+              <span style={{ color: 'rgba(74, 222, 128,0.7)', flexShrink: 0 }}>
                 <SearchIcon />
               </span>
               <input
@@ -254,7 +254,7 @@ export default function GlobalSearch({ onNavigate, basePath = '' }: { onNavigate
                   <div key={group.type}>
                     <p
                       className="px-4 pt-3 pb-1 text-[10px] font-bold tracking-[0.15em]"
-                      style={{ color: 'rgba(201, 168, 76,0.55)' }}
+                      style={{ color: 'rgba(74, 222, 128,0.55)' }}
                     >
                       {group.label}
                     </p>
@@ -266,7 +266,7 @@ export default function GlobalSearch({ onNavigate, basePath = '' }: { onNavigate
                         style={{ borderLeft: '3px solid transparent' }}
                         onMouseEnter={e => {
                           e.currentTarget.style.background      = 'rgba(255,255,255,0.04)'
-                          e.currentTarget.style.borderLeftColor = '#C9A84C'
+                          e.currentTarget.style.borderLeftColor = 'var(--accent-bright)'
                         }}
                         onMouseLeave={e => {
                           e.currentTarget.style.background      = 'transparent'
@@ -283,7 +283,7 @@ export default function GlobalSearch({ onNavigate, basePath = '' }: { onNavigate
                             </p>
                           )}
                         </div>
-                        <span className="text-sm shrink-0" style={{ color: 'rgba(201, 168, 76,0.5)' }}>→</span>
+                        <span className="text-sm shrink-0" style={{ color: 'rgba(74, 222, 128,0.5)' }}>→</span>
                       </button>
                     ))}
                   </div>

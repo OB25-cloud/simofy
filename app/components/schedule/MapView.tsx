@@ -16,7 +16,7 @@ const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
 
 const STATUS_COLOR: Record<string, string> = {
-  pending: '#6B7280',
+  pending: 'var(--ink-muted)',
   scheduled: '#3B82F6',
   in_progress: '#F59E0B',
   complete: '#22C55E',
@@ -168,11 +168,11 @@ export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
 
       const popupHtml = `
         <div style="font-family:inherit;min-width:170px;">
-          <p style="font-weight:600;font-size:13px;color:#1A1A2E;margin:0 0 4px;">${escapeHtml(job.title ?? job.job_type ?? 'Untitled')}</p>
-          <p style="font-size:12px;color:#6B7280;margin:0 0 2px;">${escapeHtml(job.clients?.name ?? 'No client')}</p>
-          <p style="font-size:12px;color:#6B7280;margin:0 0 2px;">${escapeHtml(job.staff?.name ?? 'Unassigned')}</p>
-          <p style="font-size:11px;color:#6B7280;margin:0 0 8px;">${escapeHtml(dateLabel)}</p>
-          <a href="/jobs/${job.id}" style="font-size:12px;font-weight:600;color:#C9A84C;text-decoration:none;">View Job →</a>
+          <p style="font-weight:600;font-size:13px;color:var(--ink);margin:0 0 4px;">${escapeHtml(job.title ?? job.job_type ?? 'Untitled')}</p>
+          <p style="font-size:12px;color:var(--ink-muted);margin:0 0 2px;">${escapeHtml(job.clients?.name ?? 'No client')}</p>
+          <p style="font-size:12px;color:var(--ink-muted);margin:0 0 2px;">${escapeHtml(job.staff?.name ?? 'Unassigned')}</p>
+          <p style="font-size:11px;color:var(--ink-muted);margin:0 0 8px;">${escapeHtml(dateLabel)}</p>
+          <a href="/jobs/${job.id}" style="font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;">View Job →</a>
         </div>
       `.trim()
 
@@ -194,7 +194,7 @@ export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
   }, [jobs, leafletReady])
 
   const unlocatedCount = jobs.filter(j => !jobTown(j)).length
-  const selectClass = 'border border-[#E5E7EB] rounded-lg px-2.5 py-1.5 text-xs text-[#1A1A2E] bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent'
+  const selectClass = 'border border-line rounded-lg px-2.5 py-1.5 text-xs text-ink bg-white focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent'
 
   return (
     <div className="flex-1 min-h-0 w-full flex flex-col">
@@ -202,7 +202,7 @@ export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
       <Script src={LEAFLET_JS} strategy="afterInteractive" onLoad={() => setLeafletReady(true)} />
 
       <div className="shrink-0 flex items-center gap-2 mb-3">
-        <label className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Filter</label>
+        <label className="text-xs font-semibold text-ink-muted uppercase tracking-wider">Filter</label>
         <select value={dateFilter} onChange={e => setDateFilter(e.target.value)} className={selectClass}>
           <option value="all">All dates</option>
           {dateOptions.map(d => (
@@ -222,16 +222,16 @@ export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
 
       <div
         ref={containerRef}
-        className="flex-1 min-h-0 rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden bg-[#F4F5F7]"
+        className="flex-1 min-h-0 rounded-xl border border-line shadow-sm overflow-hidden bg-surface-muted"
       >
         {!leafletReady && (
           <div className="h-full flex items-center justify-center">
-            <p className="text-sm text-[#6B7280]">Loading map…</p>
+            <p className="text-sm text-ink-muted">Loading map…</p>
           </div>
         )}
       </div>
       {unlocatedCount > 0 && (
-        <p className="shrink-0 mt-3 text-xs text-[#6B7280]">
+        <p className="shrink-0 mt-3 text-xs text-ink-muted">
           {unlocatedCount} job{unlocatedCount !== 1 ? 's' : ''} not shown — location doesn&apos;t mention Queenstown, Wanaka or Cromwell.
         </p>
       )}

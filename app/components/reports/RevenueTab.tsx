@@ -59,7 +59,7 @@ export default function RevenueTab({ data }: { data: RevenueData }) {
                     paddingAngle={2}
                   >
                     {data.byLocation.map((entry, i) => (
-                      <Cell key={entry.location} fill={PALETTE[i % PALETTE.length]} stroke="#1A1A2E" strokeWidth={2} />
+                      <Cell key={entry.location} fill={PALETTE[i % PALETTE.length]} stroke="#111827" strokeWidth={2} />
                     ))}
                   </Pie>
                   <Tooltip

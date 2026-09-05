@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'Operify — field service management for trades businesses.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#1E1E2E',
-    theme_color: '#1E1E2E',
+    background_color: '#0f1117',
+    theme_color: '#0f1117',
     icons: [
       {
         src: '/icon-192x192.png',

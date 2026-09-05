@@ -43,8 +43,8 @@ export default function LeadActions({ lead }: Props) {
     <>
       <div className="flex flex-col gap-4">
         {/* Quick status change */}
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
-          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Status</p>
+        <div className="bg-white rounded-xl border border-line shadow-sm p-4">
+          <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">Status</p>
           <div className="flex flex-wrap gap-2">
             {STATUS_OPTIONS.map(opt => {
               const isActive = currentStatus === opt.value
@@ -56,7 +56,7 @@ export default function LeadActions({ lead }: Props) {
                   className="px-3 py-1.5 rounded-md text-xs font-medium border transition-all disabled:opacity-50"
                   style={isActive
                     ? { background: opt.active, color: opt.color, borderColor: opt.color, opacity: 1 }
-                    : { background: 'white', color: '#6B7280', borderColor: '#E5E7EB' }
+                    : { background: 'white', color: 'var(--ink-muted)', borderColor: 'var(--line)' }
                   }
                 >
                   {opt.label}
@@ -77,7 +77,7 @@ export default function LeadActions({ lead }: Props) {
 
           {confirmDelete ? (
             <div className="flex items-center gap-2">
-              <span className="text-sm text-[#6B7280]">Are you sure?</span>
+              <span className="text-sm text-ink-muted">Are you sure?</span>
               <Button onClick={handleDelete} disabled={deleting} variant="destructive">
                 {deleting ? 'Deleting…' : 'Yes, delete'}
               </Button>

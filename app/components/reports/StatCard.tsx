@@ -7,12 +7,14 @@ export default function StatCard({
   accent?: boolean
   danger?: boolean
 }) {
-  const color = danger ? '#EF4444' : accent ? '#C9A84C' : '#1A1A2E'
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
-      <p className="text-[10px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">{label}</p>
-      <p className="text-2xl font-bold tabular-nums leading-none" style={{ color }}>{value}</p>
-      {sub && <p className="mt-1 text-[11px] text-[#6B7280]">{sub}</p>}
+    <div className="relative bg-surface rounded-xl border border-line shadow-card p-4 overflow-hidden">
+      {(accent || danger) && (
+        <span aria-hidden className={['absolute inset-y-0 left-0 w-[3px]', danger ? 'bg-error' : 'bg-accent'].join(' ')} />
+      )}
+      <p className="text-[10px] font-semibold text-ink-muted uppercase tracking-[0.1em] mb-1.5">{label}</p>
+      <p className={['text-2xl font-bold tracking-tight tabular-nums leading-none', danger ? 'text-error' : 'text-ink'].join(' ')}>{value}</p>
+      {sub && <p className="mt-1.5 text-[11px] text-ink-muted">{sub}</p>}
     </div>
   )
 }

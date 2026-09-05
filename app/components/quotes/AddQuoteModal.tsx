@@ -12,8 +12,8 @@ const STATUS_OPTIONS = [
   { value: 'expired',  label: 'Expired' },
 ]
 
-const inputClass = 'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white'
-const numClass   = 'w-full border border-[#E5E7EB] rounded-md px-2 py-2 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white text-right'
+const inputClass = 'w-full border border-line rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white'
+const numClass   = 'w-full border border-line rounded-md px-2 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white text-right'
 
 type LineItem = { id: string; description: string; quantity: string; unit_price: string }
 
@@ -105,9 +105,9 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
     >
       <div className="bg-white w-full h-full sm:h-[92vh] sm:max-w-2xl sm:rounded-xl shadow-2xl flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] shrink-0">
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Add Quote</h2>
-          <button onClick={onClose} className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
+          <h2 className="text-sm font-semibold text-ink">Add Quote</h2>
+          <button onClick={onClose} className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -121,8 +121,8 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
             {/* Client + Status */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-                  Client <span style={{ color: '#C9A84C' }}>*</span>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">
+                  Client <span style={{ color: 'var(--accent)' }}>*</span>
                 </label>
                 <select value={form.client_id} onChange={e => { setForm(p => ({ ...p, client_id: e.target.value, job_id: '' })) }} className={inputClass}>
                   <option value="">Select client…</option>
@@ -132,7 +132,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Status</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Status</label>
                 <select value={form.status} onChange={setField('status')} className={inputClass}>
                   {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -142,7 +142,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
             {/* Job + Valid Until */}
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Linked Job</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Linked Job</label>
                 <select value={form.job_id} onChange={setField('job_id')} className={inputClass}>
                   <option value="">No linked job</option>
                   {filteredJobs.map(j => (
@@ -151,22 +151,22 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Valid Until</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Valid Until</label>
                 <input type="date" value={form.valid_until} onChange={setField('valid_until')} className={inputClass} />
               </div>
             </div>
 
             {/* Notes */}
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Notes</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Notes</label>
               <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this quote…" rows={2} className={`${inputClass} resize-none`} />
             </div>
 
             {/* Line Items */}
             <div>
               <div className="flex items-center justify-between mb-2">
-                <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Line Items</p>
-                <button type="button" onClick={addItem} className="flex items-center gap-1 text-xs font-medium transition-opacity hover:opacity-70" style={{ color: '#C9A84C' }}>
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">Line Items</p>
+                <button type="button" onClick={addItem} className="flex items-center gap-1 text-xs font-medium transition-opacity hover:opacity-70" style={{ color: 'var(--accent)' }}>
                   <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
                     <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                   </svg>
@@ -194,7 +194,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                         className={numClass}
                       />
                       <div className="relative">
-                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[#6B7280] text-sm pointer-events-none">$</span>
+                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-muted text-sm pointer-events-none">$</span>
                         <input
                           type="number"
                           value={item.unit_price}
@@ -205,7 +205,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                           className={`${numClass} pl-6`}
                         />
                       </div>
-                      <span className="text-sm text-right text-[#6B7280] tabular-nums">
+                      <span className="text-sm text-right text-ink-muted tabular-nums">
                         ${calc.amounts[idx].toFixed(2)}
                       </span>
                       <button
@@ -225,7 +225,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
               </div>
 
               {/* Totals */}
-              <div className="mt-4 pt-4 border-t border-[#E5E7EB] flex justify-end">
+              <div className="mt-4 pt-4 border-t border-line flex justify-end">
                 <div className="w-52 space-y-1.5">
                   <div className="flex justify-between text-sm text-gray-500">
                     <span>Subtotal</span>
@@ -235,7 +235,7 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
                     <span>GST (15%)</span>
                     <span className="tabular-nums">${calc.gst.toFixed(2)}</span>
                   </div>
-                  <div className="flex justify-between text-sm font-semibold text-[#1A1A2E] pt-2 border-t border-[#E5E7EB]">
+                  <div className="flex justify-between text-sm font-semibold text-ink pt-2 border-t border-line">
                     <span>Total</span>
                     <span className="tabular-nums">${calc.total.toFixed(2)}</span>
                   </div>
@@ -247,15 +247,15 @@ export default function AddQuoteModal({ clients, jobs, onClose }: Props) {
           </div>
 
           {/* Footer */}
-          <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] shrink-0">
-            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-line shrink-0">
+            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted transition-colors">
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#C9A84C' }}
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60"
+              style={{ background: 'var(--accent)' }}
             >
               {loading ? 'Saving…' : 'Add Quote'}
             </button>

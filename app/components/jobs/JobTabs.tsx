@@ -163,7 +163,7 @@ export default function JobTabs({
   type TimelineEntry = { label: string; date: string; dotColor: string }
   const timeline: TimelineEntry[] = []
   if (job.created_at) {
-    timeline.push({ label: 'Job Created', date: job.created_at, dotColor: '#6B7280' })
+    timeline.push({ label: 'Job Created', date: job.created_at, dotColor: 'var(--ink-muted)' })
   }
   if (job.scheduled_date) {
     timeline.push({ label: 'Scheduled', date: job.scheduled_date, dotColor: '#3b82f6' })
@@ -176,7 +176,7 @@ export default function JobTabs({
   return (
     <>
       {/* Tab bar */}
-      <div className="border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="border-b border-line mb-6 overflow-x-auto scrollbar-hidden">
         <nav className="-mb-px flex gap-1 min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key
@@ -186,8 +186,8 @@ export default function JobTabs({
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#C9A84C' : '#6B7280',
-                  borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
+                  color: active ? 'var(--accent)' : 'var(--ink-muted)',
+                  borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
                 }}
               >
                 {tab.label}
@@ -201,30 +201,30 @@ export default function JobTabs({
       {activeTab === 'overview' && (
         <div className="space-y-5 tab-fade-in">
           <div className="grid grid-cols-2 gap-5">
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">
                 Job Details
               </h2>
               <dl className="space-y-3.5">
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Status</dt>
+                  <dt className="text-xs text-ink-muted mb-0.5">Status</dt>
                   <dd><StatusBadge status={job.status} /></dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Job Type</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Job Type</dt>
+                  <dd className="text-sm text-ink">
                     {job.job_type ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Recurrence</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Recurrence</dt>
+                  <dd className="text-sm text-ink">
                     {job.recurrence_pattern
                       ? (
                         <span className="inline-flex items-center gap-1.5">
                           <span
                             className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
-                            style={{ background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }}
+                            style={{ background: 'rgba(21, 128, 61,0.12)', color: 'var(--accent)' }}
                           >
                             Recurring
                           </span>
@@ -236,13 +236,13 @@ export default function JobTabs({
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Client</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Client</dt>
+                  <dd className="text-sm text-ink">
                     {job.client_id ? (
                       <Link
                         href={`/clients/${job.client_id}`}
                         className="hover:underline"
-                        style={{ color: '#C9A84C' }}
+                        style={{ color: 'var(--accent)' }}
                       >
                         {job.clients?.name ?? 'View client'}
                       </Link>
@@ -252,41 +252,41 @@ export default function JobTabs({
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Assigned To</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Assigned To</dt>
+                  <dd className="text-sm text-ink">
                     {job.staff?.name ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Location</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Location</dt>
+                  <dd className="text-sm text-ink">
                     {job.location ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Scheduled Date</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Scheduled Date</dt>
+                  <dd className="text-sm text-ink">
                     {fmtDate(job.scheduled_date)}
                     {job.scheduled_date && job.start_time && job.end_time && (
-                      <span className="text-[#6B7280]">
+                      <span className="text-ink-muted">
                         {' · '}{formatTime(job.start_time)} – {formatTime(job.end_time)}
                       </span>
                     )}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Created</dt>
-                  <dd className="text-sm text-[#1A1A2E]">{fmtDate(job.created_at)}</dd>
+                  <dt className="text-xs text-ink-muted mb-0.5">Created</dt>
+                  <dd className="text-sm text-ink">{fmtDate(job.created_at)}</dd>
                 </div>
               </dl>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">
                 Description
               </h2>
               {job.notes ? (
-                <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{job.notes}</p>
+                <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-wrap">{job.notes}</p>
               ) : (
                 <p className="text-sm text-gray-300 italic">No description added</p>
               )}
@@ -294,47 +294,47 @@ export default function JobTabs({
           </div>
 
           {/* Job Cost Summary */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-            <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
+          <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+            <h2 className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">
               Job Cost Summary
             </h2>
             <div className="space-y-2.5">
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Materials Cost</span>
-                <span className="font-medium text-[#1A1A2E]">{fmtCurrency(materialsCost)}</span>
+                <span className="font-medium text-ink">{fmtCurrency(materialsCost)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">
                   Purchase Orders
-                  <span className="text-xs text-[#6B7280] ml-1.5">(received only)</span>
+                  <span className="text-xs text-ink-muted ml-1.5">(received only)</span>
                 </span>
-                <span className="font-medium text-[#1A1A2E]">{fmtCurrency(purchaseOrdersCost)}</span>
+                <span className="font-medium text-ink">{fmtCurrency(purchaseOrdersCost)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">
                   Labour Cost
-                  <span className="text-xs text-[#6B7280] ml-1.5">
+                  <span className="text-xs text-ink-muted ml-1.5">
                     ({job.staff?.pay_rate ? `${fmtCurrency(payRate)}/hr` : 'no rate set'} × 2 hrs est.)
                   </span>
                 </span>
-                <span className="font-medium text-[#1A1A2E]">{fmtCurrency(labourCost)}</span>
+                <span className="font-medium text-ink">{fmtCurrency(labourCost)}</span>
               </div>
-              <div className="flex items-center justify-between text-sm border-t border-[#E5E7EB] pt-2.5 mt-1">
-                <span className="font-semibold text-[#6B7280]">Total Cost</span>
-                <span className="font-semibold text-[#1A1A2E]">{fmtCurrency(totalCost)}</span>
+              <div className="flex items-center justify-between text-sm border-t border-line pt-2.5 mt-1">
+                <span className="font-semibold text-ink-muted">Total Cost</span>
+                <span className="font-semibold text-ink">{fmtCurrency(totalCost)}</span>
               </div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-gray-500">Quote Total</span>
-                <span className="font-medium text-[#1A1A2E]">
+                <span className="font-medium text-ink">
                   {quoteTotal !== null ? fmtCurrency(quoteTotal) : <span className="text-gray-300">No quote</span>}
                 </span>
               </div>
               {margin !== null && (
-                <div className="flex items-center justify-between text-sm border-t border-[#E5E7EB] pt-2.5 mt-1">
-                  <span className="font-semibold text-[#6B7280]">Profit Margin</span>
+                <div className="flex items-center justify-between text-sm border-t border-line pt-2.5 mt-1">
+                  <span className="font-semibold text-ink-muted">Profit Margin</span>
                   <span
                     className="font-semibold text-base"
-                    style={{ color: margin >= 0 ? '#C9A84C' : '#EF4444' }}
+                    style={{ color: margin >= 0 ? 'var(--accent)' : '#EF4444' }}
                   >
                     {margin >= 0 ? '+' : ''}{fmtCurrency(margin)}
                   </span>
@@ -349,15 +349,15 @@ export default function JobTabs({
       {activeTab === 'notes' && (
         <div className="tab-fade-in">
           {/* Add note form */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4 mb-5">
+          <div className="bg-white rounded-xl border border-line shadow-sm p-4 mb-5">
             <textarea
               value={noteText}
               onChange={e => setNoteText(e.target.value)}
               placeholder="Add a note…"
               rows={3}
-              className="w-full text-sm text-[#1A1A2E] placeholder-gray-300 resize-none border-0 outline-none focus:ring-0"
+              className="w-full text-sm text-ink placeholder-gray-300 resize-none border-0 outline-none focus:ring-0"
             />
-            <div className="flex items-center justify-between pt-2 border-t border-[#E5E7EB]">
+            <div className="flex items-center justify-between pt-2 border-t border-line">
               {noteError ? (
                 <p className="text-xs text-[#EF4444]">{noteError}</p>
               ) : (
@@ -371,23 +371,23 @@ export default function JobTabs({
 
           {/* Notes list */}
           {notes.length === 0 ? (
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-              <p className="text-sm text-[#6B7280]">No notes yet</p>
+            <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+              <p className="text-sm text-ink-muted">No notes yet</p>
             </div>
           ) : (
             <div className="space-y-3">
               {notes.map(note => (
-                <div key={note.id} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
+                <div key={note.id} className="bg-white rounded-xl border border-line shadow-sm p-4">
                   {editingId === note.id ? (
                     <>
                       <textarea
                         value={editText}
                         onChange={e => setEditText(e.target.value)}
                         rows={3}
-                        className="w-full text-sm text-[#1A1A2E] resize-none border-0 outline-none focus:ring-0 mb-2"
+                        className="w-full text-sm text-ink resize-none border-0 outline-none focus:ring-0 mb-2"
                         autoFocus
                       />
-                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-[#E5E7EB]">
+                      <div className="flex items-center justify-end gap-2 pt-2 border-t border-line">
                         <Button
                           onClick={cancelEdit}
                           disabled={updatingId === note.id}
@@ -408,15 +408,15 @@ export default function JobTabs({
                     </>
                   ) : (
                     <>
-                      <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap mb-2">
+                      <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-wrap mb-2">
                         {note.content}
                       </p>
                       <div className="flex items-center justify-between">
-                        <p className="text-xs text-[#6B7280]">{fmtDateTime(note.created_at)}</p>
+                        <p className="text-xs text-ink-muted">{fmtDateTime(note.created_at)}</p>
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => startEdit(note)}
-                            className="text-xs text-[#6B7280] hover:text-[#1A1A2E] transition-colors"
+                            className="text-xs text-ink-muted hover:text-ink transition-colors"
                           >
                             Edit
                           </button>
@@ -488,8 +488,8 @@ export default function JobTabs({
       {activeTab === 'activity' && (
         <div className="tab-fade-in">
           {timeline.length === 0 ? (
-            <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-              <p className="text-sm text-[#6B7280]">No activity recorded</p>
+            <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+              <p className="text-sm text-ink-muted">No activity recorded</p>
             </div>
           ) : (
             <div className="relative pl-6">
@@ -502,8 +502,8 @@ export default function JobTabs({
                       style={{ background: entry.dotColor }}
                     />
                     <div>
-                      <p className="text-sm font-medium text-[#1A1A2E]">{entry.label}</p>
-                      <p className="text-xs text-[#6B7280] mt-0.5">
+                      <p className="text-sm font-medium text-ink">{entry.label}</p>
+                      <p className="text-xs text-ink-muted mt-0.5">
                         {new Date(entry.date).toLocaleDateString('en-NZ', {
                           day: 'numeric', month: 'long', year: 'numeric',
                         })}

@@ -19,7 +19,7 @@ const SOURCE_OPTIONS = [
   'Other',
 ]
 
-const inputClass = 'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white'
+const inputClass = 'w-full border border-line rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white'
 
 interface Props {
   onClose: () => void
@@ -67,9 +67,9 @@ export default function AddLeadModal({ onClose }: Props) {
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className="bg-white w-full h-full sm:h-[92vh] sm:max-w-lg sm:rounded-xl shadow-2xl flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] shrink-0">
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Add Lead</h2>
-          <button onClick={onClose} className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
+          <h2 className="text-sm font-semibold text-ink">Add Lead</h2>
+          <button onClick={onClose} className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -80,33 +80,33 @@ export default function AddLeadModal({ onClose }: Props) {
           <div className="px-6 py-5 space-y-4">
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-                Name <span style={{ color: '#C9A84C' }}>*</span>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">
+                Name <span style={{ color: 'var(--accent)' }}>*</span>
               </label>
               <input type="text" value={form.name} onChange={setField('name')} placeholder="Full name…" className={inputClass} />
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Email</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Email</label>
                 <input type="email" value={form.email} onChange={setField('email')} placeholder="email@example.com" className={inputClass} />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Phone</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Phone</label>
                 <input type="tel" value={form.phone} onChange={setField('phone')} placeholder="+64 21 000 0000" className={inputClass} />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Source</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Source</label>
                 <select value={form.source} onChange={setField('source')} className={inputClass}>
                   <option value="">Select source…</option>
                   {SOURCE_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Status</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Status</label>
                 <select value={form.status} onChange={setField('status')} className={inputClass}>
                   {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -114,23 +114,23 @@ export default function AddLeadModal({ onClose }: Props) {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Message</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Message</label>
               <textarea value={form.message} onChange={setField('message')} placeholder="Their enquiry or message…" rows={3} className={`${inputClass} resize-none`} />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Notes</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Notes</label>
               <textarea value={form.notes} onChange={setField('notes')} placeholder="Internal notes…" rows={2} className={`${inputClass} resize-none`} />
             </div>
 
             {error && <p className="text-xs text-[#EF4444]">{error}</p>}
           </div>
 
-          <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] shrink-0">
-            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-line shrink-0">
+            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
+            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60" style={{ background: 'var(--accent)' }}>
               {loading ? 'Saving…' : 'Add Lead'}
             </button>
           </div>

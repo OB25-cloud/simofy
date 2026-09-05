@@ -12,20 +12,20 @@ export default function LoginPage() {
       <div className="mb-8 text-center">
         <span
           className="text-3xl font-bold tracking-[0.3em]"
-          style={{ color: '#C9A84C' }}
+          style={{ color: 'var(--accent)' }}
         >
           OPERIFY
         </span>
-        <p className="mt-2 text-sm text-[#6B7280]">Welcome to Operify</p>
+        <p className="mt-2 text-sm text-ink-muted">Welcome to Operify</p>
       </div>
 
       {/* Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-[#E5E7EB] px-8 py-8">
-        <h1 className="text-base font-semibold text-[#1A1A2E] mb-6">Sign in to your Operify account</h1>
+      <div className="bg-white rounded-xl shadow-sm border border-line px-8 py-8">
+        <h1 className="text-base font-semibold text-ink mb-6">Sign in to your Operify account</h1>
 
         <form action={action} className="space-y-4">
           <div>
-            <label htmlFor="email" className="block text-xs font-medium text-[#6B7280] mb-1.5">
+            <label htmlFor="email" className="block text-xs font-medium text-ink-muted mb-1.5">
               Email address
             </label>
             <input
@@ -34,13 +34,13 @@ export default function LoginPage() {
               type="email"
               autoComplete="email"
               required
-              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
+              className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
               placeholder="you@example.com"
             />
           </div>
 
           <div>
-            <label htmlFor="password" className="block text-xs font-medium text-[#6B7280] mb-1.5">
+            <label htmlFor="password" className="block text-xs font-medium text-ink-muted mb-1.5">
               Password
             </label>
             <input
@@ -49,7 +49,7 @@ export default function LoginPage() {
               type="password"
               autoComplete="current-password"
               required
-              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
+              className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
               placeholder="••••••••"
             />
           </div>
@@ -63,15 +63,15 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={pending}
-            className="w-full py-2.5 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60 mt-2"
-            style={{ background: '#C9A84C' }}
+            className="w-full py-2.5 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60 mt-2"
+            style={{ background: 'var(--accent)' }}
           >
             {pending ? 'Signing in…' : 'Sign in'}
           </button>
         </form>
       </div>
 
-      <p className="mt-5 text-center text-xs text-[#6B7280]">
+      <p className="mt-5 text-center text-xs text-ink-muted">
         Contact your administrator to reset your password.
       </p>
     </div>

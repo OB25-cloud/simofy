@@ -13,13 +13,13 @@ export default async function UsersSettingsPage() {
   if (await isDemoRequest()) {
     return (
       <div className="h-full flex flex-col">
-        <div className="px-6 py-5 border-b border-[#E5E7EB] shrink-0">
-          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>Settings</p>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Users & Permissions</h1>
-          <p className="text-xs text-[#6B7280] mt-1">Manage user roles and granular module permissions.</p>
+        <div className="px-6 py-5 border-b border-line shrink-0">
+          <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--accent)' }}>Settings</p>
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Users & Permissions</h1>
+          <p className="text-xs text-ink-muted mt-1">Manage user roles and granular module permissions.</p>
         </div>
         <div className="flex-1 flex items-center justify-center px-6">
-          <p className="text-sm text-[#6B7280] text-center max-w-sm">
+          <p className="text-sm text-ink-muted text-center max-w-sm">
             User management isn&apos;t available in the demo — sign up to manage your own team.
           </p>
         </div>
@@ -70,10 +70,10 @@ export default async function UsersSettingsPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="px-6 py-5 border-b border-[#E5E7EB] shrink-0">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>Settings</p>
-        <h1 className="text-2xl font-bold text-[#1A1A2E]">Users & Permissions</h1>
-        <p className="text-xs text-[#6B7280] mt-1">Manage user roles and granular module permissions.</p>
+      <div className="px-6 py-5 border-b border-line shrink-0">
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--accent)' }}>Settings</p>
+        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Users & Permissions</h1>
+        <p className="text-xs text-ink-muted mt-1">Manage user roles and granular module permissions.</p>
       </div>
       <div className="flex-1 overflow-hidden">
         <UsersView users={userList} currentUserId={user.id} />

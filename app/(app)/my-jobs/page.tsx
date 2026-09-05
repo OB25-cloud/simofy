@@ -28,8 +28,8 @@ export default async function MyJobsPage() {
   if (!staffRecord) {
     return (
       <div className="p-4 md:p-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E] mb-2">My Jobs</h1>
-        <p className="text-sm text-[#6B7280]">
+        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink mb-2">My Jobs</h1>
+        <p className="text-sm text-ink-muted">
           {isDemo
             ? 'No active staff records to show in this demo.'
             : `No staff record found for your account (${userEmail}). Contact your administrator.`}
@@ -63,33 +63,33 @@ export default async function MyJobsPage() {
   return (
     <div className="p-4 md:p-8 max-w-2xl">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-[#1A1A2E]">My Jobs</h1>
-        <p className="mt-0.5 text-sm text-[#6B7280]">Jobs assigned to {staffRecord.name}</p>
+        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">My Jobs</h1>
+        <p className="mt-0.5 text-sm text-ink-muted">Jobs assigned to {staffRecord.name}</p>
       </div>
 
       {jobList.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
-          <p className="text-sm text-[#6B7280]">No jobs assigned to you yet.</p>
+        <div className="rounded-xl border border-line bg-surface-muted py-16 text-center">
+          <p className="text-sm text-ink-muted">No jobs assigned to you yet.</p>
         </div>
       ) : (
         <>
           {upcoming.length > 0 && (
             <div className="mb-6">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">
                 Upcoming & Active
               </p>
-              <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+              <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
                 {upcoming.map(job => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between px-5 py-4 border-t border-[#F4F5F7] first:border-t-0 hover:bg-[#F9FAFB] transition-colors group"
+                    className="flex items-center justify-between px-5 py-4 border-t border-line-soft first:border-t-0 hover:bg-surface-hover transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#1A1A2E] group-hover:text-[#C9A84C] transition-colors truncate">
+                      <p className="text-sm font-medium text-ink group-hover:text-accent transition-colors truncate">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
-                      <p className="text-xs text-[#6B7280] mt-0.5">
+                      <p className="text-xs text-ink-muted mt-0.5">
                         {job.clients?.name ?? '—'}
                         {job.scheduled_date && (
                           <span> · {new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>
@@ -105,19 +105,19 @@ export default async function MyJobsPage() {
 
           {past.length > 0 && (
             <div>
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Past</p>
-              <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">Past</p>
+              <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
                 {past.map(job => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center justify-between px-5 py-4 border-t border-[#F4F5F7] first:border-t-0 hover:bg-[#F9FAFB] transition-colors group opacity-60 hover:opacity-100"
+                    className="flex items-center justify-between px-5 py-4 border-t border-line-soft first:border-t-0 hover:bg-surface-hover transition-colors group opacity-60 hover:opacity-100"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-[#1A1A2E] group-hover:text-[#C9A84C] transition-colors truncate">
+                      <p className="text-sm font-medium text-ink group-hover:text-accent transition-colors truncate">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
-                      <p className="text-xs text-[#6B7280] mt-0.5">
+                      <p className="text-xs text-ink-muted mt-0.5">
                         {job.clients?.name ?? '—'}
                         {job.scheduled_date && (
                           <span> · {new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })}</span>

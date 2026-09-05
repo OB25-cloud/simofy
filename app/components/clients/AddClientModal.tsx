@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const inputClass =
-  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent'
+  'w-full border border-line rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent'
 
 export default function AddClientModal({ onClose }: { onClose: () => void }) {
   const router = useRouter()
@@ -64,11 +64,11 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
       }}
     >
       <div className="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-xl shadow-2xl overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB]">
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Add Client</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line">
+          <h2 className="text-sm font-semibold text-ink">Add Client</h2>
           <button
             onClick={onClose}
-            className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
+            className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
             aria-label="Close"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -80,8 +80,8 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-              Name <span style={{ color: '#C9A84C' }}>*</span>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
+              Name <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <input
               type="text"
@@ -94,7 +94,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Business Name
             </label>
             <input
@@ -108,7 +108,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Email</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Email</label>
               <input
                 type="email"
                 value={form.email}
@@ -118,7 +118,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Phone</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Phone</label>
               <input
                 type="tel"
                 value={form.phone}
@@ -130,7 +130,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Address</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">Address</label>
             <input
               type="text"
               value={form.address}
@@ -141,7 +141,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Notes</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">Notes</label>
             <textarea
               value={form.notes}
               onChange={set('notes')}
@@ -153,8 +153,8 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
 
           <div className="flex items-center justify-between py-1">
             <div>
-              <p className="text-xs font-medium text-[#6B7280]">Status</p>
-              <p className="text-xs text-[#6B7280] mt-0.5">
+              <p className="text-xs font-medium text-ink-muted">Status</p>
+              <p className="text-xs text-ink-muted mt-0.5">
                 {form.is_active ? 'Active client' : 'Inactive client'}
               </p>
             </div>
@@ -162,7 +162,7 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
               type="button"
               onClick={() => setForm((prev) => ({ ...prev, is_active: !prev.is_active }))}
               className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200"
-              style={{ background: form.is_active ? '#C9A84C' : '#E5E7EB' }}
+              style={{ background: form.is_active ? 'var(--accent)' : 'var(--line)' }}
               aria-label="Toggle active status"
             >
               <span
@@ -178,15 +178,15 @@ export default function AddClientModal({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors"
+              className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#C9A84C' }}
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60"
+              style={{ background: 'var(--accent)' }}
             >
               {loading ? 'Saving…' : 'Add Client'}
             </button>

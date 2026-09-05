@@ -6,7 +6,7 @@ export type Insight = { icon: React.ReactNode; text: string; positive?: boolean;
 
 function InsightIcon({ children }: { children: React.ReactNode }) {
   return (
-    <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-md" style={{ background: 'rgba(201, 168, 76,0.15)' }}>
+    <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-md" style={{ background: 'rgba(74, 222, 128,0.15)' }}>
       {children}
     </span>
   )
@@ -14,11 +14,11 @@ function InsightIcon({ children }: { children: React.ReactNode }) {
 
 export default function AiInsightsCard({ insights }: { insights: Insight[] }) {
   return (
-    <div className="rounded-xl overflow-hidden" style={{ background: '#1A1A2E', boxShadow: '0 0 0 1px rgba(201, 168, 76,0.15), 0 4px 24px rgba(0,0,0,0.4)' }}>
-      <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(201, 168, 76,0.2)' }}>
-        <span style={{ color: '#C9A84C', fontSize: '15px', lineHeight: 1 }}>✦</span>
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: '#C9A84C' }}>AI Insights</span>
-        <span className="ml-auto text-[10px]" style={{ color: 'rgba(201, 168, 76,0.4)' }}>refreshed now</span>
+    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--charcoal)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 4px 16px -4px rgba(17,24,39,0.35)' }}>
+      <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(74, 222, 128,0.2)' }}>
+        <span style={{ color: 'var(--accent-bright)', fontSize: '15px', lineHeight: 1 }}>✦</span>
+        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: 'var(--accent-bright)' }}>AI Insights</span>
+        <span className="ml-auto text-[10px]" style={{ color: 'rgba(74, 222, 128,0.4)' }}>refreshed now</span>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {insights.map((insight, i) => (
@@ -26,22 +26,22 @@ export default function AiInsightsCard({ insights }: { insights: Insight[] }) {
             key={i}
             className="group relative flex items-start gap-3.5 px-6 py-5 transition-colors duration-150"
             style={{
-              borderLeft: '2px solid rgba(201, 168, 76,0.35)',
+              borderLeft: '2px solid rgba(74, 222, 128,0.35)',
               background: 'transparent',
             }}
-            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(201, 168, 76,0.06)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(74, 222, 128,0.06)' }}
             onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
           >
             {i < insights.length - 1 && (
               <span
                 className="pointer-events-none absolute bottom-0 left-6 right-6"
-                style={{ borderBottom: '1px solid rgba(201, 168, 76,0.18)' }}
+                style={{ borderBottom: '1px solid rgba(74, 222, 128,0.18)' }}
               />
             )}
             <InsightIcon>{insight.icon}</InsightIcon>
             <p
               className="text-[13px] leading-relaxed pt-0.5"
-              style={{ color: insight.negative ? '#f87171' : insight.positive ? '#86efac' : 'rgba(201, 168, 76,0.9)' }}
+              style={{ color: insight.negative ? '#f87171' : insight.positive ? '#86efac' : 'rgba(74, 222, 128,0.9)' }}
             >
               {insight.text}
             </p>

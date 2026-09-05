@@ -43,7 +43,7 @@ function PhotoCard({ photo, height = 'h-36', deleting, onDelete }: PhotoCardProp
         <img
           src={photo.url}
           alt="Job photo"
-          className={`w-full ${height} object-cover rounded-lg border border-[#E5E7EB] hover:opacity-90 transition-opacity`}
+          className={`w-full ${height} object-cover rounded-lg border border-line hover:opacity-90 transition-opacity`}
         />
       </a>
 
@@ -160,14 +160,14 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
     <div>
       {/* Header + upload controls */}
       <div className="flex items-center justify-between mb-5 flex-wrap gap-3">
-        <h2 className="text-base font-semibold text-[#1A1A2E]">
+        <h2 className="text-base font-semibold text-ink">
           Photos
-          <span className="ml-2 text-sm font-normal text-[#6B7280]">({photos.length})</span>
+          <span className="ml-2 text-sm font-normal text-ink-muted">({photos.length})</span>
         </h2>
 
         <div className="flex items-center gap-3 flex-wrap">
           {/* Tag selector */}
-          <div className="flex items-center rounded-lg border border-[#E5E7EB] p-0.5 bg-[#F4F5F7] gap-0.5">
+          <div className="flex items-center rounded-lg border border-line p-0.5 bg-surface-muted gap-0.5">
             {TAG_OPTIONS.map(opt => {
               const active = pendingTag === opt.value
               return (
@@ -177,8 +177,8 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
                   className="px-3 py-1.5 text-xs font-medium rounded-md transition-colors"
                   style={
                     active
-                      ? { background: '#C9A84C', color: '#fff' }
-                      : { color: '#6B7280' }
+                      ? { background: 'var(--accent)', color: '#fff' }
+                      : { color: 'var(--ink-muted)' }
                   }
                 >
                   {opt.label}
@@ -190,8 +190,8 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
           <button
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-            style={{ background: '#C9A84C' }}
+            className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60"
+            style={{ background: 'var(--accent)' }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -205,8 +205,8 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
       {error && <p className="text-xs text-[#EF4444] mb-3">{error}</p>}
 
       {photos.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-          <p className="text-sm text-[#6B7280]">No photos yet</p>
+        <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+          <p className="text-sm text-ink-muted">No photos yet</p>
         </div>
       ) : (
         <div className="space-y-6">
@@ -226,13 +226,13 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
                       >
                         {cfg.label}
                       </span>
-                      <span className="text-xs text-[#6B7280]">
+                      <span className="text-xs text-ink-muted">
                         {col.length} photo{col.length !== 1 ? 's' : ''}
                       </span>
                     </div>
                     {col.length === 0 ? (
-                      <div className="rounded-lg border border-dashed border-[#E5E7EB] bg-[#F4F5F7] h-32 flex items-center justify-center">
-                        <p className="text-xs text-[#6B7280]">No {tag} photos</p>
+                      <div className="rounded-lg border border-dashed border-line bg-surface-muted h-32 flex items-center justify-center">
+                        <p className="text-xs text-ink-muted">No {tag} photos</p>
                       </div>
                     ) : (
                       <div className="grid grid-cols-2 gap-2">
@@ -257,7 +257,7 @@ export default function JobPhotos({ jobId, initialPhotos }: { jobId: string; ini
           {untagged.length > 0 && (
             <div>
               {hasTagged && (
-                <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">
+                <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">
                   Other Photos
                   <span className="ml-1.5 font-normal normal-case">{untagged.length}</span>
                 </p>

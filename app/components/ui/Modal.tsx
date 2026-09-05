@@ -19,11 +19,11 @@ export default function ModalShell({ title, onClose, children, maxWidth = 'sm:ma
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className={`bg-white w-full h-full sm:h-auto ${maxWidth} sm:rounded-xl sm:max-h-[90vh] shadow-2xl overflow-y-auto`}>
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] sticky top-0 bg-white z-10">
-          <h2 className="text-base font-semibold text-[#1A1A2E]">{title}</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line sticky top-0 bg-white z-10">
+          <h2 className="text-base font-semibold text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
+            className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
             aria-label="Close"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">

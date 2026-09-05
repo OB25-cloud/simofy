@@ -8,7 +8,7 @@ export type StaffColor = { rgb: string; solid: string }
 // Used for staff avatars (column headers, week-view job card avatars) — job
 // blocks themselves are colour-coded by status, not by staff, see below.
 const STAFF_COLORS: StaffColor[] = [
-  { rgb: '201,168,76', solid: '#C9A84C' }, // gold
+  { rgb: '245,158,11', solid: '#f59e0b' }, // amber
   { rgb: '59,130,246', solid: '#3b82f6' }, // blue
   { rgb: '20,184,166', solid: '#14b8a6' }, // teal
   { rgb: '139,92,246', solid: '#8b5cf6' }, // purple
@@ -40,7 +40,7 @@ const STATUS_COLORS: Record<string, StaffColor> = {
   complete:    { solid: '#22C55E', rgb: '34,197,94' },
   invoiced:    { solid: '#22C55E', rgb: '34,197,94' }, // treated as "done", same as complete
   cancelled:   { solid: '#EF4444', rgb: '239,68,68' },
-  pending:     { solid: '#6B7280', rgb: '107,114,128' },
+  pending:     { solid: 'var(--ink-muted)', rgb: '107,114,128' },
 }
 const DEFAULT_STATUS_COLOR: StaffColor = STATUS_COLORS.pending
 

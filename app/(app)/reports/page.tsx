@@ -247,9 +247,9 @@ export default async function ReportsPage() {
   return (
     <div className="p-4 md:p-8">
       <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>Finance</p>
-        <h1 className="text-2xl font-bold text-[#1A1A2E]">Reports</h1>
-        <p className="text-sm text-[#6B7280] mt-0.5">
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--accent)' }}>Finance</p>
+        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Reports</h1>
+        <p className="text-sm text-ink-muted mt-0.5">
           {windowStart.toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })} – {now.toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })}
         </p>
       </div>

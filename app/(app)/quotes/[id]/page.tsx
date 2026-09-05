@@ -42,16 +42,16 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
     <div className="p-4 md:p-8">
       <div className="max-w-3xl mx-auto">
         {/* Breadcrumb */}
-        <div className="mb-5 flex items-center gap-2 text-sm text-[#6B7280]">
-          <Link href="/quotes" className="hover:text-[#6B7280] transition-colors">Quotes</Link>
+        <div className="mb-5 flex items-center gap-2 text-sm text-ink-muted">
+          <Link href="/quotes" className="hover:text-ink-muted transition-colors">Quotes</Link>
           <span>/</span>
-          <span className="text-[#6B7280] font-mono text-xs font-medium">{quoteNumber(typedQuote.id)}</span>
+          <span className="text-ink-muted font-mono text-xs font-medium">{quoteNumber(typedQuote.id)}</span>
         </div>
 
         {/* Header */}
         <div className="mb-6 flex items-start justify-between gap-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#1A1A2E] font-mono">{quoteNumber(typedQuote.id)}</h1>
+            <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink font-mono">{quoteNumber(typedQuote.id)}</h1>
             <StatusBadge status={typedQuote.status} />
           </div>
           <div className="flex items-center gap-2 flex-wrap">

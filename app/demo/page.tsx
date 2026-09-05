@@ -7,27 +7,27 @@ export const metadata = {
 
 export default function DemoLandingPage() {
   return (
-    <div className="min-h-screen flex flex-col" style={{ background: '#F4F5F7' }}>
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--page-bg)' }}>
       <DemoBanner />
       <div className="flex-1 flex items-center justify-center px-4">
         <div className="w-full max-w-sm text-center">
           <span
             className="text-3xl font-bold tracking-[0.3em]"
-            style={{ color: '#C9A84C' }}
+            style={{ color: 'var(--accent)' }}
           >
             OPERIFY
           </span>
 
-          <div className="bg-white rounded-xl shadow-sm border border-[#E5E7EB] px-8 py-10 mt-8">
-            <h1 className="text-xl font-bold text-[#1A1A2E]">See Operify in action</h1>
-            <p className="mt-3 text-sm text-[#6B7280] leading-relaxed">
+          <div className="bg-white rounded-xl shadow-sm border border-line px-8 py-10 mt-8">
+            <h1 className="text-xl font-bold text-ink">See Operify in action</h1>
+            <p className="mt-3 text-sm text-ink-muted leading-relaxed">
               A live demo of a real field service management platform — no login required.
             </p>
 
             <Link
               href="/demo/dashboard"
-              className="mt-7 w-full inline-flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-[#1A1A2E] rounded-md transition-opacity hover:opacity-90"
-              style={{ background: '#C9A84C' }}
+              className="mt-7 w-full inline-flex items-center justify-center gap-2 py-2.5 text-sm font-semibold text-white rounded-md transition-[filter] hover:brightness-110"
+              style={{ background: 'var(--accent)' }}
             >
               View Demo
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -36,8 +36,8 @@ export default function DemoLandingPage() {
             </Link>
           </div>
 
-          <p className="mt-6 text-xs text-[#6B7280]">
-            Want this for your business? <a href="https://barrassai.com" target="_blank" rel="noopener noreferrer" className="font-medium hover:opacity-80" style={{ color: '#C9A84C' }}>barrassai.com</a>
+          <p className="mt-6 text-xs text-ink-muted">
+            Want this for your business? <a href="https://barrassai.com" target="_blank" rel="noopener noreferrer" className="font-medium hover:opacity-80" style={{ color: 'var(--accent)' }}>barrassai.com</a>
           </p>
         </div>
       </div>

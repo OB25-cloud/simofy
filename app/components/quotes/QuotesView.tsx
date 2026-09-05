@@ -41,7 +41,7 @@ function quoteNumber(id: string) {
 
 function SearchIcon() {
   return (
-    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   )
@@ -95,8 +95,8 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Quotes</h1>
-          <p className="mt-1 text-xs text-[#6B7280]">{quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'} total</p>
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Quotes</h1>
+          <p className="mt-1 text-xs text-ink-muted">{quotes.length} {quotes.length === 1 ? 'quote' : 'quotes'} total</p>
         </div>
         <Button onClick={() => setShowModal(true)} variant="primary">
           <PlusIcon />
@@ -140,26 +140,26 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
 
       {/* Table */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
-          <p className="text-sm text-[#6B7280]">
+        <div className="rounded-xl border border-line bg-surface-muted py-16 text-center">
+          <p className="text-sm text-ink-muted">
             {search || statusFilter !== 'all' ? 'No quotes match the current filters.' : 'No quotes yet. Add your first quote above.'}
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Quote</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Client</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Job</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Type</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
-                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Subtotal</th>
-                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Total</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Valid Until</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Created</th>
-                <th className="px-4 py-3 w-8 bg-[#F4F5F7]" />
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Quote</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Job</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Type</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Status</th>
+                <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Subtotal</th>
+                <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Total</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Valid Until</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Created</th>
+                <th className="px-4 py-3 w-8 bg-surface-muted border-b border-line" />
               </tr>
             </thead>
             <tbody>
@@ -167,12 +167,12 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                 <tr
                   key={quote.id}
                   onClick={() => router.push(`/quotes/${quote.id}`)}
-                  className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
+                  className="cursor-pointer border-b border-line-soft hover:bg-surface-hover transition-colors group"
                 >
-                  <td className="px-4 py-3 font-medium text-[#1A1A2E] font-mono text-xs">
+                  <td className="px-4 py-3 font-medium text-ink font-mono text-xs">
                     {quoteNumber(quote.id)}
                   </td>
-                  <td className="px-4 py-3 text-[#6B7280]">
+                  <td className="px-4 py-3 text-ink-muted">
                     {quote.clients?.name ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 text-gray-500 max-w-[120px]">
@@ -180,7 +180,7 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                       ? <span className="block truncate">{quote.jobs.title}</span>
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-[#6B7280] text-xs">
+                  <td className="px-4 py-3 text-ink-muted text-xs">
                     {quote.jobs?.job_type ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3">
@@ -192,7 +192,7 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                   <td className="px-4 py-3 text-right text-gray-500 tabular-nums text-xs">
                     {fmt(quote.subtotal)}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">
+                  <td className="px-4 py-3 text-right font-medium text-ink tabular-nums">
                     {fmt(quote.total)}
                   </td>
                   <td className="px-4 py-3 text-gray-500 text-xs">
@@ -200,11 +200,11 @@ export default function QuotesView({ quotes, clients, jobs, openModal }: Props) 
                       ? new Date(quote.valid_until).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-[#6B7280] text-xs">
+                  <td className="px-4 py-3 text-ink-muted text-xs">
                     {new Date(quote.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors text-base">→</span>
+                    <span className="text-gray-300 group-hover:text-accent transition-colors text-base">→</span>
                   </td>
                 </tr>
               ))}

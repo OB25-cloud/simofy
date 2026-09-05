@@ -12,7 +12,7 @@ const STATUS_OPTIONS = [
   { value: 'cancelled', label: 'Cancelled' },
 ]
 
-const inputClass = 'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white'
+const inputClass = 'w-full border border-line rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white'
 
 function invoiceNumber(id: string) {
   return `Q-${id.slice(0, 6).toUpperCase()}`
@@ -85,9 +85,9 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
       onClick={e => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className="bg-white w-full h-full sm:h-[92vh] sm:max-w-lg sm:rounded-xl shadow-2xl flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB] shrink-0">
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Add Invoice</h2>
-          <button onClick={onClose} className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line shrink-0">
+          <h2 className="text-sm font-semibold text-ink">Add Invoice</h2>
+          <button onClick={onClose} className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -99,8 +99,8 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-                  Client <span style={{ color: '#C9A84C' }}>*</span>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">
+                  Client <span style={{ color: 'var(--accent)' }}>*</span>
                 </label>
                 <select
                   value={form.client_id}
@@ -114,7 +114,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Status</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Status</label>
                 <select value={form.status} onChange={setField('status')} className={inputClass}>
                   {STATUS_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                 </select>
@@ -123,7 +123,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Linked Job</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Linked Job</label>
                 <select value={form.job_id} onChange={setField('job_id')} className={inputClass}>
                   <option value="">No linked job</option>
                   {filteredJobs.map(j => (
@@ -132,7 +132,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Linked Quote</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Linked Quote</label>
                 <select value={form.quote_id} onChange={setField('quote_id')} className={inputClass}>
                   <option value="">No linked quote</option>
                   {filteredQuotes.map(q => (
@@ -143,16 +143,16 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Due Date</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Due Date</label>
               <input type="date" value={form.due_date} onChange={setField('due_date')} className={inputClass} />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-                Amount (excl. GST) <span style={{ color: '#C9A84C' }}>*</span>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">
+                Amount (excl. GST) <span style={{ color: 'var(--accent)' }}>*</span>
               </label>
               <div className="relative">
-                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] text-sm pointer-events-none">$</span>
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted text-sm pointer-events-none">$</span>
                 <input
                   type="number"
                   value={form.amount}
@@ -166,7 +166,7 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
             </div>
 
             {/* Totals summary */}
-            <div className="rounded-lg bg-[#F4F5F7] border border-[#E5E7EB] px-4 py-3 space-y-2">
+            <div className="rounded-lg bg-surface-muted border border-line px-4 py-3 space-y-2">
               <div className="flex justify-between text-sm text-gray-500">
                 <span>Subtotal</span>
                 <span className="tabular-nums">${calc.amount.toFixed(2)}</span>
@@ -175,25 +175,25 @@ export default function AddInvoiceModal({ clients, jobs, quotes, onClose }: Prop
                 <span>GST (15%)</span>
                 <span className="tabular-nums">${calc.tax.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-sm font-semibold text-[#1A1A2E] pt-2 border-t border-[#E5E7EB]">
+              <div className="flex justify-between text-sm font-semibold text-ink pt-2 border-t border-line">
                 <span>Total</span>
                 <span className="tabular-nums">${calc.total.toFixed(2)}</span>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Notes</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Notes</label>
               <textarea value={form.notes} onChange={setField('notes')} placeholder="Any notes for this invoice…" rows={3} className={`${inputClass} resize-none`} />
             </div>
 
             {error && <p className="text-xs text-[#EF4444]">{error}</p>}
           </div>
 
-          <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] shrink-0">
-            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors">
+          <div className="flex justify-end gap-3 px-6 py-4 border-t border-line shrink-0">
+            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted transition-colors">
               Cancel
             </button>
-            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60" style={{ background: '#C9A84C' }}>
+            <button type="submit" disabled={loading} className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60" style={{ background: 'var(--accent)' }}>
               {loading ? 'Saving…' : 'Add Invoice'}
             </button>
           </div>

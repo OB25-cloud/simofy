@@ -13,9 +13,9 @@ import { inputClass } from '@/app/components/ui/input'
 // ── constants ─────────────────────────────────────────────────────────────────
 
 const STATUS_CONFIG: Record<string, { bg: string; text: string; dot: string; label: string }> = {
-  pending:     { bg: '#F4F5F7', text: '#6B7280', dot: '#E5E7EB', label: 'Pending'     },
+  pending:     { bg: 'var(--surface-muted)', text: 'var(--ink-muted)', dot: 'var(--line)', label: 'Pending'     },
   scheduled:   { bg: '#DBEAFE', text: '#1D4ED8', dot: '#3B82F6', label: 'Scheduled'   },
-  in_progress: { bg: 'rgba(201, 168, 76,0.12)', text: '#C9A84C', dot: '#C9A84C', label: 'In Progress' },
+  in_progress: { bg: '#FEF3C7', text: '#B45309', dot: '#F59E0B', label: 'In Progress' },
   complete:    { bg: '#DCFCE7', text: '#15803D', dot: '#22C55E', label: 'Complete'     },
   invoiced:    { bg: '#F3E8FF', text: '#7C3AED', dot: '#8b5cf6', label: 'Invoiced'    },
   cancelled:   { bg: '#FEE2E2', text: '#EF4444', dot: '#EF4444', label: 'Cancelled'   },
@@ -184,7 +184,7 @@ function ChevronIcon({ open }: { open: boolean }) {
   return (
     <svg
       width="14" height="14" viewBox="0 0 24 24" fill="none"
-      stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+      stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
       style={{ transform: open ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', display: 'inline' }}
     >
       <polyline points="6 9 12 15 18 9" />
@@ -276,29 +276,29 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
         <tr
           key={row.job.id}
           onClick={() => router.push(`/jobs/${row.job.id}`)}
-          className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
+          className="cursor-pointer border-b border-line-soft hover:bg-surface-hover transition-colors group"
         >
-          <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">
+          <td className="px-4 py-3 text-sm font-medium text-ink">
             {row.job.title ?? <span className="text-gray-300">—</span>}
           </td>
-          <td className="px-4 py-3 text-sm text-[#6B7280]">
+          <td className="px-4 py-3 text-sm text-ink-muted">
             {row.job.clients?.name ?? <span className="text-gray-300">—</span>}
           </td>
-          <td className="px-4 py-3 text-sm text-[#6B7280]">
+          <td className="px-4 py-3 text-sm text-ink-muted">
             {row.job.job_type ?? <span className="text-gray-300">—</span>}
           </td>
           <td className="px-4 py-3"><StatusBadge status={row.job.status} /></td>
-          <td className="px-4 py-3 text-sm text-[#6B7280]">
+          <td className="px-4 py-3 text-sm text-ink-muted">
             {row.job.staff?.name ?? <span className="text-gray-300">—</span>}
           </td>
-          <td className="px-4 py-3 text-sm text-[#6B7280] max-w-[140px]">
+          <td className="px-4 py-3 text-sm text-ink-muted max-w-[140px]">
             {row.job.location
               ? <span className="block truncate">{row.job.location}</span>
               : <span className="text-gray-300">—</span>}
           </td>
-          <td className="px-4 py-3 text-[#6B7280] text-xs">{fmtDate(row.job.scheduled_date)}</td>
+          <td className="px-4 py-3 text-ink-muted text-xs">{fmtDate(row.job.scheduled_date)}</td>
           <td className="px-4 py-3 text-right">
-            <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors text-base">→</span>
+            <span className="text-gray-300 group-hover:text-accent transition-colors text-base">→</span>
           </td>
         </tr>,
       )
@@ -311,38 +311,38 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
       <tr
         key={`series-${row.seriesId}`}
         onClick={() => toggleSeries(row.seriesId)}
-        className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
+        className="cursor-pointer border-b border-line-soft hover:bg-surface-hover transition-colors"
       >
-        <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">
+        <td className="px-4 py-3 text-sm font-medium text-ink">
           <div className="flex flex-col gap-1">
             <span>{row.title ?? <span className="text-gray-300 font-normal">—</span>}</span>
             <span className="flex items-center gap-1.5">
               <span
                 className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold uppercase tracking-wide"
-                style={{ background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }}
+                style={{ background: 'rgba(21, 128, 61,0.12)', color: 'var(--accent)' }}
               >
                 Recurring · {RECURRENCE_LABELS[row.pattern] ?? row.pattern}
               </span>
-              <span className="text-[11px] text-[#6B7280]">{row.upcomingCount} upcoming</span>
+              <span className="text-[11px] text-ink-muted">{row.upcomingCount} upcoming</span>
             </span>
           </div>
         </td>
-        <td className="px-4 py-3 text-sm text-[#6B7280]">
+        <td className="px-4 py-3 text-sm text-ink-muted">
           {row.clientName ?? <span className="text-gray-300">—</span>}
         </td>
-        <td className="px-4 py-3 text-sm text-[#6B7280]">
+        <td className="px-4 py-3 text-sm text-ink-muted">
           {row.jobType ?? <span className="text-gray-300">—</span>}
         </td>
         <td className="px-4 py-3"><StatusBadge status={row.nextJob.status} /></td>
-        <td className="px-4 py-3 text-sm text-[#6B7280]">
+        <td className="px-4 py-3 text-sm text-ink-muted">
           {row.staffName ?? <span className="text-gray-300">—</span>}
         </td>
-        <td className="px-4 py-3 text-sm text-[#6B7280] max-w-[140px]">
+        <td className="px-4 py-3 text-sm text-ink-muted max-w-[140px]">
           {row.location
             ? <span className="block truncate">{row.location}</span>
             : <span className="text-gray-300">—</span>}
         </td>
-        <td className="px-4 py-3 text-[#6B7280] text-xs">{fmtDate(row.nextJob.scheduled_date)}</td>
+        <td className="px-4 py-3 text-ink-muted text-xs">{fmtDate(row.nextJob.scheduled_date)}</td>
         <td className="px-4 py-3 text-right"><ChevronIcon open={expanded} /></td>
       </tr>,
     )
@@ -351,26 +351,26 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
     if (expanded) {
       row.occurrencesInRange.forEach(occ => {
         tableRows.push(
-          <tr key={`occ-${occ.id}`} className="border-b border-[#F4F5F7]" style={{ background: 'rgba(201, 168, 76,0.04)' }}>
+          <tr key={`occ-${occ.id}`} className="border-b border-line-soft" style={{ background: 'rgba(21, 128, 61,0.04)' }}>
             <td
               colSpan={8}
               className="py-2.5 text-sm"
               style={{
-                borderLeft: '3px solid #C9A84C',
+                borderLeft: '3px solid var(--accent)',
                 paddingLeft: 28,
                 paddingRight: 16,
               }}
             >
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-3">
-                  <span className="text-[#6B7280] tabular-nums">{fmtDate(occ.scheduled_date)}</span>
+                  <span className="text-ink-muted tabular-nums">{fmtDate(occ.scheduled_date)}</span>
                   <StatusBadge status={occ.status} />
                 </span>
                 <Link
                   href={`/jobs/${occ.id}`}
                   onClick={e => e.stopPropagation()}
                   className="font-medium text-base"
-                  style={{ color: '#C9A84C' }}
+                  style={{ color: 'var(--accent)' }}
                 >
                   →
                 </Link>
@@ -387,20 +387,20 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
       {/* Header */}
       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Jobs</h1>
-          <p className="mt-1 text-xs text-[#6B7280]">
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Jobs</h1>
+          <p className="mt-1 text-xs text-ink-muted">
             {jobs.length} {jobs.length === 1 ? 'job' : 'jobs'} total
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="inline-flex rounded-lg border border-[#E5E7EB] overflow-hidden shrink-0">
+          <div className="inline-flex rounded-lg border border-line overflow-hidden shrink-0">
             {(['table', 'board'] as const).map(v => (
               <button
                 key={v}
                 onClick={() => setView(v)}
                 className={[
                   'px-3.5 py-3 sm:py-2 text-sm transition-colors',
-                  view === v ? 'bg-[#C9A84C] text-[#1A1A2E] font-semibold' : 'bg-white text-[#6B7280] hover:bg-[#F4F5F7]',
+                  view === v ? 'bg-accent text-white font-semibold' : 'bg-white text-ink-muted hover:bg-surface-muted',
                 ].join(' ')}
               >
                 {v === 'table' ? 'Table View' : 'Board View'}
@@ -434,8 +434,8 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
               className={[
                 'px-4 py-3 sm:py-2 text-sm rounded-lg transition-colors',
                 active
-                  ? 'bg-[#C9A84C] text-[#1A1A2E] font-semibold'
-                  : 'bg-white text-[#6B7280] border border-[#E5E7EB] hover:bg-[#F4F5F7]',
+                  ? 'bg-accent text-white font-semibold'
+                  : 'bg-white text-ink-muted border border-line hover:bg-surface-muted',
               ].join(' ')}
             >
               {DATE_RANGE_LABELS[range]}
@@ -448,7 +448,7 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
       <div className="mb-5 flex flex-col sm:flex-row gap-3">
         <div className="relative flex-1">
           <svg
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none"
             width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
             strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
           >
@@ -483,8 +483,8 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
       {/* Table / Board */}
       {view === 'table' ? (
         tableRows.length === 0 ? (
-          <div className="rounded-xl border border-[#E5E7EB] bg-white py-16 text-center">
-            <p className="text-sm text-[#6B7280]">
+          <div className="rounded-xl border border-line bg-white py-16 text-center">
+            <p className="text-sm text-ink-muted">
               {search || statusFilter !== 'all'
                 ? 'No jobs match the current filters.'
                 : dateRange === 'all'
@@ -493,19 +493,19 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-sm">
               <thead>
                 <tr>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Title</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Client</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Type</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Staff</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Location</th>
-                  <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Scheduled</th>
-                  <th className="px-4 py-3 w-8 bg-[#F4F5F7]" />
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Title</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Type</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Status</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Staff</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Location</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Scheduled</th>
+                  <th className="px-4 py-3 w-8 bg-surface-muted border-b border-line" />
                 </tr>
               </thead>
               <tbody>{tableRows}</tbody>
@@ -524,12 +524,12 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
               <div key={col.key} className="shrink-0 w-[260px] flex flex-col">
                 <div className="flex items-center gap-2 mb-3 px-1">
                   <span className="w-2 h-2 rounded-full shrink-0" style={{ background: cfg.dot }} />
-                  <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">{col.label}</p>
-                  <span className="ml-auto text-[11px] font-semibold text-[#6B7280]">{colJobs.length}</span>
+                  <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">{col.label}</p>
+                  <span className="ml-auto text-[11px] font-semibold text-ink-muted">{colJobs.length}</span>
                 </div>
                 <div className="flex flex-col gap-2.5">
                   {colJobs.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-[#E5E7EB] py-8 text-center">
+                    <div className="rounded-xl border border-dashed border-line py-8 text-center">
                       <p className="text-xs text-gray-300">No jobs</p>
                     </div>
                   ) : (
@@ -537,17 +537,17 @@ export default function JobsView({ jobs, clients, staff, openModal }: Props) {
                       <div
                         key={job.id}
                         onClick={() => router.push(`/jobs/${job.id}`)}
-                        className="cursor-pointer rounded-xl bg-white border border-[#E5E7EB] shadow-sm p-3.5 hover:shadow-md transition-shadow duration-200"
+                        className="cursor-pointer rounded-xl bg-white border border-line shadow-sm p-3.5 hover:shadow-md transition-shadow duration-200"
                         style={{ borderLeft: `3px solid ${cfg.dot}` }}
                       >
-                        <p className="text-sm font-semibold text-[#1A1A2E] truncate mb-1">
+                        <p className="text-sm font-semibold text-ink truncate mb-1">
                           {job.title ?? job.job_type ?? 'Untitled'}
                         </p>
-                        <p className="text-xs text-[#6B7280] truncate mb-2.5">
+                        <p className="text-xs text-ink-muted truncate mb-2.5">
                           {job.clients?.name ?? <span className="text-gray-300">—</span>}
                         </p>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[11px] text-[#6B7280] tabular-nums">{fmtDate(job.scheduled_date)}</span>
+                          <span className="text-[11px] text-ink-muted tabular-nums">{fmtDate(job.scheduled_date)}</span>
                           <StatusBadge status={job.status} />
                         </div>
                       </div>

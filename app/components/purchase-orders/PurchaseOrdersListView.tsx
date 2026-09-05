@@ -31,7 +31,7 @@ function fmtShort(n: number) {
 
 function SearchIcon() {
   return (
-    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   )
@@ -90,8 +90,8 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Purchase Orders</h1>
-          <p className="mt-1 text-xs text-[#6B7280]">
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Purchase Orders</h1>
+          <p className="mt-1 text-xs text-ink-muted">
             {purchaseOrders.length} {purchaseOrders.length === 1 ? 'purchase order' : 'purchase orders'} total
           </p>
         </div>
@@ -131,36 +131,36 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
 
       {/* Table */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
-          <p className="text-sm text-[#6B7280]">
+        <div className="rounded-xl border border-line bg-surface-muted py-16 text-center">
+          <p className="text-sm text-ink-muted">
             {search || statusFilter !== 'all' ? 'No purchase orders match the current filters.' : 'No purchase orders yet.'}
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Supplier</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Description</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Job</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
-                <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Amount</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Date</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Supplier</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Description</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Job</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Status</th>
+                <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Amount</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Date</th>
               </tr>
             </thead>
             <tbody>
               {filtered.map(po => (
-                <tr key={po.id} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
-                  <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">{po.supplier}</td>
-                  <td className="px-4 py-3 text-sm text-[#6B7280] max-w-[180px]">
+                <tr key={po.id} className="border-t border-line-soft hover:bg-surface-hover transition-colors">
+                  <td className="px-4 py-3 text-sm font-medium text-ink">{po.supplier}</td>
+                  <td className="px-4 py-3 text-sm text-ink-muted max-w-[180px]">
                     {po.description
                       ? <span className="block truncate">{po.description}</span>
                       : <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-3 max-w-[140px]">
                     {po.job_id ? (
-                      <Link href={`/jobs/${po.job_id}`} className="block truncate hover:underline" style={{ color: '#C9A84C' }}>
+                      <Link href={`/jobs/${po.job_id}`} className="block truncate hover:underline" style={{ color: 'var(--accent)' }}>
                         {po.jobs?.title ?? po.jobs?.job_type ?? 'View job'}
                       </Link>
                     ) : (
@@ -173,7 +173,7 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
                         value={po.status}
                         onChange={e => handleStatusChange(po, e.target.value as PurchaseOrderStatus)}
                         disabled={updatingId === po.id}
-                        className={`text-xs rounded-full px-2.5 py-0.5 font-medium border-0 focus:outline-none focus:ring-1 focus:ring-[#C9A84C] disabled:opacity-50 ${STATUS_SELECT_CLASS[po.status]}`}
+                        className={`text-xs rounded-full px-2.5 py-0.5 font-medium border-0 focus:outline-none focus:ring-1 focus:ring-accent disabled:opacity-50 ${STATUS_SELECT_CLASS[po.status]}`}
                       >
                         {STATUS_OPTIONS.map(s => (
                           <option key={s} value={s}>{statusLabel(s)}</option>
@@ -183,10 +183,10 @@ export default function PurchaseOrdersListView({ purchaseOrders: initialPurchase
                       <StatusBadge status={po.status} />
                     )}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">
+                  <td className="px-4 py-3 text-right font-medium text-ink tabular-nums">
                     {fmt(po.amount)}
                   </td>
-                  <td className="px-4 py-3 text-[#6B7280] text-xs">
+                  <td className="px-4 py-3 text-ink-muted text-xs">
                     {new Date(po.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                 </tr>

@@ -8,7 +8,7 @@ import type { Lead } from '@/lib/types'
 const TABS = ['Overview', 'Activity'] as const
 type Tab = typeof TABS[number]
 
-const GOLD = '#C9A84C'
+const GOLD = '#15803d'
 
 const STATUS_OPTIONS = [
   { value: 'new',       label: 'New'       },
@@ -73,13 +73,13 @@ export default function LeadDetailTabs({ lead }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="flex border-b border-line mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
-            style={{ color: activeTab === tab ? '#1A1A2E' : '#6B7280' }}
+            style={{ color: activeTab === tab ? 'var(--ink)' : 'var(--ink-muted)' }}
           >
             {tab}
             {activeTab === tab && (
@@ -96,55 +96,55 @@ export default function LeadDetailTabs({ lead }: Props) {
       {activeTab === 'Overview' && (
         <div className="space-y-4">
           {/* Contact details */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Contact Details</p>
+          <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+            <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">Contact Details</p>
             <dl className="grid grid-cols-2 gap-4">
               <div>
-                <dt className="text-xs text-[#6B7280] mb-0.5">Email</dt>
-                <dd className="text-sm text-[#1A1A2E]">
+                <dt className="text-xs text-ink-muted mb-0.5">Email</dt>
+                <dd className="text-sm text-ink">
                   {lead.email
                     ? <a href={`mailto:${lead.email}`} className="hover:underline" style={{ color: GOLD }}>{lead.email}</a>
                     : <span className="text-gray-300">—</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-[#6B7280] mb-0.5">Phone</dt>
-                <dd className="text-sm text-[#1A1A2E]">
+                <dt className="text-xs text-ink-muted mb-0.5">Phone</dt>
+                <dd className="text-sm text-ink">
                   {lead.phone
                     ? <a href={`tel:${lead.phone}`} className="hover:underline" style={{ color: GOLD }}>{lead.phone}</a>
                     : <span className="text-gray-300">—</span>}
                 </dd>
               </div>
               <div>
-                <dt className="text-xs text-[#6B7280] mb-0.5">Source</dt>
-                <dd className="text-sm text-[#1A1A2E]">{lead.source ?? <span className="text-gray-300">—</span>}</dd>
+                <dt className="text-xs text-ink-muted mb-0.5">Source</dt>
+                <dd className="text-sm text-ink">{lead.source ?? <span className="text-gray-300">—</span>}</dd>
               </div>
               <div>
-                <dt className="text-xs text-[#6B7280] mb-0.5">Received</dt>
-                <dd className="text-sm text-[#1A1A2E]">{fmtDate(lead.created_at, true)}</dd>
+                <dt className="text-xs text-ink-muted mb-0.5">Received</dt>
+                <dd className="text-sm text-ink">{fmtDate(lead.created_at, true)}</dd>
               </div>
             </dl>
           </div>
 
           {/* Message */}
           {lead.message && (
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Message</p>
-              <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{lead.message}</p>
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-2">Message</p>
+              <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-wrap">{lead.message}</p>
             </div>
           )}
 
           {/* Notes */}
           {lead.notes && (
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Notes</p>
-              <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{lead.notes}</p>
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-2">Notes</p>
+              <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-wrap">{lead.notes}</p>
             </div>
           )}
 
           {/* Status */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Status</p>
+          <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+            <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">Status</p>
             <div className="flex flex-wrap gap-2">
               {STATUS_OPTIONS.map(opt => {
                 const isActive = currentStatus === opt.value
@@ -156,7 +156,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                     className="px-4 py-1.5 rounded-md text-xs font-medium border transition-all disabled:opacity-50"
                     style={
                       isActive
-                        ? { background: GOLD, color: '#1A1A2E', borderColor: GOLD, fontWeight: 600 }
+                        ? { background: GOLD, color: 'var(--ink)', borderColor: GOLD, fontWeight: 600 }
                         : { background: '#fff', color: GOLD, borderColor: GOLD }
                     }
                   >
@@ -168,7 +168,7 @@ export default function LeadDetailTabs({ lead }: Props) {
 
             {/* Convert to Client */}
             {currentStatus === 'converted' && (
-              <div className="mt-4 pt-4 border-t border-[#E5E7EB]">
+              <div className="mt-4 pt-4 border-t border-line">
                 <button
                   onClick={handleConvertToClient}
                   disabled={converting}
@@ -176,7 +176,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                 >
                   {converting ? 'Creating client…' : 'Convert to Client'}
                 </button>
-                <p className="mt-1.5 text-xs text-[#6B7280]">
+                <p className="mt-1.5 text-xs text-ink-muted">
                   Creates a new client with this lead&apos;s name, email, and phone.
                 </p>
                 {convertError && <p className="mt-1 text-xs text-[#EF4444]">{convertError}</p>}
@@ -188,19 +188,19 @@ export default function LeadDetailTabs({ lead }: Props) {
 
       {/* Activity */}
       {activeTab === 'Activity' && (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Activity</p>
-          <ol className="relative border-l border-[#E5E7EB] ml-2 space-y-6">
+        <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+          <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">Activity</p>
+          <ol className="relative border-l border-line ml-2 space-y-6">
             {/* Created */}
             <li className="pl-5">
               <span
                 className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                 style={{ background: GOLD }}
               />
-              <p className="text-xs font-medium text-[#6B7280]">Lead received</p>
-              <p className="text-xs text-[#6B7280] mt-0.5">{fmtDate(lead.created_at, false)}</p>
+              <p className="text-xs font-medium text-ink-muted">Lead received</p>
+              <p className="text-xs text-ink-muted mt-0.5">{fmtDate(lead.created_at, false)}</p>
               {lead.source && (
-                <p className="text-xs text-[#6B7280]">via {lead.source}</p>
+                <p className="text-xs text-ink-muted">via {lead.source}</p>
               )}
             </li>
 
@@ -211,8 +211,8 @@ export default function LeadDetailTabs({ lead }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#3B82F6' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Lead contacted</p>
-                <p className="text-xs text-[#6B7280] mt-0.5">Date not recorded</p>
+                <p className="text-xs font-medium text-ink-muted">Lead contacted</p>
+                <p className="text-xs text-ink-muted mt-0.5">Date not recorded</p>
               </li>
             )}
 
@@ -223,7 +223,7 @@ export default function LeadDetailTabs({ lead }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#22C55E' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Lead converted</p>
+                <p className="text-xs font-medium text-ink-muted">Lead converted</p>
               </li>
             )}
 
@@ -232,9 +232,9 @@ export default function LeadDetailTabs({ lead }: Props) {
               <li className="pl-5 relative">
                 <span
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
-                  style={{ background: '#E5E7EB' }}
+                  style={{ background: 'var(--line)' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Lead marked as lost</p>
+                <p className="text-xs font-medium text-ink-muted">Lead marked as lost</p>
               </li>
             )}
           </ol>

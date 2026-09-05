@@ -33,7 +33,7 @@ export default function QuoteActions({ quote, clients, jobs }: Props) {
 
         {confirmDelete ? (
           <div className="flex items-center gap-2">
-            <span className="text-sm text-[#6B7280]">Are you sure?</span>
+            <span className="text-sm text-ink-muted">Are you sure?</span>
             <Button onClick={handleDelete} disabled={deleting} variant="destructive">
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </Button>

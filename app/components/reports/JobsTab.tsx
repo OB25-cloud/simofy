@@ -7,9 +7,9 @@ import { axisTick, axisLine, gridStroke, tooltipContentStyle, tooltipLabelStyle,
 import type { JobsStatsData } from './types'
 
 const STATUS_COLOR: Record<string, string> = {
-  pending: '#6B7280',
+  pending: 'var(--ink-muted)',
   scheduled: '#3b82f6',
-  in_progress: '#C9A84C',
+  in_progress: '#F59E0B',
   complete: '#22c55e',
   invoiced: '#8b5cf6',
   cancelled: '#ef4444',
@@ -53,7 +53,7 @@ export default function JobsTab({ data }: { data: JobsStatsData }) {
               stroke={GOLD}
               strokeWidth={2.5}
               dot={{ fill: GOLD, r: 4, strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: GOLD, stroke: '#1A1A2E', strokeWidth: 2 }}
+              activeDot={{ r: 6, fill: GOLD, stroke: '#111827', strokeWidth: 2 }}
             />
           </LineChart>
         </ResponsiveContainer>
@@ -73,7 +73,7 @@ export default function JobsTab({ data }: { data: JobsStatsData }) {
             />
             <Bar dataKey="count" radius={[4, 4, 0, 0]}>
               {statusData.map(entry => (
-                <Cell key={entry.status} fill={STATUS_COLOR[entry.status] ?? '#6B7280'} />
+                <Cell key={entry.status} fill={STATUS_COLOR[entry.status] ?? '#6b7280'} />
               ))}
             </Bar>
           </BarChart>

@@ -12,7 +12,7 @@ type NotifSetting = { notification_type: string; enabled: boolean }
 
 function Th({ children }: { children: React.ReactNode }) {
   return (
-    <th className="text-left px-5 py-3 font-medium text-[#6B7280] text-xs uppercase tracking-wider">
+    <th className="text-left px-5 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">
       {children}
     </th>
   )
@@ -20,8 +20,8 @@ function Th({ children }: { children: React.ReactNode }) {
 
 function EmptyState({ message }: { message: string }) {
   return (
-    <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-      <p className="text-sm text-[#6B7280]">{message}</p>
+    <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+      <p className="text-sm text-ink-muted">{message}</p>
     </div>
   )
 }
@@ -66,7 +66,7 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
   return (
     <>
       {/* Tab bar */}
-      <div className="border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="border-b border-line mb-6 overflow-x-auto scrollbar-hidden">
         <nav className="-mb-px flex gap-1 min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key
@@ -76,8 +76,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#C9A84C' : '#6B7280',
-                  borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
+                  color: active ? 'var(--accent)' : 'var(--ink-muted)',
+                  borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
                 }}
               >
                 {tab.label}
@@ -96,24 +96,24 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
               { label: 'Total Invoiced', value: `$${totalInvoiced.toFixed(0)}` },
               { label: 'Outstanding',    value: `$${outstanding.toFixed(0)}` },
             ].map(stat => (
-              <div key={stat.label} className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
-                <p className="text-xs text-[#6B7280] mb-1">{stat.label}</p>
-                <p className="text-xl font-semibold text-[#1A1A2E]">{stat.value}</p>
+              <div key={stat.label} className="bg-white rounded-xl border border-line shadow-sm p-4">
+                <p className="text-xs text-ink-muted mb-1">{stat.label}</p>
+                <p className="text-xl font-semibold text-ink">{stat.value}</p>
               </div>
             ))}
           </div>
 
           <div className="grid grid-cols-2 gap-5">
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">
                 Contact Details
               </h2>
               <dl className="space-y-3.5">
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Email</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Email</dt>
+                  <dd className="text-sm text-ink">
                     {client.email ? (
-                      <a href={`mailto:${client.email}`} className="hover:underline" style={{ color: '#C9A84C' }}>
+                      <a href={`mailto:${client.email}`} className="hover:underline" style={{ color: 'var(--accent)' }}>
                         {client.email}
                       </a>
                     ) : (
@@ -122,10 +122,10 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Phone</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Phone</dt>
+                  <dd className="text-sm text-ink">
                     {client.phone ? (
-                      <a href={`tel:${client.phone}`} className="hover:underline" style={{ color: '#C9A84C' }}>
+                      <a href={`tel:${client.phone}`} className="hover:underline" style={{ color: 'var(--accent)' }}>
                         {client.phone}
                       </a>
                     ) : (
@@ -134,14 +134,14 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Address</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Address</dt>
+                  <dd className="text-sm text-ink">
                     {client.address ?? <span className="text-gray-300">—</span>}
                   </dd>
                 </div>
                 <div>
-                  <dt className="text-xs text-[#6B7280] mb-0.5">Client Since</dt>
-                  <dd className="text-sm text-[#1A1A2E]">
+                  <dt className="text-xs text-ink-muted mb-0.5">Client Since</dt>
+                  <dd className="text-sm text-ink">
                     {new Date(client.created_at).toLocaleDateString('en-NZ', {
                       day: 'numeric', month: 'long', year: 'numeric',
                     })}
@@ -150,10 +150,10 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
               </dl>
             </div>
 
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <h2 className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Notes</h2>
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <h2 className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">Notes</h2>
               {client.notes ? (
-                <p className="text-sm text-[#6B7280] leading-relaxed whitespace-pre-wrap">{client.notes}</p>
+                <p className="text-sm text-ink-muted leading-relaxed whitespace-pre-wrap">{client.notes}</p>
               ) : (
                 <p className="text-sm text-gray-300 italic">No notes added</p>
               )}
@@ -165,16 +165,16 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Jobs */}
       {activeTab === 'jobs' && (
         <div className="tab-fade-in">
-          <p className="text-xs text-[#6B7280] mb-4">
+          <p className="text-xs text-ink-muted mb-4">
             {jobs.length} job{jobs.length !== 1 ? 's' : ''}
           </p>
           {jobs.length === 0 ? (
             <EmptyState message="No jobs linked to this client yet" />
           ) : (
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+            <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
               <table className="w-full min-w-[480px] text-sm">
                 <thead>
-                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+                  <tr className="bg-surface-muted border-b border-line">
                     <Th>Job</Th>
                     <Th>Status</Th>
                     <Th>Scheduled</Th>
@@ -185,13 +185,13 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   {jobs.map(job => (
                     <tr
                       key={job.id}
-                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
+                      className="border-t border-line-soft hover:bg-surface-hover transition-colors"
                     >
                       <td className="px-5 py-3.5">
                         <Link
                           href={`/jobs/${job.id}`}
                           className="font-medium hover:underline"
-                          style={{ color: '#C9A84C' }}
+                          style={{ color: 'var(--accent)' }}
                         >
                           {job.title ?? job.job_type ?? <span className="text-gray-300">Untitled</span>}
                         </Link>
@@ -199,8 +199,8 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                       <td className="px-5 py-3.5">
                         <StatusBadge status={job.status} />
                       </td>
-                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(job.scheduled_date)}</td>
-                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(job.created_at)}</td>
+                      <td className="px-5 py-3.5 text-ink-muted text-xs">{fmtDate(job.scheduled_date)}</td>
+                      <td className="px-5 py-3.5 text-ink-muted text-xs">{fmtDate(job.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -213,16 +213,16 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Quotes */}
       {activeTab === 'quotes' && (
         <div className="tab-fade-in">
-          <p className="text-xs text-[#6B7280] mb-4">
+          <p className="text-xs text-ink-muted mb-4">
             {quotes.length} quote{quotes.length !== 1 ? 's' : ''}
           </p>
           {quotes.length === 0 ? (
             <EmptyState message="No quotes for this client yet" />
           ) : (
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+            <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
-                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+                  <tr className="bg-surface-muted border-b border-line">
                     <Th>Quote #</Th>
                     <Th>Status</Th>
                     <Th>Total</Th>
@@ -234,13 +234,13 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   {quotes.map(q => (
                     <tr
                       key={q.id}
-                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
+                      className="border-t border-line-soft hover:bg-surface-hover transition-colors"
                     >
                       <td className="px-5 py-3.5">
                         <Link
                           href={`/quotes/${q.id}`}
                           className="font-medium hover:underline"
-                          style={{ color: '#C9A84C' }}
+                          style={{ color: 'var(--accent)' }}
                         >
                           Q-{q.id.slice(0, 6).toUpperCase()}
                         </Link>
@@ -248,9 +248,9 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                       <td className="px-5 py-3.5">
                         <StatusBadge status={q.status} />
                       </td>
-                      <td className="px-5 py-3.5 text-[#1A1A2E]">{fmt(q.total)}</td>
-                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(q.valid_until)}</td>
-                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(q.created_at)}</td>
+                      <td className="px-5 py-3.5 text-ink">{fmt(q.total)}</td>
+                      <td className="px-5 py-3.5 text-ink-muted text-xs">{fmtDate(q.valid_until)}</td>
+                      <td className="px-5 py-3.5 text-ink-muted text-xs">{fmtDate(q.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -263,16 +263,16 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
       {/* Invoices */}
       {activeTab === 'invoices' && (
         <div className="tab-fade-in">
-          <p className="text-xs text-[#6B7280] mb-4">
+          <p className="text-xs text-ink-muted mb-4">
             {invoices.length} invoice{invoices.length !== 1 ? 's' : ''}
           </p>
           {invoices.length === 0 ? (
             <EmptyState message="No invoices for this client yet" />
           ) : (
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+            <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
               <table className="w-full min-w-[560px] text-sm">
                 <thead>
-                  <tr className="bg-[#F4F5F7] border-b border-[#E5E7EB]">
+                  <tr className="bg-surface-muted border-b border-line">
                     <Th>Invoice #</Th>
                     <Th>Status</Th>
                     <Th>Total</Th>
@@ -284,13 +284,13 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                   {invoices.map(inv => (
                     <tr
                       key={inv.id}
-                      className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors"
+                      className="border-t border-line-soft hover:bg-surface-hover transition-colors"
                     >
                       <td className="px-5 py-3.5">
                         <Link
                           href={`/invoices/${inv.id}`}
                           className="font-medium hover:underline"
-                          style={{ color: '#C9A84C' }}
+                          style={{ color: 'var(--accent)' }}
                         >
                           INV-{inv.id.slice(0, 6).toUpperCase()}
                         </Link>
@@ -298,9 +298,9 @@ export default function ClientTabs({ client, jobs, quotes, invoices, sites, noti
                       <td className="px-5 py-3.5">
                         <StatusBadge status={inv.status} />
                       </td>
-                      <td className="px-5 py-3.5 text-[#1A1A2E]">{fmt(inv.total)}</td>
-                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(inv.due_date)}</td>
-                      <td className="px-5 py-3.5 text-[#6B7280] text-xs">{fmtDate(inv.created_at)}</td>
+                      <td className="px-5 py-3.5 text-ink">{fmt(inv.total)}</td>
+                      <td className="px-5 py-3.5 text-ink-muted text-xs">{fmtDate(inv.due_date)}</td>
+                      <td className="px-5 py-3.5 text-ink-muted text-xs">{fmtDate(inv.created_at)}</td>
                     </tr>
                   ))}
                 </tbody>

@@ -27,7 +27,7 @@ export default function ReportsTabs({ revenue, jobsStats, staffPerformance, prof
 
   return (
     <div>
-      <div className="border-b border-[#E5E7EB] mb-6">
+      <div className="border-b border-line mb-6">
         <nav className="-mb-px flex gap-1 overflow-x-auto scrollbar-hidden min-w-max">
           {TABS.map(tab => {
             const active = activeTab === tab.key
@@ -37,8 +37,8 @@ export default function ReportsTabs({ revenue, jobsStats, staffPerformance, prof
                 onClick={() => setActiveTab(tab.key)}
                 className="px-4 pt-3 md:pt-0 pb-3 text-sm font-medium transition-colors whitespace-nowrap"
                 style={{
-                  color: active ? '#C9A84C' : '#6B7280',
-                  borderBottom: active ? '2px solid #C9A84C' : '2px solid transparent',
+                  color: active ? 'var(--accent)' : 'var(--ink-muted)',
+                  borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
                 }}
               >
                 {tab.label}

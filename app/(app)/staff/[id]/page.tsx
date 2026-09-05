@@ -7,7 +7,7 @@ import StaffDetailTabs from '@/app/components/staff/StaffDetailTabs'
 import { StatusBadge } from '@/app/components/ui/Badge'
 
 const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: 'rgba(201, 168, 76,0.12)', text: '#C9A84C', label: 'Admin' },
+  admin: { bg: 'rgba(21, 128, 61,0.12)', text: 'var(--accent)', label: 'Admin' },
   field: { bg: '#DBEAFE', text: '#3B82F6', label: 'Field' },
 }
 
@@ -37,7 +37,7 @@ export default async function StaffDetailPage({
     <div className="p-4 md:p-8 max-w-4xl">
       <Link
         href="/staff"
-        className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#1A1A2E] transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors mb-6"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -49,7 +49,7 @@ export default async function StaffDetailPage({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-1 flex-wrap">
-            <h1 className="text-2xl font-bold text-[#1A1A2E]">{typedStaff.name}</h1>
+            <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">{typedStaff.name}</h1>
             {roleConfig && (
               <span
                 className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"

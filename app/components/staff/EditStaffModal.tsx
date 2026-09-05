@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase'
 import type { Staff } from '@/lib/types'
 
 const inputClass =
-  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white'
+  'w-full border border-line rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white'
 
 interface Props {
   staff: Staff
@@ -64,9 +64,9 @@ export default function EditStaffModal({ staff, onClose }: Props) {
       onClick={(e) => { if (e.target === e.currentTarget) onClose() }}
     >
       <div className="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-xl shadow-2xl overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB]">
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Edit Staff Member</h2>
-          <button onClick={onClose} className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line">
+          <h2 className="text-sm font-semibold text-ink">Edit Staff Member</h2>
+          <button onClick={onClose} className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
@@ -75,33 +75,33 @@ export default function EditStaffModal({ staff, onClose }: Props) {
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-              Name <span style={{ color: '#C9A84C' }}>*</span>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
+              Name <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <input type="text" value={form.name} onChange={set('name')} className={inputClass} autoFocus />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Email</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Email</label>
               <input type="email" value={form.email} onChange={set('email')} placeholder="email@example.com" className={inputClass} />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Phone</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Phone</label>
               <input type="tel" value={form.phone} onChange={set('phone')} placeholder="021 xxx xxxx" className={inputClass} />
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Role</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Role</label>
               <select value={form.role} onChange={set('role')} className={inputClass}>
                 <option value="field">Field</option>
                 <option value="admin">Admin</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Pay Rate ($/hr)</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1.5">Pay Rate ($/hr)</label>
               <input
                 type="number"
                 value={form.pay_rate}
@@ -116,14 +116,14 @@ export default function EditStaffModal({ staff, onClose }: Props) {
 
           <div className="flex items-center justify-between py-1">
             <div>
-              <p className="text-xs font-medium text-[#6B7280]">Status</p>
-              <p className="text-xs text-[#6B7280] mt-0.5">{form.is_active ? 'Active' : 'Inactive'}</p>
+              <p className="text-xs font-medium text-ink-muted">Status</p>
+              <p className="text-xs text-ink-muted mt-0.5">{form.is_active ? 'Active' : 'Inactive'}</p>
             </div>
             <button
               type="button"
               onClick={() => setForm((prev) => ({ ...prev, is_active: !prev.is_active }))}
               className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200"
-              style={{ background: form.is_active ? '#C9A84C' : '#E5E7EB' }}
+              style={{ background: form.is_active ? 'var(--accent)' : 'var(--line)' }}
               aria-label="Toggle active status"
             >
               <span
@@ -136,14 +136,14 @@ export default function EditStaffModal({ staff, onClose }: Props) {
           {error && <p className="text-xs text-[#EF4444]">{error}</p>}
 
           <div className="flex justify-end gap-3 pt-1">
-            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors">
+            <button type="button" onClick={onClose} className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted transition-colors">
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#C9A84C' }}
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60"
+              style={{ background: 'var(--accent)' }}
             >
               {loading ? 'Saving…' : 'Save Changes'}
             </button>

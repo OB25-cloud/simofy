@@ -9,7 +9,7 @@ import { isOverdueForFollowUp, daysSinceLastContact } from '@/lib/quoteFollowUp'
 const TABS = ['Overview', 'Line Items', 'Activity'] as const
 type Tab = typeof TABS[number]
 
-const GOLD = '#C9A84C'
+const GOLD = '#15803d'
 
 function fmt(n: number | null | undefined) {
   return n != null ? `$${n.toFixed(2)}` : '—'
@@ -112,14 +112,14 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
   return (
     <div>
       {/* Tab bar */}
-      <div className="flex border-b border-[#E5E7EB] mb-6 overflow-x-auto scrollbar-hidden">
+      <div className="flex border-b border-line mb-6 overflow-x-auto scrollbar-hidden">
         {TABS.map(tab => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
             className="px-4 py-3 md:py-2.5 text-sm font-medium transition-colors relative shrink-0 whitespace-nowrap"
             style={{
-              color: activeTab === tab ? '#1A1A2E' : '#6B7280',
+              color: activeTab === tab ? 'var(--ink)' : 'var(--ink-muted)',
             }}
           >
             {tab}
@@ -169,11 +169,11 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
 
           {/* Client + Details cards */}
           <div className="grid grid-cols-2 gap-4">
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Client</p>
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">Client</p>
               {quote.clients ? (
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-[#1A1A2E]">{quote.clients.name}</p>
+                  <p className="text-sm font-medium text-ink">{quote.clients.name}</p>
                   {quote.clients.email && <p className="text-sm text-gray-500">{quote.clients.email}</p>}
                   {quote.clients.phone && <p className="text-sm text-gray-500">{quote.clients.phone}</p>}
                 </div>
@@ -182,30 +182,30 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               )}
             </div>
 
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-3">Details</p>
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-3">Details</p>
               <dl className="space-y-2">
                 {quote.jobs && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-xs text-[#6B7280]">Linked Job</dt>
-                    <dd className="text-xs text-[#6B7280] text-right truncate max-w-[160px]">
+                    <dt className="text-xs text-ink-muted">Linked Job</dt>
+                    <dd className="text-xs text-ink-muted text-right truncate max-w-[160px]">
                       {quote.jobs.title ?? quote.jobs.job_type ?? '—'}
                     </dd>
                   </div>
                 )}
                 <div className="flex justify-between gap-4">
-                  <dt className="text-xs text-[#6B7280]">Status</dt>
-                  <dd className="text-xs text-[#6B7280] capitalize">{quote.status ?? '—'}</dd>
+                  <dt className="text-xs text-ink-muted">Status</dt>
+                  <dd className="text-xs text-ink-muted capitalize">{quote.status ?? '—'}</dd>
                 </div>
                 {quote.valid_until && (
                   <div className="flex justify-between gap-4">
-                    <dt className="text-xs text-[#6B7280]">Valid Until</dt>
-                    <dd className="text-xs text-[#6B7280]">{fmtDate(quote.valid_until)}</dd>
+                    <dt className="text-xs text-ink-muted">Valid Until</dt>
+                    <dd className="text-xs text-ink-muted">{fmtDate(quote.valid_until)}</dd>
                   </div>
                 )}
                 <div className="flex justify-between gap-4">
-                  <dt className="text-xs text-[#6B7280]">Created</dt>
-                  <dd className="text-xs text-[#6B7280]">{fmtDate(quote.created_at)}</dd>
+                  <dt className="text-xs text-ink-muted">Created</dt>
+                  <dd className="text-xs text-ink-muted">{fmtDate(quote.created_at)}</dd>
                 </div>
               </dl>
             </div>
@@ -213,15 +213,15 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
 
           {/* Notes */}
           {quote.notes && (
-            <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-2">Notes</p>
-              <p className="text-sm text-[#6B7280] whitespace-pre-wrap">{quote.notes}</p>
+            <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-2">Notes</p>
+              <p className="text-sm text-ink-muted whitespace-pre-wrap">{quote.notes}</p>
             </div>
           )}
 
           {/* Quick actions */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Quick Actions</p>
+          <div className="bg-white rounded-xl border border-line shadow-sm p-6">
+            <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">Quick Actions</p>
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={handleAccept}
@@ -237,11 +237,11 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               >
                 {declining ? 'Updating…' : 'Decline'}
               </button>
-              <div className="h-6 w-px bg-[#E5E7EB]" />
+              <div className="h-6 w-px bg-line" />
               <button
                 onClick={handleConvertToInvoice}
                 disabled={converting}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-ink rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
                 style={{ background: GOLD }}
               >
                 {converting ? 'Creating…' : 'Convert to Invoice'}
@@ -255,9 +255,9 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
       {/* Line Items */}
       {activeTab === 'Line Items' && (
         <div className="tab-fade-in">
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden mb-4">
-            <div className="px-5 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
-              <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider">Line Items</p>
+          <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden mb-4">
+            <div className="px-5 py-3 border-b border-line bg-surface-muted">
+              <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider">Line Items</p>
             </div>
             {lineItems.length === 0 ? (
               <p className="px-5 py-6 text-sm text-gray-300">No line items</p>
@@ -265,20 +265,20 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
               <div className="overflow-x-auto">
               <table className="w-full min-w-[480px] text-sm">
                 <thead>
-                  <tr className="border-b border-[#E5E7EB]">
-                    <th className="text-left px-5 py-2.5 text-xs font-medium text-[#6B7280]">Description</th>
-                    <th className="text-right px-5 py-2.5 text-xs font-medium text-[#6B7280] w-20">Qty</th>
-                    <th className="text-right px-5 py-2.5 text-xs font-medium text-[#6B7280] w-28">Unit Price</th>
-                    <th className="text-right px-5 py-2.5 text-xs font-medium text-[#6B7280] w-28">Amount</th>
+                  <tr className="border-b border-line">
+                    <th className="text-left px-5 py-2.5 text-xs font-medium text-ink-muted">Description</th>
+                    <th className="text-right px-5 py-2.5 text-xs font-medium text-ink-muted w-20">Qty</th>
+                    <th className="text-right px-5 py-2.5 text-xs font-medium text-ink-muted w-28">Unit Price</th>
+                    <th className="text-right px-5 py-2.5 text-xs font-medium text-ink-muted w-28">Amount</th>
                   </tr>
                 </thead>
                 <tbody>
                   {lineItems.map((item, i) => (
-                    <tr key={item.id} className={i > 0 ? 'border-t border-[#F4F5F7]' : ''}>
-                      <td className="px-5 py-3 text-[#6B7280]">{item.description ?? '—'}</td>
-                      <td className="px-5 py-3 text-right text-[#6B7280] tabular-nums">{item.quantity ?? 0}</td>
-                      <td className="px-5 py-3 text-right text-[#6B7280] tabular-nums">{fmt(item.unit_price)}</td>
-                      <td className="px-5 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">{fmt(item.amount)}</td>
+                    <tr key={item.id} className={i > 0 ? 'border-t border-line-soft' : ''}>
+                      <td className="px-5 py-3 text-ink-muted">{item.description ?? '—'}</td>
+                      <td className="px-5 py-3 text-right text-ink-muted tabular-nums">{item.quantity ?? 0}</td>
+                      <td className="px-5 py-3 text-right text-ink-muted tabular-nums">{fmt(item.unit_price)}</td>
+                      <td className="px-5 py-3 text-right font-medium text-ink tabular-nums">{fmt(item.amount)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -298,7 +298,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                 <span>GST (15%)</span>
                 <span className="tabular-nums">{fmt(quote.gst)}</span>
               </div>
-              <div className="flex justify-between text-sm font-semibold text-[#1A1A2E] pt-2 border-t border-[#E5E7EB]">
+              <div className="flex justify-between text-sm font-semibold text-ink pt-2 border-t border-line">
                 <span>Total</span>
                 <span className="tabular-nums">{fmt(quote.total)}</span>
               </div>
@@ -309,16 +309,16 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
 
       {/* Activity */}
       {activeTab === 'Activity' && (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6 tab-fade-in">
-          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-4">Activity</p>
-          <ol className="relative border-l border-[#E5E7EB] ml-2 space-y-6">
+        <div className="bg-white rounded-xl border border-line shadow-sm p-6 tab-fade-in">
+          <p className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-4">Activity</p>
+          <ol className="relative border-l border-line ml-2 space-y-6">
             <li className="pl-5">
               <span
                 className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                 style={{ background: GOLD }}
               />
-              <p className="text-xs font-medium text-[#6B7280]">Quote created</p>
-              <p className="text-xs text-[#6B7280] mt-0.5">{fmtDate(quote.created_at)}</p>
+              <p className="text-xs font-medium text-ink-muted">Quote created</p>
+              <p className="text-xs text-ink-muted mt-0.5">{fmtDate(quote.created_at)}</p>
             </li>
 
             {(quote.status === 'sent' || quote.status === 'accepted' || quote.status === 'declined') && (
@@ -327,8 +327,8 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#3b82f6' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Quote sent to client</p>
-                <p className="text-xs text-[#6B7280] mt-0.5">
+                <p className="text-xs font-medium text-ink-muted">Quote sent to client</p>
+                <p className="text-xs text-ink-muted mt-0.5">
                   {quote.sent_at ? fmtDate(quote.sent_at) : 'Date not recorded'}
                 </p>
               </li>
@@ -340,8 +340,8 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#b45309' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Follow-up sent</p>
-                <p className="text-xs text-[#6B7280] mt-0.5">{fmtDate(quote.last_followed_up_at)}</p>
+                <p className="text-xs font-medium text-ink-muted">Follow-up sent</p>
+                <p className="text-xs text-ink-muted mt-0.5">{fmtDate(quote.last_followed_up_at)}</p>
               </li>
             )}
 
@@ -351,7 +351,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#22c55e' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Quote accepted</p>
+                <p className="text-xs font-medium text-ink-muted">Quote accepted</p>
               </li>
             )}
 
@@ -361,7 +361,7 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#ef4444' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Quote declined</p>
+                <p className="text-xs font-medium text-ink-muted">Quote declined</p>
               </li>
             )}
 
@@ -371,9 +371,9 @@ export default function QuoteDetailTabs({ quote, lineItems }: Props) {
                   className="absolute -left-1.5 top-0.5 w-3 h-3 rounded-full border-2 border-white"
                   style={{ background: '#f97316' }}
                 />
-                <p className="text-xs font-medium text-[#6B7280]">Quote expired</p>
+                <p className="text-xs font-medium text-ink-muted">Quote expired</p>
                 {quote.valid_until && (
-                  <p className="text-xs text-[#6B7280] mt-0.5">Valid until {fmtDate(quote.valid_until)}</p>
+                  <p className="text-xs text-ink-muted mt-0.5">Valid until {fmtDate(quote.valid_until)}</p>
                 )}
               </li>
             )}

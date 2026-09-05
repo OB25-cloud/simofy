@@ -6,16 +6,16 @@ import AddSiteModal from './AddSiteModal'
 
 function SiteCard({ site }: { site: Site }) {
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4">
+    <div className="bg-white rounded-xl border border-line shadow-sm p-4">
       <div className="mb-3">
-        <p className="text-sm font-medium text-[#1A1A2E]">{site.address}</p>
+        <p className="text-sm font-medium text-ink">{site.address}</p>
         {site.location && (
-          <p className="text-xs text-[#6B7280] mt-0.5">{site.location}</p>
+          <p className="text-xs text-ink-muted mt-0.5">{site.location}</p>
         )}
       </div>
 
       {(site.access_notes || site.hazard_notes) && (
-        <div className="space-y-2.5 pt-3 border-t border-[#F4F5F7]">
+        <div className="space-y-2.5 pt-3 border-t border-line-soft">
           {site.access_notes && (
             <div className="flex gap-2">
               <span className="shrink-0 mt-0.5">
@@ -25,8 +25,8 @@ function SiteCard({ site }: { site: Site }) {
                 </svg>
               </span>
               <div>
-                <p className="text-xs font-medium text-[#6B7280] uppercase tracking-wider mb-0.5">Access</p>
-                <p className="text-xs text-[#6B7280] leading-relaxed">{site.access_notes}</p>
+                <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-0.5">Access</p>
+                <p className="text-xs text-ink-muted leading-relaxed">{site.access_notes}</p>
               </div>
             </div>
           )}
@@ -40,8 +40,8 @@ function SiteCard({ site }: { site: Site }) {
                 </svg>
               </span>
               <div>
-                <p className="text-xs font-medium text-[#6B7280] uppercase tracking-wider mb-0.5">Hazards</p>
-                <p className="text-xs text-[#6B7280] leading-relaxed">{site.hazard_notes}</p>
+                <p className="text-xs font-medium text-ink-muted uppercase tracking-wider mb-0.5">Hazards</p>
+                <p className="text-xs text-ink-muted leading-relaxed">{site.hazard_notes}</p>
               </div>
             </div>
           )}
@@ -63,14 +63,14 @@ export default function SitesSection({
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-base font-semibold text-[#1A1A2E]">
+        <h2 className="text-base font-semibold text-ink">
           Sites
-          <span className="ml-2 text-sm font-normal text-[#6B7280]">({sites.length})</span>
+          <span className="ml-2 text-sm font-normal text-ink-muted">({sites.length})</span>
         </h2>
         <button
           onClick={() => setShowModal(true)}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90"
-          style={{ background: '#C9A84C' }}
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110"
+          style={{ background: 'var(--accent)' }}
         >
           <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
             <line x1="12" y1="5" x2="12" y2="19" />
@@ -81,8 +81,8 @@ export default function SitesSection({
       </div>
 
       {sites.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-          <p className="text-sm text-[#6B7280]">No sites added yet</p>
+        <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+          <p className="text-sm text-ink-muted">No sites added yet</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 gap-4">

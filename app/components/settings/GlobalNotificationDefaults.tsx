@@ -119,21 +119,21 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
   return (
     <div className="space-y-6">
       {/* Defaults toggles */}
-      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
         {NOTIFICATION_TYPES.map((type, i) => {
           const enabled = defaults[type.key]
           const isSaving = saving.has(type.key)
           return (
             <div
               key={type.key}
-              className={`flex items-center justify-between px-5 py-4 ${i > 0 ? 'border-t border-[#F4F5F7]' : ''}`}
+              className={`flex items-center justify-between px-5 py-4 ${i > 0 ? 'border-t border-line-soft' : ''}`}
             >
               <div className="min-w-0 flex-1 pr-6">
-                <p className="text-sm font-medium text-[#1A1A2E]">{type.label}</p>
-                <p className="text-xs text-[#6B7280] mt-0.5">{type.description}</p>
+                <p className="text-sm font-medium text-ink">{type.label}</p>
+                <p className="text-xs text-ink-muted mt-0.5">{type.description}</p>
                 {type.key === 'review_request' && (
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-xs text-[#6B7280]">Send after</span>
+                    <span className="text-xs text-ink-muted">Send after</span>
                     <input
                       type="number"
                       min={1}
@@ -142,9 +142,9 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                       onChange={e => setReviewDelayHours(Number(e.target.value))}
                       onBlur={e => saveReviewDelay(Number(e.target.value))}
                       disabled={savingDelay}
-                      className="w-16 border border-[#E5E7EB] rounded px-2 py-0.5 text-xs text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent disabled:opacity-50"
+                      className="w-16 border border-line rounded px-2 py-0.5 text-xs text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent disabled:opacity-50"
                     />
-                    <span className="text-xs text-[#6B7280]">hours after job completion</span>
+                    <span className="text-xs text-ink-muted">hours after job completion</span>
                   </div>
                 )}
               </div>
@@ -155,7 +155,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
                 onClick={() => toggleDefault(type.key)}
                 disabled={isSaving}
                 className="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 disabled:opacity-50 focus:outline-none"
-                style={{ background: enabled ? '#C9A84C' : '#E5E7EB' }}
+                style={{ background: enabled ? 'var(--accent)' : 'var(--line)' }}
               >
                 <span
                   className="inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200"
@@ -170,11 +170,11 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
       {error && <p className="text-xs text-[#EF4444]">{error}</p>}
 
       {/* Apply to all clients */}
-      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-6">
+      <div className="bg-white rounded-xl border border-line shadow-sm p-6">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-medium text-[#1A1A2E]">Apply defaults to all existing clients</p>
-            <p className="text-xs text-[#6B7280] mt-1">
+            <p className="text-sm font-medium text-ink">Apply defaults to all existing clients</p>
+            <p className="text-xs text-ink-muted mt-1">
               Overwrites all {clientCount} client{clientCount !== 1 ? 's' : ''}&apos; notification preferences with the defaults above.
             </p>
           </div>
@@ -182,7 +182,7 @@ export default function GlobalNotificationDefaults({ initialDefaults, clientCoun
             onClick={applyToAllClients}
             disabled={applying}
             className="shrink-0 px-4 py-3 sm:py-2 text-sm font-medium text-white rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-            style={{ background: '#1A1A2E' }}
+            style={{ background: 'var(--charcoal)' }}
           >
             {applying ? 'Applying…' : applyDone ? '✓ Applied' : 'Apply to All'}
           </button>

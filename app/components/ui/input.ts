@@ -1,6 +1,6 @@
 // Shared form-input styling per the Operify design system:
-// border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#C9A84C]
+// hairline border, rounded-lg, soft green focus ring + green border.
 export const inputClass =
-  'w-full border border-[#E5E7EB] rounded-lg px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white'
+  'w-full border border-line rounded-lg px-3 py-2 text-sm text-ink placeholder:text-ink-faint focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-surface transition-[box-shadow,border-color] duration-150'
 
-export const labelClass = 'block text-xs font-semibold text-[#6B7280] mb-1'
+export const labelClass = 'block text-xs font-semibold text-ink-muted mb-1'

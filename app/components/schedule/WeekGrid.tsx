@@ -123,9 +123,9 @@ function DayColumn({
       <button
         onClick={() => onJumpToDay(date)}
         className="shrink-0 px-2 py-2.5 text-center hover:bg-white/[0.04] transition-colors"
-        style={{ borderBottom: isToday ? '2px solid #C9A84C' : '1px solid #262626' }}
+        style={{ borderBottom: isToday ? '2px solid var(--accent-bright)' : '1px solid #262626' }}
       >
-        <p className="text-[13px] font-bold" style={{ color: isToday ? '#C9A84C' : '#fff' }}>
+        <p className="text-[13px] font-bold" style={{ color: isToday ? 'var(--accent-bright)' : '#fff' }}>
           {DAY_NAMES[(date.getDay() + 6) % 7]}
         </p>
         <p className="text-[11px] mt-0.5 text-gray-500">
@@ -140,7 +140,7 @@ function DayColumn({
         ref={setNodeRef}
         onClick={() => onEmptyClick(dateKey)}
         className="flex-1 min-h-0 overflow-y-auto px-1.5 py-1.5 space-y-1.5 cursor-pointer"
-        style={{ background: isOver ? 'rgba(201,168,76,0.08)' : 'transparent' }}
+        style={{ background: isOver ? 'rgba(74, 222, 128,0.08)' : 'transparent' }}
       >
         {sorted.length === 0 ? (
           <p className="text-[11px] text-gray-600 text-center pt-4">No jobs</p>
@@ -192,7 +192,7 @@ export default function WeekGrid({
   }
 
   return (
-    <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
+    <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: 'var(--charcoal)' }}>
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 min-h-0 flex">
           {weekDays.map(day => {

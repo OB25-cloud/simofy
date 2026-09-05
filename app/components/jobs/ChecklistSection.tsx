@@ -133,11 +133,11 @@ export default function ChecklistSection({
 
   if (!templateId) {
     return (
-      <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-        <p className="text-sm text-[#6B7280] mb-4">No checklist assigned to this job yet</p>
+      <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+        <p className="text-sm text-ink-muted mb-4">No checklist assigned to this job yet</p>
         {isAdmin && (
           templates.length === 0 ? (
-            <p className="text-xs text-[#6B7280]">
+            <p className="text-xs text-ink-muted">
               No checklist templates exist yet — create one under Settings → Checklists.
             </p>
           ) : (
@@ -145,7 +145,7 @@ export default function ChecklistSection({
               <select
                 value={selectedTemplate}
                 onChange={e => setSelectedTemplate(e.target.value)}
-                className="px-3 py-2 text-sm border border-[#E5E7EB] rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent text-[#6B7280]"
+                className="px-3 py-2 text-sm border border-line rounded-md bg-white focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent text-ink-muted"
               >
                 <option value="">Select a checklist…</option>
                 {templates.map(t => (
@@ -155,8 +155,8 @@ export default function ChecklistSection({
               <button
                 onClick={handleAssign}
                 disabled={!selectedTemplate || assigning}
-                className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-50"
-                style={{ background: '#C9A84C' }}
+                className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md disabled:opacity-50"
+                style={{ background: 'var(--accent)' }}
               >
                 {assigning ? 'Assigning…' : 'Assign Checklist'}
               </button>
@@ -172,15 +172,15 @@ export default function ChecklistSection({
     <div>
       {/* Progress */}
       <div className="flex items-center justify-between mb-2">
-        <p className="text-sm font-medium text-[#6B7280]">
+        <p className="text-sm font-medium text-ink-muted">
           {completedCount} of {totalCount} item{totalCount !== 1 ? 's' : ''} complete
         </p>
-        <p className="text-xs font-semibold" style={{ color: '#C9A84C' }}>{progressPct}%</p>
+        <p className="text-xs font-semibold" style={{ color: 'var(--accent)' }}>{progressPct}%</p>
       </div>
-      <div className="w-full h-1.5 rounded-full bg-[#E5E7EB] overflow-hidden mb-5">
+      <div className="w-full h-1.5 rounded-full bg-line overflow-hidden mb-5">
         <div
           className="h-full rounded-full transition-all duration-300"
-          style={{ width: `${progressPct}%`, background: '#C9A84C' }}
+          style={{ width: `${progressPct}%`, background: 'var(--accent)' }}
         />
       </div>
 
@@ -191,11 +191,11 @@ export default function ChecklistSection({
       )}
 
       {/* Items */}
-      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
+      <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
         {items.map((item, i) => (
           <div
             key={item.id}
-            className={`flex items-start gap-3 px-4 py-3.5 ${i > 0 ? 'border-t border-[#F4F5F7]' : ''}`}
+            className={`flex items-start gap-3 px-4 py-3.5 ${i > 0 ? 'border-t border-line-soft' : ''}`}
           >
             <input
               type="checkbox"
@@ -203,27 +203,27 @@ export default function ChecklistSection({
               onChange={() => handleToggle(item)}
               disabled={togglingId === item.id}
               className="mt-0.5 w-4 h-4 rounded cursor-pointer shrink-0"
-              style={{ accentColor: '#C9A84C' }}
+              style={{ accentColor: 'var(--accent)' }}
             />
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <span
                   className="text-sm"
-                  style={{ color: item.completed ? '#6B7280' : '#1A1A2E', textDecoration: item.completed ? 'line-through' : 'none' }}
+                  style={{ color: item.completed ? 'var(--ink-muted)' : 'var(--ink)', textDecoration: item.completed ? 'line-through' : 'none' }}
                 >
                   {item.item_text}
                 </span>
                 {item.required && (
                   <span
                     className="shrink-0 inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide"
-                    style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}
+                    style={{ background: 'rgba(21, 128, 61,0.1)', color: 'var(--accent)' }}
                   >
                     Required
                   </span>
                 )}
               </div>
               {item.completed && item.completed_by && item.completed_at && (
-                <p className="text-xs text-[#6B7280] mt-0.5">
+                <p className="text-xs text-ink-muted mt-0.5">
                   ✓ {item.completed_by} · {fmtDateTime(item.completed_at)}
                 </p>
               )}

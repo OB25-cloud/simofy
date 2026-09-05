@@ -1,21 +1,54 @@
 @import "tailwindcss";
 
+/* ──────────────────────────────────────────────────────────────────────────
+   Operify design tokens
+   Every colour in the app should resolve to one of these. Tailwind utilities
+   (bg-accent, text-ink, border-line, …) come from the @theme block below;
+   inline styles use the plain vars (var(--accent), var(--ink), …).
+   ────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Operify design system tokens */
-  --page-bg: #F4F5F7;
-  --surface: #FFFFFF;
-  --sidebar-bg: #1E1E2E;
-  --sidebar-active-bg: #2A2A3E;
-  --gold: #C9A84C;
-  --text-primary: #1A1A2E;
-  --text-secondary: #6B7280;
-  --border: #E5E7EB;
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --error: #EF4444;
-  --info: #3B82F6;
-  --dark-panel: #1A1A2E;
-  --dark-panel-text: #F5F5F5;
+  /* Brand accent — deep forest green */
+  --accent: #15803d;
+  --accent-hover: #166534;
+  --accent-strong: #14532d;
+  --accent-soft: #ecf7ef;            /* tint for chips / selected rows */
+  --accent-bright: #4ade80;          /* accent for text/strokes on dark surfaces */
+  --accent-rgb: 21, 128, 61;
+
+  /* Surfaces */
+  --page-bg: #f9f8f6;                /* warm off-white canvas */
+  --surface: #ffffff;
+  --surface-muted: #f4f3f0;          /* table headers, filter bars, chips */
+  --surface-hover: #f7f6f3;          /* row hover */
+
+  /* Sidebar / dark chrome */
+  --sidebar-bg: #0f1117;
+  --sidebar-hover: rgba(255, 255, 255, 0.05);
+  --sidebar-active-bg: rgba(21, 128, 61, 0.16);
+  --sidebar-active-fg: #4ade80;
+  --sidebar-text: #9ca3af;
+  --sidebar-label: #6b7280;
+  --sidebar-line: rgba(255, 255, 255, 0.07);
+  --charcoal: #111827;               /* dark chart / report panels */
+
+  /* Text */
+  --ink: #111827;
+  --ink-muted: #6b7280;
+  --ink-faint: #9ca3af;
+
+  /* Lines */
+  --line: #e7e5e4;                   /* hairline card border */
+  --line-soft: #f0eeeb;              /* row separators */
+
+  /* Semantic */
+  --success: #16a34a;
+  --warning: #f59e0b;
+  --error: #ef4444;
+  --info: #3b82f6;
+
+  /* Elevation — soft two-layer card shadow */
+  --shadow-card: 0 1px 2px rgba(17, 24, 39, 0.04), 0 4px 14px -4px rgba(17, 24, 39, 0.08);
+  --shadow-card-hover: 0 1px 2px rgba(17, 24, 39, 0.05), 0 10px 24px -8px rgba(17, 24, 39, 0.14);
 
   /* Set (and reset) by DemoBanner — 0px everywhere in the real app, so this
      is a no-op outside /demo. Lets viewport-anchored layouts (schedule)
@@ -23,20 +56,58 @@
   --demo-banner-h: 0px;
 
   --background: var(--page-bg);
-  --foreground: var(--text-primary);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-gold: var(--gold);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-strong: var(--accent-strong);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-bright: var(--accent-bright);
+
+  --color-page: var(--page-bg);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-hover: var(--surface-hover);
+
+  --color-sidebar: var(--sidebar-bg);
+  --color-charcoal: var(--charcoal);
+
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-faint: var(--ink-faint);
+
+  --color-line: var(--line);
+  --color-line-soft: var(--line-soft);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
   background: var(--page-bg);
-  color: var(--text-primary);
+  color: var(--ink);
+}
+
+/* Shared surface primitives — keep in sync with app/components/ui/Card.tsx */
+@utility card-surface {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-card);
 }
 
 .scrollbar-hidden {

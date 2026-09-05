@@ -54,7 +54,7 @@ export default async function JobDetailPage({
     <div className="p-4 md:p-8 max-w-4xl">
       <Link
         href="/jobs"
-        className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#1A1A2E] transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors mb-6"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -66,13 +66,13 @@ export default async function JobDetailPage({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-bold text-[#1A1A2E]">
+            <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">
               {job.title ?? job.job_type ?? 'Untitled Job'}
             </h1>
             <StatusBadge status={job.status} />
           </div>
           {job.clients?.name && (
-            <p className="text-sm text-[#6B7280]">{job.clients.name}</p>
+            <p className="text-sm text-ink-muted">{job.clients.name}</p>
           )}
         </div>
         <JobActions job={job} clients={clients ?? []} staff={staff ?? []} />

@@ -24,8 +24,8 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   if (!value) return null
   return (
     <div>
-      <dt className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider mb-0.5">{label}</dt>
-      <dd className="text-sm text-[#1A1A2E]">{value}</dd>
+      <dt className="text-xs font-semibold text-ink-muted uppercase tracking-wider mb-0.5">{label}</dt>
+      <dd className="text-sm text-ink">{value}</dd>
     </div>
   )
 }
@@ -56,7 +56,7 @@ export default function JobDetailPanel({ job, onClose }: Props) {
         onClick={onClose}
       />
       <div className="relative w-full max-w-sm h-full bg-white shadow-2xl flex flex-col">
-        <div className="px-6 py-4 border-b border-[#E5E7EB] flex items-start justify-between gap-3 shrink-0">
+        <div className="px-6 py-4 border-b border-line flex items-start justify-between gap-3 shrink-0">
           <div className="min-w-0">
             <span
               className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium mb-2"
@@ -65,13 +65,13 @@ export default function JobDetailPanel({ job, onClose }: Props) {
               <span className="w-1.5 h-1.5 rounded-full" style={{ background: color.solid }} />
               {statusLabel}
             </span>
-            <h2 className="text-base font-semibold text-[#1A1A2E] truncate">
+            <h2 className="text-base font-semibold text-ink truncate">
               {job.title ?? job.job_type ?? 'Untitled job'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-1 -mr-1"
+            className="shrink-0 text-ink-muted hover:text-ink transition-colors p-1 -mr-1"
             aria-label="Close"
           >
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -93,10 +93,10 @@ export default function JobDetailPanel({ job, onClose }: Props) {
           <Row label="Location" value={address} />
         </dl>
 
-        <div className="px-6 py-4 border-t border-[#E5E7EB] shrink-0">
+        <div className="px-6 py-4 border-t border-line shrink-0">
           <Link
             href={`/jobs/${job.id}`}
-            className="flex items-center justify-center gap-1.5 w-full px-4 py-2.5 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F4F5F7] transition-colors"
+            className="flex items-center justify-center gap-1.5 w-full px-4 py-2.5 text-sm font-medium bg-white border border-line text-ink rounded-lg hover:bg-surface-muted transition-colors"
           >
             View full job page
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

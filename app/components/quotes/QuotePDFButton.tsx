@@ -239,8 +239,7 @@ export default function QuotePDFButton({ quote, lineItems }: Props) {
     <button
       onClick={handleDownload}
       disabled={busy}
-      className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-      style={{ background: '#1A1A2E', color: '#C9A84C', border: '1px solid #C9A84C' }}
+      className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium rounded-lg bg-surface border border-line text-ink hover:bg-surface-muted transition-colors disabled:opacity-60"
     >
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />

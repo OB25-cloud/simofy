@@ -31,9 +31,9 @@ export default function DemoWriteToast() {
     <div className="fixed bottom-6 right-6 z-[200]">
       <div
         className="flex items-center gap-3 pl-4 pr-4 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
-        style={{ background: '#1A1A2E' }}
+        style={{ background: 'var(--charcoal)' }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
           <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" />
         </svg>
         <span>This is a demo — sign up to make changes</span>

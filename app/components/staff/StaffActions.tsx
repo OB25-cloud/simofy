@@ -26,7 +26,7 @@ export default function StaffActions({ staff }: { staff: Staff }) {
 
         {confirmDelete ? (
           <>
-            <span className="text-xs text-[#6B7280]">Delete this staff member?</span>
+            <span className="text-xs text-ink-muted">Delete this staff member?</span>
             <Button onClick={handleDelete} disabled={deleting} variant="destructive">
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </Button>

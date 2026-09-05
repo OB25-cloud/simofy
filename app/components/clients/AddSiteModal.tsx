@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 
 const inputClass =
-  'w-full border border-[#E5E7EB] rounded-md px-3 py-2 text-sm text-[#1A1A2E] placeholder:text-[#6B7280] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent'
+  'w-full border border-line rounded-md px-3 py-2 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent'
 
 export default function AddSiteModal({
   clientId,
@@ -65,11 +65,11 @@ export default function AddSiteModal({
       }}
     >
       <div className="bg-white w-full h-full sm:h-auto sm:max-w-md sm:rounded-xl shadow-2xl overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E5E7EB]">
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Add Site</h2>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-line">
+          <h2 className="text-sm font-semibold text-ink">Add Site</h2>
           <button
             onClick={onClose}
-            className="text-[#6B7280] hover:text-[#1A1A2E] transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
+            className="text-ink-muted hover:text-ink transition-colors p-3.5 -m-3.5 md:p-0 md:m-0"
             aria-label="Close"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -81,8 +81,8 @@ export default function AddSiteModal({
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
-              Address <span style={{ color: '#C9A84C' }}>*</span>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
+              Address <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <input
               type="text"
@@ -95,7 +95,7 @@ export default function AddSiteModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Location Description
             </label>
             <input
@@ -108,7 +108,7 @@ export default function AddSiteModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Access Notes
             </label>
             <textarea
@@ -121,7 +121,7 @@ export default function AddSiteModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Hazard Notes
             </label>
             <textarea
@@ -139,15 +139,15 @@ export default function AddSiteModal({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-md hover:bg-[#F4F5F7] transition-colors"
+              className="px-4 py-3 sm:py-2 text-sm font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-60"
-              style={{ background: '#C9A84C' }}
+              className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-60"
+              style={{ background: 'var(--accent)' }}
             >
               {loading ? 'Saving…' : 'Add Site'}
             </button>

@@ -150,7 +150,7 @@ export default function AddJobModal({ clients, staff, onClose, initialStaffId, i
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
             <label className={labelClass}>
-              Title <span style={{ color: '#C9A84C' }}>*</span>
+              Title <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <input
               type="text"

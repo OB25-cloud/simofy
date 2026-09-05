@@ -40,7 +40,7 @@ export default async function ClientDetailPage({
     <div className="p-4 md:p-8 max-w-4xl">
       <Link
         href="/clients"
-        className="inline-flex items-center gap-1.5 text-sm text-[#6B7280] hover:text-[#1A1A2E] transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors mb-6"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -51,11 +51,11 @@ export default async function ClientDetailPage({
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center gap-3 mb-1">
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">{client.name}</h1>
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">{client.name}</h1>
           <StatusBadge status={client.is_active ? 'active' : 'inactive'} />
         </div>
         {client.business_name && (
-          <p className="text-sm text-[#6B7280]">{client.business_name}</p>
+          <p className="text-sm text-ink-muted">{client.business_name}</p>
         )}
       </div>
 

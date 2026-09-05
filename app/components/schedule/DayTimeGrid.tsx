@@ -118,7 +118,7 @@ function JobHoverCard({ job, x, y }: { job: Job; x: number; y: number }) {
       className="fixed z-[70] pointer-events-none w-72 rounded-xl bg-white shadow-xl p-4 text-sm"
       style={{ left, top: y + 16 }}
     >
-      <p className="font-semibold text-[#1A1A2E] mb-1.5 truncate">{job.title ?? job.job_type ?? 'Untitled job'}</p>
+      <p className="font-semibold text-ink mb-1.5 truncate">{job.title ?? job.job_type ?? 'Untitled job'}</p>
       <span
         className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium mb-2.5"
         style={{ background: `${color.solid}1F`, color: color.solid }}
@@ -126,12 +126,12 @@ function JobHoverCard({ job, x, y }: { job: Job; x: number; y: number }) {
         <span className="w-1.5 h-1.5 rounded-full" style={{ background: color.solid }} />
         {statusLabel}
       </span>
-      <dl className="space-y-1 text-xs text-[#6B7280]">
-        <p><span className="font-medium text-[#1A1A2E]">Client:</span> {job.clients?.name ?? 'No client'}</p>
-        <p><span className="font-medium text-[#1A1A2E]">Location:</span> {address ?? 'Not set'}</p>
-        <p><span className="font-medium text-[#1A1A2E]">Type:</span> {job.job_type ?? 'Not set'}</p>
-        <p><span className="font-medium text-[#1A1A2E]">Time:</span> {formatTime(job.start_time)} – {formatTime(job.end_time)}</p>
-        <p><span className="font-medium text-[#1A1A2E]">Staff:</span> {job.staff?.name ?? 'Unassigned'}</p>
+      <dl className="space-y-1 text-xs text-ink-muted">
+        <p><span className="font-medium text-ink">Client:</span> {job.clients?.name ?? 'No client'}</p>
+        <p><span className="font-medium text-ink">Location:</span> {address ?? 'Not set'}</p>
+        <p><span className="font-medium text-ink">Type:</span> {job.job_type ?? 'Not set'}</p>
+        <p><span className="font-medium text-ink">Time:</span> {formatTime(job.start_time)} – {formatTime(job.end_time)}</p>
+        <p><span className="font-medium text-ink">Staff:</span> {job.staff?.name ?? 'Unassigned'}</p>
       </dl>
     </div>
   )
@@ -238,7 +238,7 @@ function DayColumn({
       onClick={handleGridClick}
       className="relative flex-1 min-w-0 h-full cursor-pointer"
       style={{
-        background: isOver ? 'rgba(201,168,76,0.08)' : 'transparent',
+        background: isOver ? 'rgba(74, 222, 128,0.08)' : 'transparent',
         borderRight: '1px solid #262626',
         borderLeft: isEmpty ? '1px dashed #3A3A3A' : undefined,
         borderTop: isEmpty ? '1px dashed #3A3A3A' : undefined,
@@ -345,7 +345,7 @@ function UnassignedStrip({
 }) {
   const { setNodeRef, isOver } = useDroppable({ id: UNASSIGNED_KEY })
   return (
-    <div className="shrink-0 mt-3 h-20 rounded-lg flex flex-col" style={{ background: '#1A1A2E' }}>
+    <div className="shrink-0 mt-3 h-20 rounded-lg flex flex-col" style={{ background: 'var(--charcoal)' }}>
       <div className="shrink-0 flex items-center gap-2 px-4 pt-2 pb-1">
         <span className="text-xs font-semibold uppercase tracking-wider text-gray-500">Unassigned</span>
         {jobs.length > 0 && (
@@ -363,7 +363,7 @@ function UnassignedStrip({
       <div
         ref={setNodeRef}
         className="flex-1 min-h-0 flex items-center gap-2 px-4 pb-2 overflow-x-auto"
-        style={{ background: isOver ? 'rgba(201,168,76,0.08)' : 'transparent' }}
+        style={{ background: isOver ? 'rgba(74, 222, 128,0.08)' : 'transparent' }}
       >
         {jobs.length === 0 ? (
           <p className="text-xs text-gray-600">No unassigned jobs today</p>
@@ -410,11 +410,11 @@ function NowIndicator({ isToday }: { isToday: boolean }) {
     <>
       <div
         className="absolute pointer-events-none"
-        style={{ top: `${nowPct}%`, left: AXIS_WIDTH, right: 0, height: 2, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
+        style={{ top: `${nowPct}%`, left: AXIS_WIDTH, right: 0, height: 2, background: 'var(--accent-bright)', boxShadow: '0 0 6px var(--accent-bright)' }}
       />
       <div
         className="absolute pointer-events-none rounded-full"
-        style={{ top: `calc(${nowPct}% - 4px)`, left: AXIS_WIDTH - 5, width: 10, height: 10, background: '#C9A84C', boxShadow: '0 0 6px #C9A84C' }}
+        style={{ top: `calc(${nowPct}% - 4px)`, left: AXIS_WIDTH - 5, width: 10, height: 10, background: 'var(--accent-bright)', boxShadow: '0 0 6px var(--accent-bright)' }}
       />
     </>
   )
@@ -502,7 +502,7 @@ export default function DayTimeGrid({
   }
 
   return (
-    <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: '#1A1A2E' }}>
+    <div className="flex-1 min-h-0 w-full flex flex-col rounded-lg overflow-hidden" style={{ background: 'var(--charcoal)' }}>
       <DndContext sensors={sensors} collisionDetection={pointerWithin} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="flex-1 min-h-0 flex flex-col">
           {/* Header row */}

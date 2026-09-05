@@ -126,6 +126,20 @@ function PurchaseOrderIcon() {
   )
 }
 
+// Brand mark: a simple leaf, rendered inside the green logo tile.
+function LogoMark() {
+  return (
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z" />
+      <path d="M2 21c0-3 1.85-5.36 5.08-6" />
+    </svg>
+  )
+}
+
+// Section labels: tiny, muted, wide-tracked.
+const SECTION_LABEL_CLASSES =
+  'text-[10.5px] font-semibold text-[var(--sidebar-label)] uppercase tracking-[0.14em] mb-2.5'
+
 // ─── nav config ─────────────────────────────────────────────────────────────
 
 type NavItem = { name: string; href: string; Icon: () => React.ReactElement }
@@ -239,16 +253,19 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
   const displayName = userName ?? userEmail ?? 'User'
 
   return (
-    <aside className="w-full h-full bg-[#1E1E2E] flex flex-col">
+    <aside className="w-full h-full bg-sidebar flex flex-col">
       {/* Logo */}
-      <div className="px-6 py-6 flex items-center justify-between">
-        <Link href={`${basePath}/dashboard`} className="text-lg font-bold tracking-widest text-[#C9A84C]">
-          OPERIFY
+      <div className="px-5 pt-6 pb-5 flex items-center justify-between">
+        <Link href={`${basePath}/dashboard`} className="flex items-center gap-2.5 group">
+          <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+            <LogoMark />
+          </span>
+          <span className="text-[15px] font-bold tracking-[0.18em] text-white">OPERIFY</span>
         </Link>
         {onCollapse && (
           <button
             onClick={onCollapse}
-            className="hidden md:flex items-center justify-center w-7 h-7 -mr-1.5 rounded-md text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+            className="hidden md:flex items-center justify-center w-7 h-7 -mr-1 rounded-md text-white/40 hover:text-white hover:bg-white/10 transition-colors"
             aria-label="Collapse sidebar"
           >
             <ChevronLeftIcon />
@@ -259,16 +276,14 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
       {/* Nav sections */}
       <nav className="flex-1 px-2 pb-4 overflow-y-auto scrollbar-hidden">
         {/* Global search */}
-        <div className="mb-4 px-2">
-          <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-2 mb-2">
-            Search
-          </p>
+        <div className="mb-5 px-2">
+          <p className={`${SECTION_LABEL_CLASSES} px-2`}>Search</p>
           <GlobalSearch onNavigate={onNavigate} basePath={basePath} />
         </div>
 
         {sections.map((section, si) => (
-          <div key={section.label} className={si > 0 ? 'mt-6' : ''}>
-            <p className="text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 mb-2">
+          <div key={section.label} className={si > 0 ? 'mt-7' : ''}>
+            <p className={`${SECTION_LABEL_CLASSES} px-4`}>
               {section.label}
             </p>
             {section.items.map(({ name, href, Icon }) => {
@@ -278,14 +293,23 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
                   key={href}
                   href={`${basePath}${href}`}
                   onClick={onNavigate}
+                  aria-current={isActive ? 'page' : undefined}
                   className={[
-                    'flex items-center gap-3 px-4 py-2.5 md:py-2.5 rounded-lg mx-2 mb-0.5 text-sm transition-colors duration-150 border-l-2',
+                    'relative flex items-center gap-3 px-4 py-2 rounded-lg mx-2 mb-1 text-[13.5px] transition-colors duration-150',
                     isActive
-                      ? 'bg-[#2A2A3E] text-[#C9A84C] border-[#C9A84C] font-medium'
-                      : 'text-[#9CA3AF] border-transparent hover:bg-[#2A2A3E]/60 hover:text-white',
+                      ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-active-fg)] font-medium'
+                      : 'text-[var(--sidebar-text)] hover:bg-[var(--sidebar-hover)] hover:text-white',
                   ].join(' ')}
                 >
-                  <Icon />
+                  {isActive && (
+                    <span
+                      aria-hidden
+                      className="absolute left-0 top-1/2 -translate-y-1/2 h-[18px] w-[3px] rounded-r-full bg-[var(--sidebar-active-fg)]"
+                    />
+                  )}
+                  <span className={isActive ? 'text-[var(--sidebar-active-fg)]' : 'text-white/45'}>
+                    <Icon />
+                  </span>
                   {name}
                 </Link>
               )
@@ -294,7 +318,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
         ))}
       </nav>
 
-      <div className="border-t border-[#2A2A3E] p-4">
+      <div className="border-t border-[var(--sidebar-line)] p-4">
         {companyName && (
           <p className="text-xs font-semibold text-white truncate mb-3">
             {companyName}
@@ -302,10 +326,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
         )}
         {/* User profile */}
         <div className="flex items-center gap-3 mb-3">
-          <div
-            className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold"
-            style={{ background: '#C9A84C', color: '#1A1A2E' }}
-          >
+          <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold bg-accent text-white">
             {initials}
           </div>
           <div className="min-w-0 flex-1">
@@ -318,7 +339,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
                 <p className="text-xs font-semibold truncate text-white">
                   {displayName}
                 </p>
-                <p className="text-[10px] truncate mt-px text-[#9CA3AF]">
+                <p className="text-[10px] truncate mt-px text-ink-faint">
                   {displayRole}
                 </p>
               </>
@@ -328,7 +349,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
         {demoMode ? (
           <Link
             href="/demo"
-            className="flex items-center gap-3 w-full px-4 py-2.5 rounded-lg text-sm transition-colors duration-150 text-[#9CA3AF] hover:text-white hover:bg-[#2A2A3E]"
+            className="flex items-center gap-3 w-full px-4 py-2 rounded-lg text-[13.5px] transition-colors duration-150 text-[var(--sidebar-text)] hover:text-white hover:bg-[var(--sidebar-hover)]"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />

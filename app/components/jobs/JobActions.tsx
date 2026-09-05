@@ -32,7 +32,7 @@ export default function JobActions({ job, clients, staff }: Props) {
 
         {confirmDelete ? (
           <>
-            <span className="text-xs text-[#6B7280]">Delete this job?</span>
+            <span className="text-xs text-ink-muted">Delete this job?</span>
             <Button onClick={handleDelete} disabled={deleting} variant="destructive">
               {deleting ? 'Deleting…' : 'Yes, delete'}
             </Button>

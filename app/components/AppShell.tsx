@@ -51,7 +51,7 @@ export default function AppShell({ role, userName, userEmail, permissions, demoM
   return (
     <div className="h-full flex flex-col">
       {/* Mobile top bar */}
-      <div className="md:hidden shrink-0 h-14 bg-[#1E1E2E] flex items-center px-4 gap-4">
+      <div className="md:hidden shrink-0 h-14 bg-sidebar flex items-center px-4 gap-4">
         <button
           onClick={() => setOpen(true)}
           className="flex items-center justify-center w-11 h-11 -ml-2.5 text-white/60 hover:text-white transition-colors"
@@ -59,7 +59,7 @@ export default function AppShell({ role, userName, userEmail, permissions, demoM
         >
           <HamburgerIcon />
         </button>
-        <span className="text-lg font-bold tracking-widest text-[#C9A84C]">
+        <span className="text-[15px] font-bold tracking-[0.18em] text-white">
           OPERIFY
         </span>
       </div>
@@ -98,7 +98,7 @@ export default function AppShell({ role, userName, userEmail, permissions, demoM
           </div>
 
           {/* Collapsed rail — desktop only */}
-          <div className={`hidden h-full bg-[#1E1E2E] flex-col items-center pt-7 ${collapsed ? 'md:flex' : ''}`}>
+          <div className={`hidden h-full bg-sidebar flex-col items-center pt-7 ${collapsed ? 'md:flex' : ''}`}>
             <button
               onClick={() => setCollapsed(false)}
               className="flex items-center justify-center w-8 h-8 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors"
@@ -109,7 +109,7 @@ export default function AppShell({ role, userName, userEmail, permissions, demoM
           </div>
         </div>
 
-        <main className="flex-1 overflow-y-auto min-w-0 bg-[#F4F5F7]">
+        <main className="flex-1 overflow-y-auto min-w-0 bg-page">
           {children}
         </main>
       </div>

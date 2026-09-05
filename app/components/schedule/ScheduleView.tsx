@@ -94,9 +94,9 @@ function NotifyCheckboxes({
             checked={notifyClient}
             onChange={(e) => onToggleClient(e.target.checked)}
             className="w-4 h-4 rounded cursor-pointer shrink-0"
-            style={{ accentColor: '#C9A84C' }}
+            style={{ accentColor: 'var(--accent)' }}
           />
-          <span className="text-sm text-[#6B7280]">Notify client of this schedule change?</span>
+          <span className="text-sm text-ink-muted">Notify client of this schedule change?</span>
         </label>
       )}
       {staffName && (
@@ -106,9 +106,9 @@ function NotifyCheckboxes({
             checked={notifyStaff}
             onChange={(e) => onToggleStaff(e.target.checked)}
             className="w-4 h-4 rounded cursor-pointer shrink-0"
-            style={{ accentColor: '#C9A84C' }}
+            style={{ accentColor: 'var(--accent)' }}
           />
-          <span className="text-sm text-[#6B7280]">Notify {staffName} of this schedule change?</span>
+          <span className="text-sm text-ink-muted">Notify {staffName} of this schedule change?</span>
         </label>
       )}
     </div>
@@ -156,46 +156,46 @@ function ReschedulePickerModal({
       onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
     >
       <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        <div className="px-6 py-4 border-b border-[#E5E7EB] shrink-0" style={{ background: 'rgba(201, 168, 76,0.12)' }}>
-          <h2 className="text-sm font-semibold text-[#1A1A2E]">Reschedule Job</h2>
+        <div className="px-6 py-4 border-b border-line shrink-0" style={{ background: 'rgba(21, 128, 61,0.12)' }}>
+          <h2 className="text-sm font-semibold text-ink">Reschedule Job</h2>
         </div>
 
         <div className="px-6 py-5 space-y-4 overflow-y-auto">
           <div>
-            <p className="text-sm font-medium text-[#1A1A2E]">{job.title ?? job.job_type ?? 'Untitled job'}</p>
-            <p className="mt-1.5 text-sm text-[#6B7280]">
+            <p className="text-sm font-medium text-ink">{job.title ?? job.job_type ?? 'Untitled job'}</p>
+            <p className="mt-1.5 text-sm text-ink-muted">
               Currently {formatModalDate(currentKey)}{showTime && <> · {formatTime(currentStart)} – {formatTime(currentEnd)}</>}
             </p>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#6B7280] mb-1.5">New date</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">New date</label>
             <input
               type="date"
               value={dateKey}
               onChange={(e) => setDateKey(e.target.value)}
-              className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
+              className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
             />
           </div>
 
           {showTime && (
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">Start Time</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">Start Time</label>
                 <select
                   value={startTime}
                   onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
+                  className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
                 >
                   {TIME_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#6B7280] mb-1.5">End Time</label>
+                <label className="block text-xs font-medium text-ink-muted mb-1.5">End Time</label>
                 <select
                   value={endTime}
                   onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full border border-[#E5E7EB] rounded-md px-3 py-2.5 text-sm text-[#1A1A2E] focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent bg-white"
+                  className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
                 >
                   {TIME_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
@@ -213,12 +213,12 @@ function ReschedulePickerModal({
           />
         </div>
 
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-[#E5E7EB] shrink-0">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-line shrink-0">
           <button
             type="button"
             onClick={onCancel}
             disabled={saving}
-            className="px-4 py-3 md:py-2 text-sm bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F4F5F7] transition-colors disabled:opacity-60"
+            className="px-4 py-3 md:py-2 text-sm bg-white border border-line text-ink rounded-lg hover:bg-surface-muted transition-colors disabled:opacity-60"
           >
             Cancel
           </button>
@@ -226,8 +226,8 @@ function ReschedulePickerModal({
             type="button"
             onClick={() => onConfirm(dateKey, startTime, endTime)}
             disabled={saving || unchanged}
-            className="px-4 py-3 md:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-lg transition-opacity hover:opacity-90 disabled:opacity-60 disabled:hover:opacity-60"
-            style={{ background: '#C9A84C' }}
+            className="px-4 py-3 md:py-2 text-sm font-medium text-white font-semibold rounded-lg transition-[filter] hover:brightness-110 disabled:opacity-60 disabled:hover:opacity-60"
+            style={{ background: 'var(--accent)' }}
           >
             {saving ? 'Rescheduling…' : 'Confirm'}
           </button>
@@ -244,9 +244,9 @@ function Toast({ message, onUndo }: { message: string; onUndo?: () => void }) {
     <div className="fixed bottom-6 right-6 z-50">
       <div
         className="flex items-center gap-3 pl-4 pr-2 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
-        style={{ background: '#1A1A2E' }}
+        style={{ background: 'var(--charcoal)' }}
       >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
           <polyline points="20 6 9 17 4 12" />
         </svg>
         <span>{message}</span>
@@ -254,7 +254,7 @@ function Toast({ message, onUndo }: { message: string; onUndo?: () => void }) {
           <button
             onClick={onUndo}
             className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-md hover:bg-white/10 transition-colors"
-            style={{ color: '#C9A84C' }}
+            style={{ color: 'var(--accent-bright)' }}
           >
             Undo
           </button>
@@ -270,8 +270,8 @@ function Toast({ message, onUndo }: { message: string; onUndo?: () => void }) {
 
 function GridLoading() {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-3 rounded-lg" style={{ background: '#1A1A2E' }}>
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" className="animate-spin">
+    <div className="flex-1 flex flex-col items-center justify-center gap-3 rounded-lg" style={{ background: 'var(--charcoal)' }}>
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" className="animate-spin">
         <path d="M21 12a9 9 0 1 1-6.219-8.56" />
       </svg>
       <p className="text-sm text-gray-500">Loading schedule…</p>
@@ -281,7 +281,7 @@ function GridLoading() {
 
 function GridError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: '#1A1A2E' }}>
+    <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: 'var(--charcoal)' }}>
       <button
         onClick={onRetry}
         className="flex flex-col items-center gap-2 px-6 py-4 text-center hover:opacity-90 transition-opacity"
@@ -311,26 +311,26 @@ function MobileJobList({ jobs, todayKey, onOpen }: { jobs: Job[]; todayKey: stri
 
   if (todaysJobs.length === 0) {
     return (
-      <div className="rounded-xl border border-[#E5E7EB] bg-white py-12 text-center">
-        <p className="text-sm text-[#6B7280]">No jobs scheduled for today</p>
+      <div className="rounded-xl border border-line bg-white py-12 text-center">
+        <p className="text-sm text-ink-muted">No jobs scheduled for today</p>
       </div>
     )
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm divide-y divide-[#F4F5F7]">
+    <div className="bg-white rounded-xl border border-line shadow-sm divide-y divide-line-soft">
       {todaysJobs.map(job => {
         const color = colorForStatus(job.status)
         return (
           <button
             key={job.id}
             onClick={() => onOpen(job)}
-            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-[#F9FAFB] transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-surface-hover transition-colors"
           >
             <span className="shrink-0 w-1 h-10 rounded-full" style={{ background: color.solid }} />
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-[#1A1A2E] truncate">{job.title ?? job.job_type ?? 'Untitled'}</p>
-              <p className="text-xs text-[#6B7280] truncate mt-0.5">
+              <p className="text-sm font-medium text-ink truncate">{job.title ?? job.job_type ?? 'Untitled'}</p>
+              <p className="text-xs text-ink-muted truncate mt-0.5">
                 {formatTime(job.start_time)} · {job.clients?.name ?? 'No client'} · {job.staff?.name ?? 'Unassigned'}
               </p>
             </div>
@@ -634,20 +634,20 @@ export default function ScheduleView() {
       {/* Page header */}
       <div className="shrink-0 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Schedule</h1>
-          <p className="mt-1 text-xs text-[#6B7280]">{headerLabel}</p>
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Schedule</h1>
+          <p className="mt-1 text-xs text-ink-muted">{headerLabel}</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={goToday}
-            className="px-3 py-3 sm:py-1.5 text-sm bg-white border border-[#E5E7EB] text-[#1A1A2E] rounded-lg hover:bg-[#F4F5F7] transition-colors"
+            className="px-3 py-3 sm:py-1.5 text-sm bg-white border border-line text-ink rounded-lg hover:bg-surface-muted transition-colors"
           >
             Today
           </button>
-          <div className="flex items-center rounded-md border border-[#E5E7EB] overflow-hidden">
+          <div className="flex items-center rounded-md border border-line overflow-hidden">
             <button
               onClick={goPrev}
-              className="p-3.5 sm:p-1.5 text-[#6B7280] hover:text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors border-r border-[#E5E7EB]"
+              className="p-3.5 sm:p-1.5 text-ink-muted hover:text-ink hover:bg-surface-hover transition-colors border-r border-line"
               aria-label={isDayMode ? 'Previous day' : 'Previous week'}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -656,7 +656,7 @@ export default function ScheduleView() {
             </button>
             <button
               onClick={goNext}
-              className="p-3.5 sm:p-1.5 text-[#6B7280] hover:text-[#1A1A2E] hover:bg-[#F9FAFB] transition-colors"
+              className="p-3.5 sm:p-1.5 text-ink-muted hover:text-ink hover:bg-surface-hover transition-colors"
               aria-label={isDayMode ? 'Next day' : 'Next week'}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -664,14 +664,14 @@ export default function ScheduleView() {
               </svg>
             </button>
           </div>
-          <div className="inline-flex rounded-md border border-[#E5E7EB] overflow-hidden shrink-0">
+          <div className="inline-flex rounded-md border border-line overflow-hidden shrink-0">
             {(['day', 'week', 'map'] as const).map(v => (
               <button
                 key={v}
                 onClick={() => { setView(v); if (v !== 'map') setGridMode(v); if (v === 'map') setMapEverShown(true) }}
                 className={[
                   'px-3.5 py-3 sm:py-2 text-sm transition-colors',
-                  view === v ? 'bg-[#C9A84C] text-[#1A1A2E] font-semibold' : 'bg-white text-[#6B7280] hover:bg-[#F4F5F7]',
+                  view === v ? 'bg-accent text-white font-semibold' : 'bg-white text-ink-muted hover:bg-surface-muted',
                 ].join(' ')}
               >
                 {v === 'day' ? 'Day' : v === 'week' ? 'Week' : 'Map View'}

@@ -8,8 +8,8 @@ import type { StaffPerfRow } from './types'
 export default function StaffPerformanceTab({ data }: { data: StaffPerfRow[] }) {
   if (data.length === 0) {
     return (
-      <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
-        <p className="text-sm text-[#6B7280]">No active staff to report on</p>
+      <div className="rounded-xl border border-line bg-surface-muted py-16 text-center">
+        <p className="text-sm text-ink-muted">No active staff to report on</p>
       </div>
     )
   }
@@ -37,25 +37,25 @@ export default function StaffPerformanceTab({ data }: { data: StaffPerfRow[] }) 
         </ResponsiveContainer>
       </ChartCard>
 
-      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+      <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
         <table className="w-full min-w-[560px] text-sm">
           <thead>
             <tr>
-              <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Staff</th>
-              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Assigned</th>
-              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Completed</th>
-              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Revenue</th>
-              <th className="text-right px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Avg Job Value</th>
+              <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Staff</th>
+              <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Assigned</th>
+              <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Completed</th>
+              <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Revenue</th>
+              <th className="text-right px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Avg Job Value</th>
             </tr>
           </thead>
           <tbody>
             {data.map(row => (
-              <tr key={row.name} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
-                <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">{row.name}</td>
-                <td className="px-4 py-3 text-right text-sm text-[#6B7280] tabular-nums">{row.jobsAssigned}</td>
-                <td className="px-4 py-3 text-right text-sm text-[#6B7280] tabular-nums">{row.jobsCompleted}</td>
-                <td className="px-4 py-3 text-right font-medium text-[#1A1A2E] tabular-nums">{moneyFormatter.format(row.revenue)}</td>
-                <td className="px-4 py-3 text-right text-sm text-[#6B7280] tabular-nums">{moneyFormatter.format(row.avgJobValue)}</td>
+              <tr key={row.name} className="border-t border-line-soft hover:bg-surface-hover transition-colors">
+                <td className="px-4 py-3 text-sm font-medium text-ink">{row.name}</td>
+                <td className="px-4 py-3 text-right text-sm text-ink-muted tabular-nums">{row.jobsAssigned}</td>
+                <td className="px-4 py-3 text-right text-sm text-ink-muted tabular-nums">{row.jobsCompleted}</td>
+                <td className="px-4 py-3 text-right font-medium text-ink tabular-nums">{moneyFormatter.format(row.revenue)}</td>
+                <td className="px-4 py-3 text-right text-sm text-ink-muted tabular-nums">{moneyFormatter.format(row.avgJobValue)}</td>
               </tr>
             ))}
           </tbody>

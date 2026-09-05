@@ -16,11 +16,11 @@ export default async function NotificationSettingsPage() {
     <div className="p-4 md:p-8 max-w-2xl">
       {/* Header */}
       <div className="mb-8">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: '#C9A84C' }}>
+        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--accent)' }}>
           Settings
         </p>
-        <h1 className="text-2xl font-bold text-[#1A1A2E]">Notification Defaults</h1>
-        <p className="text-xs text-[#6B7280] mt-1">
+        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Notification Defaults</h1>
+        <p className="text-xs text-ink-muted mt-1">
           Set the default notification preferences for new clients. You can override these per client from their profile page.
         </p>
       </div>

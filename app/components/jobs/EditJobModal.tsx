@@ -311,7 +311,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
           <div>
             <label className={labelClass}>
-              Title <span style={{ color: '#C9A84C' }}>*</span>
+              Title <span style={{ color: 'var(--accent)' }}>*</span>
             </label>
             <input
               type="text"
@@ -443,7 +443,7 @@ export default function EditJobModal({ job, clients, staff, onClose }: Props) {
           </div>
 
           {notifBanner && (
-            <div className="flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium" style={{ background: 'rgba(201, 168, 76,0.1)', color: '#C9A84C' }}>
+            <div className="flex items-center gap-2 rounded-md px-3 py-2 text-xs font-medium" style={{ background: 'rgba(21, 128, 61,0.1)', color: 'var(--accent)' }}>
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" /><path d="M13.73 21a2 2 0 0 1-3.46 0" />
               </svg>

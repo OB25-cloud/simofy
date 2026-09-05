@@ -10,13 +10,13 @@ import Button from '@/app/components/ui/Button'
 import { inputClass } from '@/app/components/ui/input'
 
 const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: 'rgba(201, 168, 76,0.12)', text: '#C9A84C', label: 'Admin' },
+  admin: { bg: 'rgba(21, 128, 61,0.12)', text: 'var(--accent)', label: 'Admin' },
   field: { bg: '#DBEAFE', text: '#3B82F6', label: 'Field' },
 }
 
 function RoleBadge({ role }: { role: string | null }) {
   if (!role) return <span className="text-gray-300 text-xs">—</span>
-  const config = ROLE_CONFIG[role] ?? { bg: '#F4F5F7', text: '#6B7280', label: role }
+  const config = ROLE_CONFIG[role] ?? { bg: 'var(--surface-muted)', text: 'var(--ink-muted)', label: role }
   return (
     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium" style={{ background: config.bg, color: config.text }}>
       {config.label}
@@ -26,7 +26,7 @@ function RoleBadge({ role }: { role: string | null }) {
 
 function SearchIcon() {
   return (
-    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted pointer-events-none" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
     </svg>
   )
@@ -74,8 +74,8 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E]">Staff</h1>
-          <p className="mt-1 text-xs text-[#6B7280]">{staff.length} {staff.length === 1 ? 'team member' : 'team members'} total</p>
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Staff</h1>
+          <p className="mt-1 text-xs text-ink-muted">{staff.length} {staff.length === 1 ? 'team member' : 'team members'} total</p>
         </div>
         <Button onClick={() => setShowModal(true)} variant="primary">
           <PlusIcon />
@@ -118,24 +118,24 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
 
       {/* Table */}
       {filtered.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-16 text-center">
-          <p className="text-sm text-[#6B7280]">
+        <div className="rounded-xl border border-line bg-surface-muted py-16 text-center">
+          <p className="text-sm text-ink-muted">
             {search || statusFilter !== 'all' ? 'No staff match the current filters.' : 'No staff yet. Add your first team member above.'}
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
               <tr>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Name</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Role</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Phone</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Email</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Pay Rate</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Added</th>
-                <th className="text-left px-4 py-3 font-semibold text-[#6B7280] text-xs uppercase tracking-wider bg-[#F4F5F7]">Status</th>
-                <th className="px-4 py-3 w-8 bg-[#F4F5F7]" />
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Name</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Role</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Phone</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Email</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Pay Rate</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Added</th>
+                <th className="text-left px-4 py-3 text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Status</th>
+                <th className="px-4 py-3 w-8 bg-surface-muted border-b border-line" />
               </tr>
             </thead>
             <tbody>
@@ -143,29 +143,29 @@ export default function StaffView({ staff }: { staff: Staff[] }) {
                 <tr
                   key={member.id}
                   onClick={() => router.push(`/staff/${member.id}`)}
-                  className="cursor-pointer border-b border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors group"
+                  className="cursor-pointer border-b border-line-soft hover:bg-surface-hover transition-colors group"
                 >
-                  <td className="px-4 py-3 text-sm font-medium text-[#1A1A2E]">{member.name}</td>
+                  <td className="px-4 py-3 text-sm font-medium text-ink">{member.name}</td>
                   <td className="px-4 py-3"><RoleBadge role={member.role} /></td>
-                  <td className="px-4 py-3 text-sm text-[#6B7280]">
+                  <td className="px-4 py-3 text-sm text-ink-muted">
                     {member.phone ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-sm text-[#6B7280]">
+                  <td className="px-4 py-3 text-sm text-ink-muted">
                     {member.email ?? <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-sm text-[#6B7280] tabular-nums">
+                  <td className="px-4 py-3 text-sm text-ink-muted tabular-nums">
                     {member.pay_rate != null
-                      ? <span>${member.pay_rate.toFixed(2)}<span className="text-[#6B7280] text-xs">/hr</span></span>
+                      ? <span>${member.pay_rate.toFixed(2)}<span className="text-ink-muted text-xs">/hr</span></span>
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-[#6B7280] text-xs">
+                  <td className="px-4 py-3 text-ink-muted text-xs">
                     {new Date(member.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={member.is_active ? 'active' : 'inactive'} />
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors text-base">→</span>
+                    <span className="text-gray-300 group-hover:text-accent transition-colors text-base">→</span>
                   </td>
                 </tr>
               ))}

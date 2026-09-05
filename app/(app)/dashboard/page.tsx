@@ -63,7 +63,7 @@ function IconQuotesPipe() {
 
 function PipelineArrow() {
   return (
-    <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(201, 168, 76,0.35)' }}>
+    <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(21, 128, 61,0.35)' }}>
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
         <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
       </svg>
@@ -285,33 +285,33 @@ export default async function DashboardPage() {
   // ── Insight icons ─────────────────────────────────────────────────────────────
 
   const AlertIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
       <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
     </svg>
   )
   const TrendIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/>
     </svg>
   )
   const StarIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
     </svg>
   )
   const RevenueIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
     </svg>
   )
   const BellIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
     </svg>
   )
   const PctIcon = (
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#C9A84C" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#15803d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
       <line x1="19" y1="5" x2="5" y2="19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/>
     </svg>
   )
@@ -388,8 +388,8 @@ export default async function DashboardPage() {
 
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E]">Dashboard</h1>
-        <p className="text-xs text-[#6B7280] mt-1">{dateLabel}</p>
+        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Dashboard</h1>
+        <p className="text-xs text-ink-muted mt-1">{dateLabel}</p>
       </div>
 
       {/* AI Search */}
@@ -449,7 +449,7 @@ export default async function DashboardPage() {
 
       {/* Business Pipeline */}
       <div className="mb-6">
-        <p className="text-sm font-semibold text-[#1A1A2E] mb-3">Business Pipeline</p>
+        <p className="text-sm font-semibold text-ink mb-3">Business Pipeline</p>
         <div className="flex flex-col sm:flex-row gap-3">
           <DarkStatCard label="Leads" value={leads.length} icon={<IconClients />} className="flex-1" />
           <PipelineArrow />
@@ -477,7 +477,7 @@ export default async function DashboardPage() {
           <Link
             key={href}
             href={href}
-            className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs bg-white border border-[#E5E7EB] text-[#1A1A2E] hover:bg-[#F4F5F7] transition-colors"
+            className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs bg-white border border-line text-ink hover:bg-surface-muted transition-colors"
           >
             {label}
           </Link>
@@ -493,61 +493,61 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
 
         {/* Jobs Today — 3/5 */}
-        <div className="lg:col-span-3 bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
+        <div className="lg:col-span-3 bg-white rounded-xl border border-line shadow-sm overflow-hidden">
+          <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-surface-muted">
             <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Jobs Today</p>
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Jobs Today</p>
               <span
                 className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold"
-                style={{ background: 'rgba(201, 168, 76,0.15)', color: '#C9A84C' }}
+                style={{ background: 'rgba(21, 128, 61,0.15)', color: 'var(--accent)' }}
               >
                 {jobsToday.length}
               </span>
             </div>
-            <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#C9A84C]">
+            <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-accent">
               View all →
             </Link>
           </div>
 
           {jobsToday.length === 0 ? (
             <div className="px-4 py-12 text-center">
-              <p className="text-sm text-[#9CA3AF]">No jobs scheduled for today</p>
+              <p className="text-sm text-ink-faint">No jobs scheduled for today</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full min-w-[520px] text-sm">
                 <thead>
                   <tr>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Job</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Client</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Type</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Staff</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-2 w-6" />
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Job</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Type</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Staff</th>
+                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Status</th>
+                    <th className="px-4 py-2 w-6 bg-surface-muted border-b border-line" />
                   </tr>
                 </thead>
                 <tbody>
                   {jobsToday.map(job => (
-                    <tr key={job.id} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
+                    <tr key={job.id} className="border-t border-line-soft hover:bg-surface-hover transition-colors">
                       <td className="px-4 py-2.5">
-                        <p className="font-medium text-[#1A1A2E] truncate max-w-[130px] text-xs">
+                        <p className="font-medium text-ink truncate max-w-[130px] text-xs">
                           {job.title ?? job.job_type ?? 'Untitled'}
                         </p>
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-[#6B7280] truncate max-w-[110px]">
+                      <td className="px-4 py-2.5 text-xs text-ink-muted truncate max-w-[110px]">
                         {job.clients?.name ?? <span className="text-gray-300">—</span>}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-[#6B7280]">
+                      <td className="px-4 py-2.5 text-xs text-ink-muted">
                         {job.job_type ?? <span className="text-gray-300">—</span>}
                       </td>
-                      <td className="px-4 py-2.5 text-xs text-[#6B7280]">
+                      <td className="px-4 py-2.5 text-xs text-ink-muted">
                         {job.staff?.name ?? <span className="text-gray-300">—</span>}
                       </td>
                       <td className="px-4 py-2.5">
                         <StatusBadge status={job.status} />
                       </td>
                       <td className="px-4 py-2.5 text-right">
-                        <Link href={`/jobs/${job.id}`} className="text-gray-300 hover:text-[#C9A84C] transition-colors text-sm">→</Link>
+                        <Link href={`/jobs/${job.id}`} className="text-gray-300 hover:text-accent transition-colors text-sm">→</Link>
                       </td>
                     </tr>
                   ))}
@@ -561,30 +561,30 @@ export default async function DashboardPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">Recent Activity</p>
-              <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#C9A84C]">
+          <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-surface-muted">
+              <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Recent Activity</p>
+              <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-accent">
                 View all →
               </Link>
             </div>
             {recentJobs.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-[#9CA3AF]">No jobs yet</p>
+                <p className="text-sm text-ink-faint">No jobs yet</p>
               </div>
             ) : (
-              <div className="divide-y divide-[#F4F5F7]">
+              <div className="divide-y divide-line-soft">
                 {recentJobs.slice(0, 5).map(job => (
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#F9FAFB] transition-colors group"
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-hover transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-[#1A1A2E] truncate group-hover:text-[#C9A84C] transition-colors">
+                      <p className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
-                      <p className="text-[11px] text-[#6B7280] truncate mt-0.5">
+                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
                         {job.clients?.name ?? '—'}
                         {job.created_at && (
                           <span> · {new Date(job.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' })}</span>
@@ -599,44 +599,44 @@ export default async function DashboardPage() {
           </div>
 
           {/* New Leads */}
-          <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-[#E5E7EB] bg-[#F4F5F7]">
+          <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-surface-muted">
               <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-[#6B7280]">New Leads</p>
+                <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">New Leads</p>
                 {leads.length > 0 && (
                   <span
-                    className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-[#1A1A2E]"
-                    style={{ background: '#C9A84C' }}
+                    className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
+                    style={{ background: 'var(--accent)' }}
                   >
                     {leads.length}
                   </span>
                 )}
               </div>
-              <Link href="/leads" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#C9A84C]">
+              <Link href="/leads" className="text-xs font-medium hover:opacity-70 transition-opacity text-accent">
                 View all →
               </Link>
             </div>
             {leads.length === 0 ? (
               <div className="px-4 py-8 text-center">
-                <p className="text-sm text-[#9CA3AF]">No new leads</p>
+                <p className="text-sm text-ink-faint">No new leads</p>
               </div>
             ) : (
-              <div className="divide-y divide-[#F4F5F7]">
+              <div className="divide-y divide-line-soft">
                 {leads.slice(0, 5).map(lead => (
                   <Link
                     key={lead.id}
                     href={`/leads/${lead.id}`}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-[#F9FAFB] transition-colors group"
+                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-hover transition-colors group"
                   >
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-[#1A1A2E] truncate group-hover:text-[#C9A84C] transition-colors">
+                      <p className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">
                         {lead.name ?? 'Unnamed Lead'}
                       </p>
-                      <p className="text-[11px] text-[#6B7280] truncate mt-0.5">
+                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
                         {lead.email ?? lead.phone ?? (lead as unknown as { source?: string }).source ?? '—'}
                       </p>
                     </div>
-                    <span className="text-gray-300 group-hover:text-[#C9A84C] transition-colors shrink-0 text-sm">→</span>
+                    <span className="text-gray-300 group-hover:text-accent transition-colors shrink-0 text-sm">→</span>
                   </Link>
                 ))}
               </div>
@@ -667,26 +667,26 @@ export default async function DashboardPage() {
           <table className="w-full min-w-[480px] text-sm">
             <thead>
               <tr>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Invoice</th>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Client</th>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Amount</th>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-[#6B7280] uppercase tracking-wider">Due Date</th>
-                <th className="px-4 py-2 w-6" />
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Invoice</th>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Amount</th>
+                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Due Date</th>
+                <th className="px-4 py-2 w-6 bg-surface-muted border-b border-line" />
               </tr>
             </thead>
             <tbody>
               {overdueInvoices.map(inv => (
-                <tr key={inv.id} className="border-t border-[#F4F5F7] hover:bg-[#F9FAFB] transition-colors">
-                  <td className="px-4 py-2.5 font-mono text-xs font-semibold text-[#1A1A2E]">
+                <tr key={inv.id} className="border-t border-line-soft hover:bg-surface-hover transition-colors">
+                  <td className="px-4 py-2.5 font-mono text-xs font-semibold text-ink">
                     INV-{inv.id.slice(0, 6).toUpperCase()}
                   </td>
-                  <td className="px-4 py-2.5 text-sm font-medium text-[#1A1A2E]">
+                  <td className="px-4 py-2.5 text-sm font-medium text-ink">
                     {inv.clients?.name ?? <span className="text-gray-300">—</span>}
                   </td>
                   <td className="px-4 py-2.5 text-sm font-semibold tabular-nums" style={{ color: '#EF4444' }}>
                     {inv.total != null ? fmtMoney(inv.total) : '—'}
                   </td>
-                  <td className="px-4 py-2.5 text-xs text-[#6B7280]">
+                  <td className="px-4 py-2.5 text-xs text-ink-muted">
                     {inv.due_date
                       ? new Date(inv.due_date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
                       : <span className="text-gray-300">—</span>}

@@ -109,28 +109,28 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
 
   return (
     <div>
-      <h2 className="text-base font-semibold text-[#1A1A2E] mb-5">
+      <h2 className="text-base font-semibold text-ink mb-5">
         Purchase Orders
-        <span className="ml-2 text-sm font-normal text-[#6B7280]">({purchaseOrders.length})</span>
+        <span className="ml-2 text-sm font-normal text-ink-muted">({purchaseOrders.length})</span>
       </h2>
 
       {/* Add purchase order form */}
-      <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm p-4 mb-5 space-y-3">
+      <div className="bg-white rounded-xl border border-line shadow-sm p-4 mb-5 space-y-3">
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-xs text-[#6B7280] mb-1">Supplier</label>
+            <label className="block text-xs text-ink-muted mb-1">Supplier</label>
             <input
               type="text"
               value={supplier}
               onChange={e => setSupplier(e.target.value)}
               placeholder="e.g. Bunnings Warehouse"
-              className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
+              className="w-full rounded-md border border-line px-3 py-2 text-sm text-ink placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent"
             />
           </div>
           <div>
-            <label className="block text-xs text-[#6B7280] mb-1">Amount</label>
+            <label className="block text-xs text-ink-muted mb-1">Amount</label>
             <div className="relative">
-              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[#6B7280] text-sm pointer-events-none">$</span>
+              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted text-sm pointer-events-none">$</span>
               <input
                 type="number"
                 min="0"
@@ -138,26 +138,26 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                 value={amount}
                 onChange={e => setAmount(e.target.value)}
                 placeholder="0.00"
-                className="w-full rounded-md border border-[#E5E7EB] pl-7 pr-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
+                className="w-full rounded-md border border-line pl-7 pr-3 py-2 text-sm text-ink placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent"
               />
             </div>
           </div>
         </div>
 
         <div>
-          <label className="block text-xs text-[#6B7280] mb-1">Description</label>
+          <label className="block text-xs text-ink-muted mb-1">Description</label>
           <input
             type="text"
             value={description}
             onChange={e => setDescription(e.target.value)}
             placeholder="What's being ordered…"
-            className="w-full rounded-md border border-[#E5E7EB] px-3 py-2 text-sm text-[#1A1A2E] placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-[#C9A84C] focus:border-transparent"
+            className="w-full rounded-md border border-line px-3 py-2 text-sm text-ink placeholder-gray-300 focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent"
           />
         </div>
 
         <div className="flex items-end justify-between gap-3 flex-wrap">
           <div>
-            <label className="block text-xs text-[#6B7280] mb-1">Receipt (optional)</label>
+            <label className="block text-xs text-ink-muted mb-1">Receipt (optional)</label>
             <input
               ref={fileInputRef}
               type="file"
@@ -170,8 +170,8 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
           <button
             onClick={handleAdd}
             disabled={adding || !supplier.trim() || !amount || parseFloat(amount) <= 0}
-            className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md transition-opacity hover:opacity-90 disabled:opacity-50"
-            style={{ background: '#C9A84C' }}
+            className="flex items-center gap-1.5 px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md transition-[filter] hover:brightness-110 disabled:opacity-50"
+            style={{ background: 'var(--accent)' }}
           >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
               <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
@@ -185,39 +185,39 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
 
       {/* Purchase orders table */}
       {purchaseOrders.length === 0 ? (
-        <div className="rounded-xl border border-[#E5E7EB] bg-[#F4F5F7] py-10 text-center">
-          <p className="text-sm text-[#6B7280]">No purchase orders yet</p>
+        <div className="rounded-xl border border-line bg-surface-muted py-10 text-center">
+          <p className="text-sm text-ink-muted">No purchase orders yet</p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+        <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
           <table className="w-full min-w-[640px] text-sm">
             <thead>
-              <tr className="border-b border-[#E5E7EB] bg-[#F4F5F7]">
-                <th className="text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 py-3">Supplier</th>
-                <th className="text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 py-3">Description</th>
-                <th className="text-right text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 py-3">Amount</th>
-                <th className="text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 py-3">Status</th>
-                <th className="text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 py-3">Receipt</th>
-                <th className="text-left text-xs font-semibold text-[#6B7280] uppercase tracking-wider px-4 py-3">Date</th>
+              <tr className="border-b border-line bg-surface-muted">
+                <th className="text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] px-4 py-3 bg-surface-muted border-b border-line">Supplier</th>
+                <th className="text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] px-4 py-3 bg-surface-muted border-b border-line">Description</th>
+                <th className="text-right text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] px-4 py-3 bg-surface-muted border-b border-line">Amount</th>
+                <th className="text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] px-4 py-3 bg-surface-muted border-b border-line">Status</th>
+                <th className="text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] px-4 py-3 bg-surface-muted border-b border-line">Receipt</th>
+                <th className="text-left text-[11px] font-semibold text-ink-muted uppercase tracking-[0.08em] px-4 py-3 bg-surface-muted border-b border-line">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#F4F5F7]">
+            <tbody className="divide-y divide-line-soft">
               {purchaseOrders.map(po => (
-                <tr key={po.id} className="hover:bg-[#F9FAFB] transition-colors">
-                  <td className="px-4 py-3 text-[#1A1A2E] font-medium">{po.supplier}</td>
+                <tr key={po.id} className="hover:bg-surface-hover transition-colors">
+                  <td className="px-4 py-3 text-ink font-medium">{po.supplier}</td>
                   <td className="px-4 py-3 text-gray-500 max-w-[200px]">
                     {po.description
                       ? <span className="block truncate">{po.description}</span>
                       : <span className="text-gray-300">—</span>}
                   </td>
-                  <td className="px-4 py-3 text-right font-medium text-[#1A1A2E]">{fmtCurrency(po.amount)}</td>
+                  <td className="px-4 py-3 text-right font-medium text-ink">{fmtCurrency(po.amount)}</td>
                   <td className="px-4 py-3">
                     {isAdmin ? (
                       <select
                         value={po.status}
                         onChange={e => handleStatusChange(po, e.target.value as PurchaseOrderStatus)}
                         disabled={updatingId === po.id}
-                        className={`text-xs rounded-full px-2.5 py-0.5 font-medium border-0 focus:outline-none focus:ring-1 focus:ring-[#C9A84C] disabled:opacity-50 ${STATUS_SELECT_CLASS[po.status]}`}
+                        className={`text-xs rounded-full px-2.5 py-0.5 font-medium border-0 focus:outline-none focus:ring-1 focus:ring-accent disabled:opacity-50 ${STATUS_SELECT_CLASS[po.status]}`}
                       >
                         {STATUS_OPTIONS.map(s => (
                           <option key={s} value={s}>{statusLabel(s)}</option>
@@ -234,7 +234,7 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-xs hover:underline"
-                        style={{ color: '#C9A84C' }}
+                        style={{ color: 'var(--accent)' }}
                       >
                         View
                       </a>
@@ -242,16 +242,16 @@ export default function PurchaseOrdersSection({ jobId, purchaseOrders, setPurcha
                       <span className="text-gray-300 text-xs">—</span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-[#6B7280] text-xs">{fmtDate(po.created_at)}</td>
+                  <td className="px-4 py-3 text-ink-muted text-xs">{fmtDate(po.created_at)}</td>
                 </tr>
               ))}
             </tbody>
             <tfoot>
-              <tr className="border-t border-[#E5E7EB] bg-[#F4F5F7]">
-                <td colSpan={2} className="px-4 py-3 text-xs font-semibold text-[#6B7280] uppercase tracking-wider">
+              <tr className="border-t border-line bg-surface-muted">
+                <td colSpan={2} className="px-4 py-3 text-xs font-semibold text-ink-muted uppercase tracking-wider">
                   Total ({fmtCurrency(receivedAmount)} received)
                 </td>
-                <td className="px-4 py-3 text-right font-semibold text-[#1A1A2E]">{fmtCurrency(totalAmount)}</td>
+                <td className="px-4 py-3 text-right font-semibold text-ink">{fmtCurrency(totalAmount)}</td>
                 <td colSpan={3} />
               </tr>
             </tfoot>

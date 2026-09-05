@@ -28,9 +28,9 @@ const ROLE_LABELS: Record<string, string> = {
 const ROLES = ['admin', 'supervisor', 'field'] as const
 
 function roleBadgeStyle(role: string) {
-  if (role === 'admin')      return { background: 'rgba(201, 168, 76,0.12)', color: '#C9A84C' }
+  if (role === 'admin')      return { background: 'rgba(21, 128, 61,0.12)', color: 'var(--accent)' }
   if (role === 'supervisor') return { background: '#DBEAFE', color: '#1D4ED8' }
-  return { background: '#F4F5F7', color: '#6B7280' }
+  return { background: 'var(--surface-muted)', color: 'var(--ink-muted)' }
 }
 
 export default function UsersView({
@@ -160,15 +160,15 @@ export default function UsersView({
           onClick={e => { if (e.target === e.currentTarget) setShowDeleteConfirm(false) }}
         >
           <div className="bg-white rounded-xl shadow-xl w-full max-w-sm mx-4 p-6">
-            <h2 className="text-base font-semibold text-[#1A1A2E] mb-2">Delete user?</h2>
-            <p className="text-sm text-[#6B7280] mb-1">
-              Are you sure you want to delete <span className="font-medium text-[#6B7280]">{selectedUser.name ?? selectedUser.email}</span>?
+            <h2 className="text-base font-semibold text-ink mb-2">Delete user?</h2>
+            <p className="text-sm text-ink-muted mb-1">
+              Are you sure you want to delete <span className="font-medium text-ink-muted">{selectedUser.name ?? selectedUser.email}</span>?
             </p>
             <p className="text-sm text-[#EF4444] mb-6">This cannot be undone.</p>
             <div className="flex justify-end gap-2">
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-3 sm:py-2 text-sm text-[#6B7280] hover:text-[#1A1A2E]"
+                className="px-4 py-3 sm:py-2 text-sm text-ink-muted hover:text-ink"
               >
                 Cancel
               </button>
@@ -187,7 +187,7 @@ export default function UsersView({
       {/* User list — hidden on mobile once a user is selected, so the detail
           panel gets the full screen instead of being squeezed beside a
           fixed-width list */}
-      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-[#E5E7EB] flex-col`}>
+      <div className={`${selectedId ? 'hidden md:flex' : 'flex'} w-full md:w-72 shrink-0 border-r border-line flex-col`}>
         <div className="flex-1 overflow-y-auto">
           {users.map(user => {
             const initials = (user.name ?? user.email).slice(0, 2).toUpperCase()
@@ -196,21 +196,21 @@ export default function UsersView({
               <button
                 key={user.id}
                 onClick={() => selectUser(user)}
-                className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-[#F4F5F7]"
+                className="w-full flex items-center gap-3 px-4 py-3.5 text-left transition-colors border-b border-line-soft"
                 style={{
-                  background:  isSelected ? 'rgba(201, 168, 76,0.04)' : 'transparent',
-                  borderLeft:  isSelected ? '3px solid #C9A84C'     : '3px solid transparent',
+                  background:  isSelected ? 'rgba(21, 128, 61,0.04)' : 'transparent',
+                  borderLeft:  isSelected ? '3px solid var(--accent)'     : '3px solid transparent',
                 }}
               >
                 <div
                   className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold text-white"
-                  style={{ background: '#C9A84C' }}
+                  style={{ background: 'var(--accent)' }}
                 >
                   {initials}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-[#1A1A2E] truncate">{user.name ?? '—'}</p>
-                  <p className="text-xs text-[#6B7280] truncate">{user.email}</p>
+                  <p className="text-sm font-medium text-ink truncate">{user.name ?? '—'}</p>
+                  <p className="text-xs text-ink-muted truncate">{user.email}</p>
                 </div>
                 <span className="text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0" style={roleBadgeStyle(user.role)}>
                   {ROLE_LABELS[user.role] ?? user.role}
@@ -226,7 +226,7 @@ export default function UsersView({
         <div className="flex-1 overflow-y-auto p-6">
           <button
             onClick={() => { setSelectedId(null); setPermMap(null) }}
-            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-[#6B7280] hover:text-[#1A1A2E]"
+            className="md:hidden -ml-2 mb-4 flex items-center gap-1.5 px-2 py-3 text-sm font-medium text-ink-muted hover:text-ink"
           >
             ← Back to users
           </button>
@@ -234,13 +234,13 @@ export default function UsersView({
           <div className="flex items-center gap-3 mb-6">
             <div
               className="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white shrink-0"
-              style={{ background: '#C9A84C' }}
+              style={{ background: 'var(--accent)' }}
             >
               {(selectedUser.name ?? selectedUser.email).slice(0, 2).toUpperCase()}
             </div>
             <div>
-              <p className="font-semibold text-[#1A1A2E]">{selectedUser.name ?? '—'}</p>
-              <p className="text-sm text-[#6B7280]">{selectedUser.email}</p>
+              <p className="font-semibold text-ink">{selectedUser.name ?? '—'}</p>
+              <p className="text-sm text-ink-muted">{selectedUser.email}</p>
             </div>
           </div>
 
@@ -252,53 +252,53 @@ export default function UsersView({
 
           {/* Role */}
           <div className="mb-7">
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-2">Role</label>
+            <label className="block text-xs font-bold uppercase tracking-wider text-ink-muted mb-2">Role</label>
             <div className="flex items-center gap-3">
               <select
                 value={selectedUser.role}
                 onChange={e => handleRoleChange(selectedUser.id, e.target.value)}
                 disabled={roleChanging || selectedUser.id === currentUserId || selectedUser.role === 'admin'}
-                className="px-3 py-2 rounded-md border border-[#E5E7EB] text-sm font-medium text-[#1A1A2E] bg-white focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 rounded-md border border-line text-sm font-medium text-ink bg-white focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {ROLES.map(r => (
                   <option key={r} value={r}>{ROLE_LABELS[r]}</option>
                 ))}
               </select>
-              {roleChanging && <span className="text-xs text-[#6B7280]">Saving…</span>}
+              {roleChanging && <span className="text-xs text-ink-muted">Saving…</span>}
             </div>
             {selectedUser.id === currentUserId && (
-              <p className="text-xs text-[#6B7280] mt-1.5">You cannot change your own role.</p>
+              <p className="text-xs text-ink-muted mt-1.5">You cannot change your own role.</p>
             )}
             {selectedUser.role === 'admin' && selectedUser.id !== currentUserId && (
-              <p className="text-xs text-[#6B7280] mt-1.5">Admin roles cannot be changed.</p>
+              <p className="text-xs text-ink-muted mt-1.5">Admin roles cannot be changed.</p>
             )}
           </div>
 
           {/* Permissions */}
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-[#6B7280] mb-3">
+            <label className="block text-xs font-bold uppercase tracking-wider text-ink-muted mb-3">
               Permissions
             </label>
 
             {selectedUser.role === 'admin' ? (
               <div
                 className="rounded-lg border px-5 py-4 flex items-center gap-3"
-                style={{ background: 'rgba(201, 168, 76,0.04)', borderColor: 'rgba(201, 168, 76,0.2)' }}
+                style={{ background: 'rgba(21, 128, 61,0.04)', borderColor: 'rgba(21, 128, 61,0.2)' }}
               >
-                <span className="text-sm font-semibold" style={{ color: '#C9A84C' }}>Full Access</span>
-                <span className="text-xs text-[#6B7280]">— Admins have unrestricted access to all modules</span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--accent)' }}>Full Access</span>
+                <span className="text-xs text-ink-muted">— Admins have unrestricted access to all modules</span>
               </div>
             ) : (
               <>
-                <div className="bg-white rounded-xl border border-[#E5E7EB] shadow-sm overflow-x-auto">
+                <div className="bg-white rounded-xl border border-line shadow-sm overflow-x-auto">
                   <table className="w-full min-w-[560px] text-sm">
                     <thead>
                       <tr>
-                        <th className="text-left px-4 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider w-32 bg-[#F4F5F7]">
+                        <th className="text-left px-4 py-2.5 text-xs font-bold text-ink-muted uppercase tracking-wider w-32 bg-surface-muted">
                           Module
                         </th>
                         {ACTIONS.map(a => (
-                          <th key={a} className="text-center px-2 py-2.5 text-xs font-bold text-[#6B7280] uppercase tracking-wider bg-[#F4F5F7]">
+                          <th key={a} className="text-center px-2 py-2.5 text-xs font-bold text-ink-muted uppercase tracking-wider bg-surface-muted">
                             {ACTION_LABELS[a]}
                           </th>
                         ))}
@@ -306,8 +306,8 @@ export default function UsersView({
                     </thead>
                     <tbody>
                       {MODULES.map(module => (
-                        <tr key={module} className="border-t border-[#F4F5F7]">
-                          <td className="px-4 py-3 text-sm font-medium text-[#6B7280]">
+                        <tr key={module} className="border-t border-line-soft">
+                          <td className="px-4 py-3 text-sm font-medium text-ink-muted">
                             {MODULE_LABELS[module]}
                           </td>
                           {ACTIONS.map(action => (
@@ -317,7 +317,7 @@ export default function UsersView({
                                 checked={permMap?.[module]?.[action] ?? false}
                                 onChange={e => handlePermissionToggle(module, action, e.target.checked)}
                                 className="w-4 h-4 rounded cursor-pointer"
-                                style={{ accentColor: '#C9A84C' }}
+                                style={{ accentColor: 'var(--accent)' }}
                               />
                             </td>
                           ))}
@@ -336,8 +336,8 @@ export default function UsersView({
                   <button
                     onClick={handleSavePermissions}
                     disabled={!isDirty || saving}
-                    className="px-4 py-3 sm:py-2 text-sm font-medium text-[#1A1A2E] font-semibold rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
-                    style={{ background: '#C9A84C' }}
+                    className="px-4 py-3 sm:py-2 text-sm font-medium text-white font-semibold rounded-md disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{ background: 'var(--accent)' }}
                   >
                     {saving ? 'Saving…' : 'Save Changes'}
                   </button>
@@ -347,7 +347,7 @@ export default function UsersView({
           </div>
           {/* Secondary actions */}
           {selectedUser.role !== 'admin' && selectedUser.id !== currentUserId && (
-            <div className="mt-8 pt-6 border-t border-[#E5E7EB] flex items-center justify-end">
+            <div className="mt-8 pt-6 border-t border-line flex items-center justify-end">
               <button
                 onClick={() => setShowDeleteConfirm(true)}
                 className="text-sm font-medium text-[#EF4444] hover:text-red-700"
