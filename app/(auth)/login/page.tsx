@@ -14,14 +14,14 @@ export default function LoginPage() {
           className="text-3xl font-bold tracking-[0.3em]"
           style={{ color: 'var(--accent)' }}
         >
-          OPERIFY
+          RUNSITE
         </span>
-        <p className="mt-2 text-sm text-ink-muted">Welcome to Operify</p>
+        <p className="mt-2 text-sm text-ink-muted">Welcome to Runsite</p>
       </div>
 
       {/* Card */}
       <div className="bg-white rounded-xl shadow-sm border border-line px-8 py-8">
-        <h1 className="text-base font-semibold text-ink mb-6">Sign in to your Operify account</h1>
+        <h1 className="text-base font-semibold text-ink mb-6">Sign in to your Runsite account</h1>
 
         <form action={action} className="space-y-4">
           <div>

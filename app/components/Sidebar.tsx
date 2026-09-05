@@ -268,7 +268,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
     return (
       <aside className="w-full h-full bg-sidebar flex flex-col items-center">
         <div className="pt-5 pb-3 flex flex-col items-center gap-1.5 shrink-0">
-          <Link href={`${basePath}/dashboard`} title="Operify" aria-label="Operify dashboard" className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+          <Link href={`${basePath}/dashboard`} title="Runsite" aria-label="Runsite dashboard" className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
             <LogoMark />
           </Link>
           {onExpand && (
@@ -340,7 +340,7 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
           <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
             <LogoMark />
           </span>
-          <span className="text-[15px] font-bold tracking-[0.18em] text-white">OPERIFY</span>
+          <span className="text-[15px] font-bold tracking-[0.18em] text-white">RUNSITE</span>
         </Link>
         {onCollapse && (
           <button

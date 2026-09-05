@@ -2,9 +2,9 @@ import type { MetadataRoute } from 'next'
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Operify',
-    short_name: 'Operify',
-    description: 'Operify — field service management for trades businesses.',
+    name: 'Runsite',
+    short_name: 'Runsite',
+    description: 'Runsite — field service management for trades businesses.',
     start_url: '/',
     display: 'standalone',
     background_color: '#0f1117',

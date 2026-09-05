@@ -85,7 +85,7 @@ export default function AiSearchBar() {
             <SparkIcon size={13} />
           </span>
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: 'var(--accent-bright)' }}>
-            Ask Operify
+            Ask Runsite
           </p>
           <span className="ml-auto text-[10px] font-medium" style={{ color: 'rgba(255,255,255,0.35)' }}>
             Powered by Claude

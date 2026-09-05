@@ -54,7 +54,7 @@ export default function InvoicePDFButton({ invoice, lineItems }: Props) {
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(22)
       doc.setTextColor(...WHITE)
-      doc.text('OPERIFY', M, 17)
+      doc.text('RUNSITE', M, 17)
       doc.setFont('helvetica', 'normal')
       doc.setFontSize(8)
       doc.setTextColor(74, 222, 128)
@@ -62,7 +62,7 @@ export default function InvoicePDFButton({ invoice, lineItems }: Props) {
       doc.setTextColor(...MUTED)
       doc.setFontSize(7.5)
       doc.text('Queenstown, New Zealand', M, 29)
-      doc.text('info@operify.co.nz  ·  +64 21 000 0000', M, 34.5)
+      doc.text('info@runsite.co.nz  ·  +64 21 000 0000', M, 34.5)
 
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(24)

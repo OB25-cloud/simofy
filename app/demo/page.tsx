@@ -2,7 +2,7 @@ import Link from 'next/link'
 import DemoBanner from '@/app/components/DemoBanner'
 
 export const metadata = {
-  title: 'Operify Demo — See It In Action',
+  title: 'Runsite Demo — See It In Action',
 }
 
 export default function DemoLandingPage() {
@@ -15,11 +15,11 @@ export default function DemoLandingPage() {
             className="text-3xl font-bold tracking-[0.3em]"
             style={{ color: 'var(--accent)' }}
           >
-            OPERIFY
+            RUNSITE
           </span>
 
           <div className="bg-white rounded-xl shadow-sm border border-line px-8 py-10 mt-8">
-            <h1 className="text-xl font-bold text-ink">See Operify in action</h1>
+            <h1 className="text-xl font-bold text-ink">See Runsite in action</h1>
             <p className="mt-3 text-sm text-ink-muted leading-relaxed">
               A live demo of a real field service management platform — no login required.
             </p>

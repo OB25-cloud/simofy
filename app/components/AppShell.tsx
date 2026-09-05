@@ -52,7 +52,7 @@ export default function AppShell({ role, userName, userEmail, permissions, demoM
           <HamburgerIcon />
         </button>
         <span className="text-[15px] font-bold tracking-[0.18em] text-white">
-          OPERIFY
+          RUNSITE
         </span>
       </div>
 

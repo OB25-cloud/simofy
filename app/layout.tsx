@@ -9,11 +9,11 @@ const geist = Geist({
 })
 
 export const metadata: Metadata = {
-  title: 'Operify — Field Service Management',
-  description: 'Operify — field service management for trades businesses.',
+  title: 'Runsite — Field Service Management',
+  description: 'Runsite — field service management for trades businesses.',
   appleWebApp: {
     capable: true,
-    title: 'Operify',
+    title: 'Runsite',
     statusBarStyle: 'black-translucent',
   },
   icons: {

@@ -50,7 +50,7 @@ export default function DemoBanner() {
         Demo
       </span>
       <p className="text-xs truncate">
-        You&apos;re viewing the Operify demo for Green &amp; Co Landscaping
+        You&apos;re viewing the Runsite demo for Green &amp; Co Landscaping
         <span className="hidden sm:inline">
           {' '}·{' '}
           <a

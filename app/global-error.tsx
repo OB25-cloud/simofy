@@ -12,7 +12,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
       <body className="h-full antialiased">
         <div className="flex flex-col items-center justify-center min-h-screen px-6 text-center" style={{ background: 'var(--page-bg)' }}>
           <div className="w-full max-w-md rounded-xl border border-line bg-white p-8 shadow-sm">
-            <p className="text-sm font-semibold text-ink">Operify hit an unexpected error</p>
+            <p className="text-sm font-semibold text-ink">Runsite hit an unexpected error</p>
             <p className="mt-2 text-sm text-ink-muted">
               Try reloading the page. If this keeps happening, let us know what you were doing.
             </p>

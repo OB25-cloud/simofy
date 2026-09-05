@@ -107,7 +107,7 @@ ${completedJobsSummary.length > 0 ? completedJobsSummary.map(j => `  - ${j}`).jo
   const message = await client.messages.create({
     model: 'claude-sonnet-4-6',
     max_tokens: 1024,
-    system: `You are a business assistant for a field service company using Operify. Answer questions about the business concisely and helpfully using the data provided. All monetary values are in New Zealand Dollars (NZD) — always use the $ symbol. Keep answers short and actionable.`,
+    system: `You are a business assistant for a field service company using Runsite. Answer questions about the business concisely and helpfully using the data provided. All monetary values are in New Zealand Dollars (NZD) — always use the $ symbol. Keep answers short and actionable.`,
     messages: [
       {
         role: 'user',
