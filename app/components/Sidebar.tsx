@@ -274,7 +274,8 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
       </div>
 
       {/* Nav sections */}
-      <nav className="flex-1 px-2 pb-4 overflow-y-auto scrollbar-hidden">
+      {/* Only this list scrolls — the logo above and the profile row below stay pinned. */}
+      <nav className="flex-1 min-h-0 px-2 pb-4 overflow-y-auto sidebar-scroll">
         {/* Global search */}
         <div className="mb-5 px-2">
           <p className={`${SECTION_LABEL_CLASSES} px-2`}>Search</p>

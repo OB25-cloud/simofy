@@ -117,6 +117,37 @@ body {
   display: none; /* Chrome, Safari, Edge */
 }
 
+/* Sidebar nav scrollbar — thin, transparent track, muted green thumb that
+   only shows while the pointer is over the nav (or while dragging it). */
+.sidebar-scroll {
+  scrollbar-width: thin;                          /* Firefox */
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 200ms ease;
+}
+.sidebar-scroll:hover,
+.sidebar-scroll:focus-within {
+  scrollbar-color: rgba(74, 222, 128, 0.22) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar {              /* Chrome, Safari, Edge */
+  width: 6px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background-color: transparent;
+  border-radius: 999px;
+  transition: background-color 200ms ease;
+}
+.sidebar-scroll:hover::-webkit-scrollbar-thumb,
+.sidebar-scroll:focus-within::-webkit-scrollbar-thumb {
+  background-color: rgba(74, 222, 128, 0.22);
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover,
+.sidebar-scroll::-webkit-scrollbar-thumb:active {
+  background-color: rgba(74, 222, 128, 0.38);
+}
+
 @keyframes tab-fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
