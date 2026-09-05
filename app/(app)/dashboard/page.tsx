@@ -8,7 +8,6 @@ import RevenueTrendChart from './RevenueTrendChart'
 import TodayTimeline, { type TimelineJob } from './TodayTimeline'
 import PipelineFunnel from './PipelineFunnel'
 import CrewToday, { type CrewMember } from './CrewToday'
-import { StatusBadge, statusDot } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
 
@@ -167,7 +166,6 @@ export default async function DashboardPage() {
     { count: inProgressCount },
     outstandingInvoices,
     { count: overdueCount },
-    { data: rawRecentJobs },
     { data: rawLeads },
     { data: rawOverdueInvoices },
     { data: paidThisMonth },
@@ -193,10 +191,7 @@ export default async function DashboardPage() {
       supabase.from('invoices').select('total').in('status', ['sent', 'overdue']).range(from, to)
     ),
     supabase.from('invoices').select('*', { count: 'exact', head: true }).eq('status', 'overdue'),
-    supabase.from('jobs')
-      .select('id, title, job_type, status, created_at, clients(name)')
-      .order('created_at', { ascending: false }).limit(6),
-    // Only the columns the "New Leads" card actually renders.
+    // Feeds the attention chips and the AI insights; the leads card itself was removed.
     supabase.from('leads').select('id, name, email, phone, source').eq('status', 'new').order('created_at', { ascending: false }),
     supabase.from('invoices')
       .select('id, total, due_date, clients(name)')
@@ -235,8 +230,7 @@ export default async function DashboardPage() {
 
   // ── Derived values ────────────────────────────────────────────────────────────
   const jobsToday       = (rawJobsToday       ?? []) as unknown as TodayJob[]
-  const recentJobs      = (rawRecentJobs       ?? []) as unknown as DashJob[]
-  const leads           = (rawLeads           ?? []) as unknown as Lead[]
+  const leads          = (rawLeads           ?? []) as unknown as Lead[]
   const overdueInvoices = (rawOverdueInvoices ?? []) as unknown as OverdueInvoice[]
 
   const outstandingVal   = (outstandingInvoices ?? []).reduce((s, inv: { total: number | null }) => s + (inv.total ?? 0), 0)
@@ -667,162 +661,12 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── Trend + insights ──────────────────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <div className="lg:col-span-7 min-h-[300px]">
           <RevenueTrendChart data={revenueTrendData} headline={fmtMoney(sixMonthRevenue)} />
         </div>
         <div className="lg:col-span-5">
           <AiInsightsCard insights={insights} />
-        </div>
-      </div>
-
-      {/* ── Needs attention + activity ───────────────────────────────────── */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-
-        {/* Overdue invoices */}
-        <div className="lg:col-span-7 bg-surface rounded-xl border border-line shadow-card overflow-hidden">
-          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
-            <div className="flex items-center gap-2.5">
-              <span className={['flex items-center justify-center w-6 h-6 rounded-md', overdueInvoices.length > 0 ? 'bg-red-50 text-error' : 'bg-accent-soft text-accent'].join(' ')}>
-                <IconAlert />
-              </span>
-              <p className="text-sm font-semibold text-ink">Overdue invoices</p>
-              {overdueInvoices.length > 0 && (
-                <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-bold bg-error text-white tabular-nums">
-                  {overdueCount}
-                </span>
-              )}
-            </div>
-            <ViewAll href="/invoices" />
-          </div>
-          {overdueInvoices.length === 0 ? (
-            <div className="px-5 py-10 text-center">
-              <p className="text-sm font-medium text-ink">Nothing overdue</p>
-              <p className="text-xs text-ink-muted mt-1">Every sent invoice is still within its payment terms.</p>
-            </div>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[480px] text-sm">
-                <thead>
-                  <tr>
-                    <th className="text-left px-5 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Invoice</th>
-                    <th className="text-left px-4 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
-                    <th className="text-right px-4 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Amount</th>
-                    <th className="text-left px-4 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Due</th>
-                    <th className="px-4 py-2.5 w-6 bg-surface-muted border-b border-line" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {overdueInvoices.map(inv => {
-                    const due = inv.due_date ? new Date(inv.due_date) : null
-                    const daysLate = due ? Math.max(0, Math.floor((today.getTime() - due.getTime()) / 86400000)) : null
-                    return (
-                      <tr key={inv.id} className="border-b border-line-soft last:border-b-0 hover:bg-surface-hover transition-colors">
-                        <td className="px-5 py-3 font-mono text-xs font-semibold text-ink">
-                          INV-{inv.id.slice(0, 6).toUpperCase()}
-                        </td>
-                        <td className="px-4 py-3 text-sm font-medium text-ink">
-                          {inv.clients?.name ?? <span className="text-ink-faint">—</span>}
-                        </td>
-                        <td className="px-4 py-3 text-sm font-bold tabular-nums text-right text-red-700">
-                          {inv.total != null ? fmtMoney(inv.total) : '—'}
-                        </td>
-                        <td className="px-4 py-3 text-xs text-ink-muted whitespace-nowrap">
-                          {due
-                            ? <>{due.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' })}{daysLate != null && daysLate > 0 && <span className="ml-1.5 text-red-600 font-semibold">{daysLate}d late</span>}</>
-                            : <span className="text-ink-faint">—</span>}
-                        </td>
-                        <td className="px-4 py-3 text-right">
-                          <Link href={`/invoices/${inv.id}`} className="text-ink-faint hover:text-error transition-colors inline-flex"><IconArrow /></Link>
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Leads + recent activity */}
-        <div className="lg:col-span-5 flex flex-col gap-4">
-          <div className="bg-surface rounded-xl border border-line shadow-card overflow-hidden">
-            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
-              <div className="flex items-center gap-2.5">
-                <p className="text-sm font-semibold text-ink">New leads</p>
-                {leads.length > 0 && (
-                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 tabular-nums">
-                    {leads.length}
-                  </span>
-                )}
-              </div>
-              <ViewAll href="/leads" />
-            </div>
-            {leads.length === 0 ? (
-              <div className="px-5 py-8 text-center">
-                <p className="text-sm text-ink-faint">No new leads waiting</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-line-soft">
-                {leads.slice(0, 5).map(lead => (
-                  <Link
-                    key={lead.id}
-                    href={`/leads/${lead.id}`}
-                    className="group flex items-center gap-3 px-5 py-2.5 hover:bg-surface-hover transition-colors"
-                  >
-                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold bg-amber-100 text-amber-800 shrink-0">
-                      {(lead.name ?? '?').split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2)}
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-ink truncate group-hover:text-accent transition-colors">
-                        {lead.name ?? 'Unnamed lead'}
-                      </p>
-                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
-                        {lead.email ?? lead.phone ?? (lead as unknown as { source?: string }).source ?? '—'}
-                      </p>
-                    </div>
-                    <span className="text-ink-faint group-hover:text-accent transition-colors shrink-0"><IconArrow /></span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-surface rounded-xl border border-line shadow-card overflow-hidden">
-            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
-              <p className="text-sm font-semibold text-ink">Recent activity</p>
-              <ViewAll href="/jobs" />
-            </div>
-            {recentJobs.length === 0 ? (
-              <div className="px-5 py-8 text-center">
-                <p className="text-sm text-ink-faint">No jobs yet</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-line-soft">
-                {recentJobs.slice(0, 5).map(job => (
-                  <Link
-                    key={job.id}
-                    href={`/jobs/${job.id}`}
-                    className="group flex items-center gap-3 px-5 py-2.5 hover:bg-surface-hover transition-colors"
-                  >
-                    <span aria-hidden className="w-1.5 h-7 rounded-full shrink-0" style={{ background: statusDot(job.status) }} />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-ink truncate group-hover:text-accent transition-colors">
-                        {job.title ?? job.job_type ?? 'Untitled'}
-                      </p>
-                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
-                        {job.clients?.name ?? '—'}
-                        {job.created_at && (
-                          <span> · {new Date(job.created_at).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' })}</span>
-                        )}
-                      </p>
-                    </div>
-                    <StatusBadge status={job.status} />
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
 
