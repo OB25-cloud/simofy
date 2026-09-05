@@ -119,7 +119,7 @@ export default function WeekBoard({ jobs, staffRows, weekDays, todayKey, hideFre
     : staffRows
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col bg-surface overflow-hidden">
       <div className="flex-1 min-h-0 overflow-auto overscroll-contain">
         <div style={{ minWidth: STAFF_COL_W + MIN_DAY_W * 7 }}>
           {/* Header */}
@@ -180,7 +180,7 @@ export default function WeekBoard({ jobs, staffRows, weekDays, todayKey, hideFre
               const weekJobs = dayKeys.reduce((n, k) => n + (byStaffDay.get(`${staff.id}|${k}`)?.length ?? 0), 0)
               const weekMin = dayKeys.reduce((n, k) => n + (byStaffDay.get(`${staff.id}|${k}`) ?? []).reduce((s, j) => s + jobDurationMin(j), 0), 0)
               return (
-                <div key={staff.id} className="flex border-b border-line-soft last:border-b-0" style={{ minHeight: 92 }}>
+                <div key={staff.id} className="flex border-b border-line-soft last:border-b-0" style={{ minHeight: 108 }}>
                   <div className="sticky left-0 z-20 shrink-0 flex items-center gap-3 px-4 bg-white border-r border-line" style={{ width: STAFF_COL_W }}>
                     <StaffAvatar staffId={staff.id} name={staff.name} size="md" />
                     <div className="min-w-0">

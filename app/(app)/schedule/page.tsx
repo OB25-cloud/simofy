@@ -1,14 +1,12 @@
 import ScheduleView from '@/app/components/schedule/ScheduleView'
 
 export default function SchedulePage() {
-  // Anchored to the viewport directly (not a percentage of `main`) so the
-  // flex-1/min-h-0 chain below has a guaranteed-definite height to resolve
-  // against — matches AppShell's real available height exactly: main has no
-  // padding, and on desktop there's no chrome above it (the mobile top bar,
-  // subtracted below, is md:hidden) other than the demo banner, accounted
-  // for via --demo-banner-h (0px outside /demo, see globals.css).
+  // Full-bleed: the scheduler owns the whole viewport below the mobile top
+  // bar (md:hidden) and the demo banner (--demo-banner-h is 0px outside
+  // /demo, see globals.css). No page padding — the stat bar, toolbar and
+  // grid start at the very top edge and the grid fills whatever is left.
   return (
-    <div className="flex flex-col h-[calc(100vh-56px-var(--demo-banner-h))] md:h-[calc(100vh-var(--demo-banner-h))] p-4 md:p-8 md:pb-4">
+    <div className="flex flex-col h-[calc(100vh-56px-var(--demo-banner-h))] md:h-[calc(100vh-var(--demo-banner-h))]">
       <ScheduleView />
     </div>
   )

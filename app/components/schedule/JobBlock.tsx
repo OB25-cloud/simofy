@@ -314,7 +314,7 @@ export function DragGhost({ job, width, staffName }: { job: ScheduleJob; width: 
     <div
       className="rounded-lg overflow-hidden cursor-grabbing"
       style={{
-        width, height: 56,
+        width, height: 72,
         background: '#fff',
         boxShadow: `inset 0 0 0 1px rgba(${color.rgb}, 0.35), inset 3px 0 0 ${color.solid}, 0 12px 28px -8px rgba(17,24,39,0.35), 0 2px 6px rgba(17,24,39,0.10)`,
         transform: 'scale(1.02)',

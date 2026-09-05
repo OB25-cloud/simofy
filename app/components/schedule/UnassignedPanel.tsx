@@ -52,25 +52,25 @@ export default function UnassignedPanel({ inRange, upcoming, rangeLabel, collaps
       <div
         ref={setNodeRef}
         className={[
-          'shrink-0 w-11 flex flex-col items-center bg-surface rounded-xl border shadow-card py-3 gap-3 transition-colors',
-          isOver ? 'border-accent bg-accent-soft' : 'border-line',
+          'shrink-0 w-10 flex flex-col items-center border-r py-2 gap-2 transition-colors',
+          isOver ? 'border-accent bg-accent-soft' : 'border-line bg-surface-muted/60',
         ].join(' ')}
       >
         <button
           onClick={onToggle}
-          className="w-8 h-8 rounded-lg flex items-center justify-center text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors"
+          className="relative w-8 h-8 rounded-md flex items-center justify-center text-ink-muted hover:text-ink hover:bg-white transition-colors"
           aria-label="Show unassigned jobs"
           title="Show unassigned jobs"
         >
           <IconInbox />
+          {total > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-4 h-4 px-1 rounded-full text-[9.5px] font-bold tabular-nums flex items-center justify-center bg-amber-500 text-white ring-2 ring-white">
+              {total}
+            </span>
+          )}
         </button>
-        {total > 0 && (
-          <span className="text-[10.5px] font-bold tabular-nums px-1.5 py-0.5 rounded-md bg-amber-50 text-amber-800 ring-1 ring-inset ring-amber-600/25">
-            {total}
-          </span>
-        )}
         <span
-          className="text-[10px] font-semibold uppercase tracking-[0.14em] text-ink-faint mt-1"
+          className="text-[9.5px] font-semibold uppercase tracking-[0.14em] text-ink-faint mt-1 select-none"
           style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)' }}
         >
           Unassigned
@@ -82,11 +82,11 @@ export default function UnassignedPanel({ inRange, upcoming, rangeLabel, collaps
   return (
     <aside
       className={[
-        'shrink-0 w-[272px] flex flex-col bg-surface rounded-xl border shadow-card overflow-hidden transition-colors',
+        'shrink-0 w-[220px] flex flex-col bg-surface border-r overflow-hidden transition-colors',
         isOver ? 'border-accent' : 'border-line',
       ].join(' ')}
     >
-      <div className="shrink-0 flex items-center gap-2 px-3.5 py-3 border-b border-line bg-surface-muted/70">
+      <div className="shrink-0 h-10 flex items-center gap-2 px-3 border-b border-line bg-surface-muted/70">
         <span className="text-ink-muted"><IconInbox /></span>
         <h2 className="text-[12px] font-semibold text-ink">Unassigned</h2>
         {total > 0 ? (
@@ -106,7 +106,7 @@ export default function UnassignedPanel({ inRange, upcoming, rangeLabel, collaps
 
       <div
         ref={setNodeRef}
-        className={['relative flex-1 min-h-0 overflow-y-auto p-3 space-y-4 transition-colors', isOver ? 'bg-accent-soft/60' : ''].join(' ')}
+        className={['relative flex-1 min-h-0 overflow-y-auto p-2.5 space-y-4 transition-colors', isOver ? 'bg-accent-soft/60' : ''].join(' ')}
       >
         {canReceive && (
           <div className="pointer-events-none absolute inset-2 rounded-lg border-[1.5px] border-dashed border-accent/60 flex items-center justify-center z-10">
@@ -138,15 +138,15 @@ export default function UnassignedPanel({ inRange, upcoming, rangeLabel, collaps
         )}
       </div>
 
-      <div className="shrink-0 border-t border-line p-2.5">
+      <div className="shrink-0 border-t border-line p-2">
         <button
           onClick={onAddJob}
-          className="w-full flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors"
+          className="w-full flex items-center justify-center gap-1.5 py-1.5 text-[11.5px] font-semibold rounded-md text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors"
         >
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
           New unassigned job
         </button>
-        <p className="text-[10.5px] text-ink-faint text-center mt-1.5">Drag cards onto a staff row to assign</p>
+        <p className="text-[10px] text-ink-faint text-center mt-1">Drag onto a staff row to assign</p>
       </div>
     </aside>
   )

@@ -14,10 +14,11 @@ import { useDropPreview } from './dragPreviewStore'
 import { DayJobBlock } from './JobBlock'
 import StaffAvatar from './StaffAvatar'
 
-export const STAFF_COL_W = 192
-export const HEADER_H = 44
-const LANE_H = 60
-const ROW_PAD = 6
+export const STAFF_COL_W = 200
+export const HEADER_H = 40
+// Taller lanes so blocks read (and tap) easily: 80px lane → 72px block.
+const LANE_H = 80
+const ROW_PAD = 8
 // Below this the track scrolls horizontally instead of squeezing further —
 // sized so a 1440px laptop with the sidebar and unassigned panel open fits.
 const MIN_HOUR_PX = 52
@@ -266,7 +267,7 @@ export default function DayBoard({ jobs, staffRows, isToday, hideFree, geometry,
   }, [showNow, nowX])
 
   return (
-    <div className="flex-1 min-h-0 flex flex-col bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+    <div className="flex-1 min-h-0 flex flex-col bg-surface overflow-hidden">
       <div ref={scrollRef} className="flex-1 min-h-0 overflow-auto overscroll-contain">
         <div className="relative" style={{ minWidth: STAFF_COL_W + trackWidth }}>
           {/* Header */}

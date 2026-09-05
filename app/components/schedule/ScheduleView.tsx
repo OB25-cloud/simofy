@@ -14,7 +14,6 @@ import { isDemoRoute } from '@/lib/demoGuard'
 import type { Client, Job, Staff } from '@/lib/types'
 import { minutesToTime } from '@/lib/timeOptions'
 import AddJobModal from '@/app/components/jobs/AddJobModal'
-import { StatCard } from '@/app/components/ui/StatCard'
 import MapView from './MapView'
 import DayBoard, { staffIdFromRowId, type BoardGeometry, type StaffRow } from './DayBoard'
 import WeekBoard, { parseCellId } from './WeekBoard'
@@ -67,13 +66,13 @@ const Icon = {
 
 function BoardSkeleton() {
   return (
-    <div className="flex-1 min-h-0 bg-surface rounded-xl border border-line shadow-card overflow-hidden flex flex-col">
+    <div className="flex-1 min-h-0 bg-surface overflow-hidden flex flex-col">
       <div className="h-11 bg-surface-muted border-b border-line flex items-center px-4 gap-3">
         <div className="h-3 w-20 rounded bg-line animate-pulse" />
       </div>
-      {[...Array(5)].map((_, i) => (
-        <div key={i} className="flex border-b border-line-soft" style={{ height: 72 }}>
-          <div className="w-[208px] shrink-0 flex items-center gap-3 px-4 border-r border-line">
+      {[...Array(6)].map((_, i) => (
+        <div key={i} className="flex border-b border-line-soft" style={{ height: 88 }}>
+          <div className="w-[200px] shrink-0 flex items-center gap-3 px-4 border-r border-line">
             <div className="w-9 h-9 rounded-full bg-line animate-pulse" />
             <div className="space-y-1.5">
               <div className="h-3 w-24 rounded bg-line animate-pulse" />
@@ -92,7 +91,7 @@ function BoardSkeleton() {
 
 function BoardError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="flex-1 min-h-0 bg-surface rounded-xl border border-line shadow-card flex items-center justify-center">
+    <div className="flex-1 min-h-0 bg-surface flex items-center justify-center">
       <button onClick={onRetry} className="flex flex-col items-center gap-2 px-6 py-4 text-center group">
         <span className="w-10 h-10 rounded-full bg-red-50 text-error flex items-center justify-center">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
@@ -104,9 +103,23 @@ function BoardError({ onRetry }: { onRetry: () => void }) {
   )
 }
 
+// One inline stat for the slim bar at the top of the page.
+function Stat({ icon, label, value, hint, danger }: { icon: React.ReactNode; label: string; value: number; hint?: string; danger?: boolean }) {
+  return (
+    <div className="flex items-center gap-2 whitespace-nowrap">
+      <span className={['w-6 h-6 rounded-md flex items-center justify-center shrink-0', danger ? 'bg-red-50 text-error' : 'bg-accent-soft text-accent'].join(' ')}>
+        {icon}
+      </span>
+      <span className={['text-[15px] font-bold tabular-nums leading-none', danger ? 'text-error' : 'text-ink'].join(' ')}>{value}</span>
+      <span className="text-[11px] font-medium text-ink-muted leading-none">{label}</span>
+      {hint && <span className="hidden xl:inline text-[10.5px] text-ink-faint leading-none">· {hint}</span>}
+    </div>
+  )
+}
+
 function Legend() {
   return (
-    <div className="hidden lg:flex items-center gap-3.5">
+    <div className="hidden lg:flex items-center gap-3">
       {STATUS_ORDER.filter(s => s !== 'invoiced').map(s => {
         const c = colorForStatus(s)
         return (
@@ -161,7 +174,9 @@ function ScheduleInner() {
   const [dayDate, setDayDate] = useState<Date>(() => startOfDay(new Date()))
   const [weekStart, setWeekStart] = useState<Date>(() => getMonday(new Date()))
   const [todayKey, setTodayKey] = useState('')
-  const [panelCollapsed, setPanelCollapsed] = useState(false)
+  // Rail starts collapsed so the grid gets the whole viewport; expanding it
+  // is remembered.
+  const [panelCollapsed, setPanelCollapsed] = useState(true)
   const [hideFree, setHideFree] = useState(false)
 
   // ── data
@@ -194,7 +209,7 @@ function ScheduleInner() {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setTodayKey(toDateKey(new Date()))
     try {
-      if (localStorage.getItem(PANEL_KEY) === '1') setPanelCollapsed(true)
+      if (localStorage.getItem(PANEL_KEY) === '0') setPanelCollapsed(false)
       if (localStorage.getItem(HIDE_FREE_KEY) === '1') setHideFree(true)
       const v = localStorage.getItem(VIEW_KEY)
       if (v === 'week') { setView('week'); setGridMode('week') }
@@ -588,7 +603,7 @@ function ScheduleInner() {
       key={v}
       onClick={() => switchView(v)}
       className={[
-        'px-3.5 py-1.5 text-[12.5px] rounded-md transition-[background-color,color,box-shadow] duration-150',
+        'px-3 py-1 text-[12px] rounded transition-[background-color,color,box-shadow] duration-150',
         view === v ? 'bg-white text-ink font-semibold shadow-[0_1px_2px_rgba(17,24,39,0.12),0_0_0_1px_rgba(17,24,39,0.05)]' : 'text-ink-muted hover:text-ink font-medium',
       ].join(' ')}
     >
@@ -597,77 +612,58 @@ function ScheduleInner() {
   )
 
   return (
-    <div className="h-full flex flex-col">
-      {/* ── Header ── */}
-      <div className="shrink-0 mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <div>
-            <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Schedule</h1>
-            <p className="mt-0.5 text-xs text-ink-muted flex items-center gap-2">
-              {headerLabel}
-              {isViewingToday && <span className="text-[10px] font-bold uppercase tracking-[0.08em] px-1.5 py-px rounded bg-accent-soft text-accent">Today</span>}
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={goToday}
-            className="px-3 py-1.5 text-[12.5px] font-medium bg-white border border-line text-ink rounded-lg hover:bg-surface-muted hover:border-[#d6d3d1] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
-          >
-            Today
-          </button>
-          <div className="flex items-center rounded-lg border border-line bg-white overflow-hidden shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
-            <button onClick={goPrev} className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors border-r border-line" aria-label={isDayMode ? 'Previous day' : 'Previous week'}>
-              {Icon.chevronLeft}
-            </button>
-            <button onClick={goNext} className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors" aria-label={isDayMode ? 'Next day' : 'Next week'}>
-              {Icon.chevronRight}
-            </button>
-          </div>
-          <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-surface-muted border border-line">
-            {segment('day', 'Day')}
-            {segment('week', 'Week')}
-            {segment('map', 'Map')}
-          </div>
-          <button
-            onClick={() => setAddJobPrefill({ staffId: '', date: isDayMode ? dayKey : todayKey })}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[12.5px] font-semibold text-white rounded-lg bg-accent hover:brightness-110 active:brightness-95 transition-[filter] shadow-[0_1px_2px_rgba(17,24,39,0.12)]"
-          >
-            {Icon.plus} New job
-          </button>
-        </div>
+    <div className="h-full flex flex-col bg-surface">
+      {/* ── Stat bar — one slim line, ≤48px ── */}
+      <div className="shrink-0 h-10 md:h-11 flex items-center gap-x-5 gap-y-1 px-4 border-b border-line bg-surface-muted/60 overflow-x-auto scrollbar-hidden">
+        <Stat icon={Icon.calendar} label="Today's jobs" value={todayStats.jobs} hint={todayStats.inProgress > 0 ? `${todayStats.inProgress} in progress` : undefined} />
+        <Stat icon={Icon.crew} label="Staff scheduled" value={todayStats.staff} hint={`of ${staffList.length}`} />
+        <Stat icon={Icon.inbox} label="Unassigned" value={unassignedInRange.length} danger={unassignedInRange.length > 0} hint={extraUnassigned.length > 0 ? `${rangeWord.toLowerCase()} · ${extraUnassigned.length} other dates` : rangeWord.toLowerCase()} />
+        <Stat icon={Icon.check} label="Completed today" value={todayStats.completed} hint={todayStats.jobs > 0 ? `of ${todayStats.jobs}` : undefined} />
       </div>
 
-      {/* ── Stat strip ── */}
-      <div className="shrink-0 grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4 mb-4">
-        <StatCard label="Today's Jobs" value={String(todayStats.jobs)} icon={Icon.calendar} sub={todayStats.inProgress > 0 ? `${todayStats.inProgress} in progress` : 'None in progress'} className="!p-4" />
-        <StatCard label="Staff Scheduled" value={String(todayStats.staff)} icon={Icon.crew} sub={`of ${staffList.length} active today`} className="!p-4" />
-        <StatCard
-          label="Unassigned"
-          value={String(unassignedInRange.length)}
-          icon={Icon.inbox}
-          danger={unassignedInRange.length > 0}
-          sub={extraUnassigned.length > 0 ? `${rangeWord.toLowerCase()} · ${extraUnassigned.length} more on other dates` : rangeWord.toLowerCase()}
-          className="!p-4"
-        />
-        <StatCard label="Completed Today" value={String(todayStats.completed)} icon={Icon.check} sub={todayStats.jobs > 0 ? `of ${todayStats.jobs} jobs` : 'No jobs today'} className="!p-4" />
+      {/* ── Toolbar ── */}
+      <div className="shrink-0 min-h-11 flex items-center gap-2 px-3 py-1.5 border-b border-line bg-surface flex-wrap">
+        <button
+          onClick={goToday}
+          className="px-2.5 py-1 text-[12px] font-medium bg-white border border-line text-ink rounded-md hover:bg-surface-muted hover:border-[#d6d3d1] transition-colors"
+        >
+          Today
+        </button>
+        <div className="flex items-center rounded-md border border-line bg-white overflow-hidden">
+          <button onClick={goPrev} className="p-1 text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors border-r border-line" aria-label={isDayMode ? 'Previous day' : 'Previous week'}>
+            {Icon.chevronLeft}
+          </button>
+          <button onClick={goNext} className="p-1 text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors" aria-label={isDayMode ? 'Next day' : 'Next week'}>
+            {Icon.chevronRight}
+          </button>
+        </div>
+        <p className="text-[13px] font-semibold text-ink whitespace-nowrap flex items-center gap-1.5 ml-1">
+          {headerLabel}
+          {isViewingToday && <span className="text-[9.5px] font-bold uppercase tracking-[0.08em] px-1.5 py-px rounded bg-accent-soft text-accent">Today</span>}
+        </p>
+        <div className="inline-flex items-center gap-0.5 p-0.5 rounded-md bg-surface-muted border border-line ml-1">
+          {segment('day', 'Day')}
+          {segment('week', 'Week')}
+          {segment('map', 'Map')}
+        </div>
+
+        <div className="hidden md:flex items-center gap-4 ml-auto">
+          {view !== 'map' && <Legend />}
+          {view !== 'map' && <Toggle checked={hideFree} onChange={setHideFree} label="Hide free staff" />}
+          <span className="hidden 2xl:inline text-[10.5px] text-ink-faint">
+            <kbd className="font-sans font-semibold text-ink-muted">←</kbd> <kbd className="font-sans font-semibold text-ink-muted">→</kbd> navigate · <kbd className="font-sans font-semibold text-ink-muted">T</kbd> today · <kbd className="font-sans font-semibold text-ink-muted">N</kbd> new job
+          </span>
+        </div>
+        <button
+          onClick={() => setAddJobPrefill({ staffId: '', date: isDayMode ? dayKey : todayKey })}
+          className="inline-flex items-center gap-1.5 px-3 py-1 text-[12px] font-semibold text-white rounded-md bg-accent hover:brightness-110 active:brightness-95 transition-[filter] ml-auto md:ml-0"
+        >
+          {Icon.plus} New job
+        </button>
       </div>
 
-      {/* ── Desktop board ── */}
+      {/* ── Desktop board — fills the rest of the viewport ── */}
       <div className="hidden md:flex flex-1 min-h-0 flex-col">
-        {view !== 'map' && (
-          <div className="shrink-0 flex items-center justify-between gap-3 mb-2 px-0.5">
-            <Legend />
-            <div className="flex items-center gap-4 ml-auto">
-              <Toggle checked={hideFree} onChange={setHideFree} label="Hide free staff" />
-              <span className="hidden xl:inline text-[10.5px] text-ink-faint">
-                <kbd className="font-sans font-semibold text-ink-muted">←</kbd> <kbd className="font-sans font-semibold text-ink-muted">→</kbd> navigate · <kbd className="font-sans font-semibold text-ink-muted">T</kbd> today · <kbd className="font-sans font-semibold text-ink-muted">N</kbd> new job
-              </span>
-            </div>
-          </div>
-        )}
-
         <DndContext
           sensors={sensors}
           collisionDetection={pointerWithin}
@@ -676,7 +672,7 @@ function ScheduleInner() {
           onDragEnd={handleDragEnd}
           onDragCancel={finishDrag}
         >
-          <div className="flex-1 min-h-0 flex gap-3">
+          <div className="flex-1 min-h-0 flex">
             {view !== 'map' && !loading && !loadError && (
               <UnassignedPanel
                 inRange={unassignedInRange}
@@ -725,7 +721,7 @@ function ScheduleInner() {
               {/* Map stays mounted once opened so Leaflet's CDN script and map
                   instance are never torn down; markers update via props. */}
               {mapEverShown && (
-                <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'map' ? 'flex' : 'none' }}>
+                <div className="flex-1 min-h-0 flex-col p-3" style={{ display: view === 'map' ? 'flex' : 'none' }}>
                   <MapView jobs={jobs} />
                 </div>
               )}
@@ -739,7 +735,7 @@ function ScheduleInner() {
       </div>
 
       {/* ── Mobile: simple day list ── */}
-      <div className="md:hidden flex-1 min-h-0 overflow-y-auto flex flex-col">
+      <div className="md:hidden flex-1 min-h-0 overflow-y-auto flex flex-col p-3 bg-page">
         {view === 'week' && (
           <div className="mb-3 flex items-center justify-between gap-2">
             <button onClick={() => setDayDate(d => addDays(d, -1))} className="p-2.5 rounded-lg border border-line bg-white text-ink-muted" aria-label="Previous day">{Icon.chevronLeft}</button>
