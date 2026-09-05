@@ -318,33 +318,32 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
         ))}
       </nav>
 
-      <div className="border-t border-[var(--sidebar-line)] p-4">
-        {companyName && (
-          <p className="text-xs font-semibold text-white truncate mb-3">
-            {companyName}
-          </p>
-        )}
+      <div className="border-t border-[var(--sidebar-line)] p-3">
         {/* User profile */}
-        <div className="flex items-center gap-3 mb-3">
-          <div className="w-8 h-8 rounded-full shrink-0 flex items-center justify-center text-xs font-bold bg-accent text-white">
-            {initials}
+        <div className="flex items-center gap-3 px-2 py-2.5 mb-1 rounded-lg" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}>
+          <div className="relative shrink-0">
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white"
+              style={{ background: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)', boxShadow: '0 0 0 2px rgba(74,222,128,0.18)' }}
+            >
+              {initials}
+            </div>
+            <span aria-hidden className="absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full bg-[#4ade80] ring-2 ring-[var(--sidebar-bg)]" />
           </div>
           <div className="min-w-0 flex-1">
-            {demoMode ? (
-              <p className="text-xs font-semibold truncate text-white">
-                Demo User — Admin
-              </p>
-            ) : (
-              <>
-                <p className="text-xs font-semibold truncate text-white">
-                  {displayName}
-                </p>
-                <p className="text-[10px] truncate mt-px text-ink-faint">
-                  {displayRole}
-                </p>
-              </>
-            )}
+            <p className="text-[13px] font-semibold truncate text-white leading-tight">
+              {demoMode ? 'Demo User' : displayName}
+            </p>
+            <p className="text-[11px] truncate mt-0.5 text-[var(--sidebar-text)] leading-tight">
+              {companyName ?? displayRole}
+            </p>
           </div>
+          <span
+            className="shrink-0 text-[10px] font-semibold uppercase tracking-[0.08em] px-1.5 py-0.5 rounded-md"
+            style={{ background: 'rgba(74,222,128,0.12)', color: 'var(--accent-bright)' }}
+          >
+            {demoMode ? 'Admin' : displayRole.split(' ')[0]}
+          </span>
         </div>
         {demoMode ? (
           <Link

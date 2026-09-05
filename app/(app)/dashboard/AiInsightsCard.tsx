@@ -1,53 +1,43 @@
-﻿'use client'
+'use client'
 
 import type React from 'react'
 
 export type Insight = { icon: React.ReactNode; text: string; positive?: boolean; negative?: boolean }
 
-function InsightIcon({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-md" style={{ background: 'rgba(74, 222, 128,0.15)' }}>
-      {children}
-    </span>
-  )
+function tone(insight: Insight) {
+  if (insight.negative) return { tile: 'bg-red-50 text-red-600', dot: '#ef4444' }
+  if (insight.positive) return { tile: 'bg-accent-soft text-accent', dot: 'var(--accent)' }
+  return { tile: 'bg-surface-muted text-ink-muted', dot: '#9ca3af' }
 }
 
+// Light insight list: each row gets a tinted icon tile and a status dot so the
+// owner can scan good / neutral / needs-attention at a glance.
 export default function AiInsightsCard({ insights }: { insights: Insight[] }) {
   return (
-    <div className="rounded-xl overflow-hidden" style={{ background: 'var(--charcoal)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 4px 16px -4px rgba(17,24,39,0.35)' }}>
-      <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(74, 222, 128,0.2)' }}>
-        <span style={{ color: 'var(--accent-bright)', fontSize: '15px', lineHeight: 1 }}>✦</span>
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: 'var(--accent-bright)' }}>AI Insights</span>
-        <span className="ml-auto text-[10px]" style={{ color: 'rgba(74, 222, 128,0.4)' }}>refreshed now</span>
+    <div className="bg-surface rounded-xl border border-line shadow-card overflow-hidden h-full flex flex-col">
+      <div className="flex items-center gap-2.5 px-5 py-4 border-b border-line-soft">
+        <span className="flex items-center justify-center w-7 h-7 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(17,24,39,0.15)]">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.8 5.7L19.5 9.5l-5.7 1.8L12 17l-1.8-5.7L4.5 9.5l5.7-1.8z"/><path d="M19 15l.9 2.6 2.6.9-2.6.9L19 22l-.9-2.6-2.6-.9 2.6-.9z" opacity=".6"/></svg>
+        </span>
+        <div>
+          <p className="text-sm font-semibold text-ink leading-tight">AI Insights</p>
+          <p className="text-[11px] text-ink-faint leading-tight mt-0.5">Refreshed just now</p>
+        </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {insights.map((insight, i) => (
-          <div
-            key={i}
-            className="group relative flex items-start gap-3.5 px-6 py-5 transition-colors duration-150"
-            style={{
-              borderLeft: '2px solid rgba(74, 222, 128,0.35)',
-              background: 'transparent',
-            }}
-            onMouseEnter={e => { (e.currentTarget as HTMLDivElement).style.background = 'rgba(74, 222, 128,0.06)' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLDivElement).style.background = 'transparent' }}
-          >
-            {i < insights.length - 1 && (
-              <span
-                className="pointer-events-none absolute bottom-0 left-6 right-6"
-                style={{ borderBottom: '1px solid rgba(74, 222, 128,0.18)' }}
-              />
-            )}
-            <InsightIcon>{insight.icon}</InsightIcon>
-            <p
-              className="text-[13px] leading-relaxed pt-0.5"
-              style={{ color: insight.negative ? '#f87171' : insight.positive ? '#86efac' : 'rgba(74, 222, 128,0.9)' }}
-            >
-              {insight.text}
-            </p>
-          </div>
-        ))}
-      </div>
+      <ul className="divide-y divide-line-soft flex-1">
+        {insights.map((insight, i) => {
+          const t = tone(insight)
+          return (
+            <li key={i} className="flex items-start gap-3 px-5 py-3">
+              <span className={['shrink-0 flex items-center justify-center w-7 h-7 rounded-lg [&>svg]:w-3.5 [&>svg]:h-3.5 [&>svg]:stroke-current', t.tile].join(' ')}>
+                {insight.icon}
+              </span>
+              <p className="text-[13px] leading-relaxed text-ink pt-0.5 flex-1">{insight.text}</p>
+              <span aria-hidden className="mt-2 w-1.5 h-1.5 rounded-full shrink-0" style={{ background: t.dot }} />
+            </li>
+          )
+        })}
+      </ul>
     </div>
   )
 }

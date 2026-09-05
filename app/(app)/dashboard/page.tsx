@@ -5,8 +5,10 @@ import type { Lead } from '@/lib/types'
 import AiSearchBar from '@/app/components/AiSearchBar'
 import AiInsightsCard, { type Insight } from './AiInsightsCard'
 import RevenueTrendChart from './RevenueTrendChart'
-import { StatusBadge } from '@/app/components/ui/Badge'
-import { StatCard as UiStatCard, DarkStatCard } from '@/app/components/ui/StatCard'
+import TodayTimeline, { type TimelineJob } from './TodayTimeline'
+import PipelineFunnel from './PipelineFunnel'
+import CrewToday, { type CrewMember } from './CrewToday'
+import { StatusBadge, statusDot } from '@/app/components/ui/Badge'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,6 +22,13 @@ type DashJob = {
   created_at: string | null
   clients: { name: string } | null
   staff: { name: string } | null
+}
+
+type TodayJob = DashJob & {
+  start_time: string | null
+  end_time: string | null
+  location: string | null
+  staff_id: string | null
 }
 
 type OverdueInvoice = {
@@ -37,9 +46,6 @@ function IconRevenue() {
 function IconClients() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
 }
-function IconJobs() {
-  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-}
 function IconProgress() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
 }
@@ -55,19 +61,55 @@ function IconJobValue() {
 function IconConversion() {
   return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M3 16v5h5"/><path d="M21 16v5h-5"/><path d="M21 3l-7 7"/><path d="M3 21l7-7"/></svg>
 }
-function IconQuotesPipe() {
-  return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+
+function IconArrow() {
+  return <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
 }
 
-// ─── pipeline ───────────────────────────────────────────────────────────────
+// ─── small presentational helpers ───────────────────────────────────────────
 
-function PipelineArrow() {
+// Six-month revenue sparkline, rendered as plain SVG bars so it paints
+// instantly on the server with no client chart runtime.
+function Sparkline({ points }: { points: { month: string; revenue: number }[] }) {
+  const max = Math.max(1, ...points.map(p => p.revenue))
+  const W = 132, H = 40, gap = 6
+  const bw = (W - gap * (points.length - 1)) / points.length
   return (
-    <div className="hidden sm:flex items-center shrink-0 px-1" style={{ color: 'rgba(21, 128, 61,0.35)' }}>
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-        <line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" />
-      </svg>
+    <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden className="shrink-0">
+      {points.map((p, i) => {
+        const h = Math.max(3, Math.round((p.revenue / max) * (H - 4)))
+        const isLast = i === points.length - 1
+        return (
+          <rect
+            key={p.month}
+            x={i * (bw + gap)}
+            y={H - h}
+            width={bw}
+            height={h}
+            rx={2.5}
+            fill={isLast ? 'var(--accent)' : 'rgba(21, 128, 61, 0.28)'}
+          />
+        )
+      })}
+    </svg>
+  )
+}
+
+function SectionLabel({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between mb-3">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted">{children}</p>
+      {action}
     </div>
+  )
+}
+
+function ViewAll({ href, children = 'View all' }: { href: string; children?: React.ReactNode }) {
+  return (
+    <Link href={href} className="inline-flex items-center gap-1 text-xs font-semibold text-accent hover:text-accent-hover transition-colors">
+      {children}
+      <IconArrow />
+    </Link>
   )
 }
 
@@ -137,11 +179,12 @@ export default async function DashboardPage() {
     { count: activeJobsPipelineCount },
     allQuoteStatuses,
     paidInvoicesAll,
+    { count: activeStaffCount },
   ] = await Promise.all([
     supabase.from('clients').select('*', { count: 'exact', head: true }).eq('is_active', true),
     supabase.from('jobs')
-      .select('id, title, job_type, status, created_at, clients(name), staff(name)')
-      .gte('scheduled_date', todayStr).lt('scheduled_date', tomorrowStr).order('scheduled_date'),
+      .select('id, title, job_type, status, created_at, start_time, end_time, location, staff_id, clients(name), staff(name)')
+      .gte('scheduled_date', todayStr).lt('scheduled_date', tomorrowStr).order('start_time'),
     supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
     // 739+ rows and growing — was an unbounded single fetch close to the
     // 1000-row PostgREST cap; paginated defensively even though it's a
@@ -174,6 +217,8 @@ export default async function DashboardPage() {
       supabase.from('quotes').select('status').range(from, to)
     ),
     fetchPaidInvoicesSince(supabase, sixMonthsAgoStart),
+    // Crew widget: how many active staff exist, to frame "N of M scheduled today".
+    supabase.from('staff').select('*', { count: 'exact', head: true }).eq('is_active', true),
   ])
 
   // ── Wave 2: margin sub-queries ───────────────────────────────────────────────
@@ -189,7 +234,7 @@ export default async function DashboardPage() {
   ])
 
   // ── Derived values ────────────────────────────────────────────────────────────
-  const jobsToday       = (rawJobsToday       ?? []) as unknown as DashJob[]
+  const jobsToday       = (rawJobsToday       ?? []) as unknown as TodayJob[]
   const recentJobs      = (rawRecentJobs       ?? []) as unknown as DashJob[]
   const leads           = (rawLeads           ?? []) as unknown as Lead[]
   const overdueInvoices = (rawOverdueInvoices ?? []) as unknown as OverdueInvoice[]
@@ -381,195 +426,375 @@ export default async function DashboardPage() {
     insights.push({ icon: PctIcon, text: 'Add quotes and materials to completed jobs to track profit margins.' })
   }
 
+  // ─── presentation-only derived values ────────────────────────────────────────
+
+  const hour = today.getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const sixMonthRevenue = revenueTrendData.reduce((s, p) => s + p.revenue, 0)
+  const outstandingCount = (outstandingInvoices ?? []).length
+  const newLeadCount = leads.length
+
+  // Crew widget: staff who have at least one job today, earliest start first.
+  const crewMap = new Map<string, CrewMember>()
+  for (const job of jobsToday) {
+    if (!job.staff_id || !job.staff?.name) continue
+    const entry = crewMap.get(job.staff_id) ?? { id: job.staff_id, name: job.staff.name, jobs: 0, firstStart: null }
+    entry.jobs += 1
+    if (job.start_time && (!entry.firstStart || job.start_time < entry.firstStart)) entry.firstStart = job.start_time
+    crewMap.set(job.staff_id, entry)
+  }
+  const crew = [...crewMap.values()].sort((a, b) => (a.firstStart ?? '99').localeCompare(b.firstStart ?? '99'))
+  const unassignedToday = jobsToday.filter(j => !j.staff_id).length
+
+  const timelineJobs: TimelineJob[] = jobsToday.map(j => ({
+    id: j.id, title: j.title, job_type: j.job_type, status: j.status,
+    start_time: j.start_time, end_time: j.end_time, location: j.location, staff_id: j.staff_id,
+    clients: j.clients, staff: j.staff,
+  }))
+
+  const attention: { label: string; href: string; tone: 'red' | 'amber' | 'green' | 'neutral' }[] = []
+  if ((overdueCount ?? 0) > 0) attention.push({ label: `${overdueCount} overdue ${overdueCount === 1 ? 'invoice' : 'invoices'}`, href: '/invoices', tone: 'red' })
+  else attention.push({ label: 'No overdue invoices', href: '/invoices', tone: 'green' })
+  if (newLeadCount > 0) attention.push({ label: `${newLeadCount} new ${newLeadCount === 1 ? 'lead' : 'leads'} to follow up`, href: '/leads', tone: 'amber' })
+  if (unassignedToday > 0) attention.push({ label: `${unassignedToday} unassigned today`, href: '/schedule', tone: 'amber' })
+  attention.push({ label: `${inProgressCount ?? 0} in progress`, href: '/jobs', tone: 'neutral' })
+
+  const CHIP_TONE: Record<typeof attention[number]['tone'], string> = {
+    red: 'bg-red-50 text-red-700 ring-red-600/20 hover:bg-red-100',
+    amber: 'bg-amber-50 text-amber-800 ring-amber-600/25 hover:bg-amber-100',
+    green: 'bg-accent-soft text-accent ring-accent/20 hover:bg-[#dff2e6]',
+    neutral: 'bg-surface text-ink-muted ring-line hover:bg-surface-muted',
+  }
+  const CHIP_DOT: Record<typeof attention[number]['tone'], string> = {
+    red: '#ef4444', amber: '#f59e0b', green: 'var(--accent)', neutral: '#9ca3af',
+  }
+
+  const supporting = [
+    { label: 'Active clients', value: String(activeClientsCount ?? 0), icon: <IconClients />, href: '/clients' },
+    { label: 'Jobs in progress', value: String(inProgressCount ?? 0), icon: <IconProgress />, href: '/jobs' },
+    { label: 'Avg job value', value: avgJobValue != null ? fmtMoney(avgJobValue) : '—', icon: <IconJobValue />, href: '/invoices' },
+    { label: 'Quote conversion', value: conversionRate != null ? `${conversionRate}%` : '—', icon: <IconConversion />, href: '/quotes' },
+  ]
+
+  const funnelStages = [
+    { label: 'Leads', value: leads.length, href: '/leads', hint: 'new' },
+    { label: 'Quotes', value: quotesPipelineCount ?? 0, href: '/quotes', hint: 'open' },
+    { label: 'Active jobs', value: activeJobsPipelineCount ?? 0, href: '/jobs', hint: 'scheduled + live' },
+    { label: 'Invoices', value: outstandingCount, href: '/invoices', hint: 'awaiting payment' },
+  ]
+
+  const shortDate = today.toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })
+
   // ─── render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-4 md:p-8 page-fade-in">
+    <div className="p-4 md:p-8 max-w-[1440px] mx-auto page-fade-in">
 
-      {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Dashboard</h1>
-        <p className="text-xs text-ink-muted mt-1">{dateLabel}</p>
-      </div>
+      {/* ── Hero ─────────────────────────────────────────────────────────── */}
+      <header className="mb-6 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-5">
+        <div className="min-w-0">
+          <p className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted">
+            <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+            {dateLabel}
+          </p>
+          <h1 className="mt-2 text-[30px] sm:text-[34px] leading-[1.1] font-bold tracking-tight text-ink">
+            {greeting}.{' '}
+            <span className="text-ink-muted font-semibold">
+              {jobsToday.length === 0
+                ? 'Nothing scheduled today.'
+                : `${jobsToday.length} ${jobsToday.length === 1 ? 'job' : 'jobs'} on the board today.`}
+            </span>
+          </h1>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {attention.map(chip => (
+              <Link
+                key={chip.label}
+                href={chip.href}
+                className={['inline-flex items-center gap-2 text-xs font-semibold px-3 py-1.5 rounded-full ring-1 ring-inset transition-colors', CHIP_TONE[chip.tone]].join(' ')}
+              >
+                <span className="w-1.5 h-1.5 rounded-full" style={{ background: CHIP_DOT[chip.tone] }} />
+                {chip.label}
+              </Link>
+            ))}
+          </div>
+        </div>
 
-      {/* AI Search */}
-      <AiSearchBar />
+        <div className="flex flex-wrap gap-2 shrink-0">
+          <Link
+            href="/jobs?action=new"
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold bg-accent text-white shadow-[0_1px_2px_rgba(17,24,39,0.12)] hover:brightness-110 transition-[filter]"
+          >
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+            New Job
+          </Link>
+          {([
+            { label: 'Quote', href: '/quotes?action=new' },
+            { label: 'Client', href: '/clients?action=new' },
+            { label: 'Lead', href: '/leads?action=new' },
+          ] as const).map(({ label, href }) => (
+            <Link
+              key={href}
+              href={href}
+              className="inline-flex items-center gap-1 px-3.5 py-2 rounded-lg text-sm font-medium bg-surface border border-line text-ink shadow-[0_1px_2px_rgba(17,24,39,0.04)] hover:bg-surface-muted transition-colors"
+            >
+              <span className="text-ink-faint">+</span> {label}
+            </Link>
+          ))}
+        </div>
+      </header>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-4 mb-6">
-        <UiStatCard
-          label="Revenue This Month"
-          value={fmtMoney(revenueThisMonth)}
-          sub={revPct !== null ? `vs last month` : undefined}
-          trend={revPct}
-          icon={<IconRevenue />}
-        />
-        <UiStatCard
-          label="Active Clients"
-          value={String(activeClientsCount ?? 0)}
-          icon={<IconClients />}
-        />
-        <UiStatCard
-          label="Jobs Today"
-          value={String(jobsToday.length)}
-          sub="scheduled"
-          icon={<IconJobs />}
-        />
-        <UiStatCard
-          label="In Progress"
-          value={String(inProgressCount ?? 0)}
-          icon={<IconProgress />}
-        />
-        <UiStatCard
-          label="Outstanding"
-          value={fmtMoney(outstandingVal)}
-          sub="sent + overdue"
-          icon={<IconOutstanding />}
-        />
-        <UiStatCard
-          label="Overdue"
-          value={String(overdueCount ?? 0)}
-          sub={(overdueCount ?? 0) > 0 ? 'requires attention' : 'all clear'}
-          icon={<IconAlert />}
-          danger={(overdueCount ?? 0) > 0}
-        />
-        <UiStatCard
-          label="Avg Job Value"
-          value={avgJobValue != null ? fmtMoney(avgJobValue) : '—'}
-          sub={avgJobValue != null ? 'per paid invoice, last 6 months' : undefined}
-          icon={<IconJobValue />}
-        />
-        <UiStatCard
-          label="Quote Conversion"
-          value={conversionRate != null ? `${conversionRate}%` : '—'}
-          sub={conversionRate != null ? 'accepted vs decided' : undefined}
-          icon={<IconConversion />}
-        />
-      </div>
-
-      {/* Business Pipeline */}
+      {/* ── Ask Operify ───────────────────────────────────────────────────── */}
       <div className="mb-6">
-        <p className="text-sm font-semibold text-ink mb-3">Business Pipeline</p>
-        <div className="flex flex-col sm:flex-row gap-3">
-          <DarkStatCard label="Leads" value={leads.length} icon={<IconClients />} className="flex-1" />
-          <PipelineArrow />
-          <DarkStatCard label="Quotes" value={quotesPipelineCount ?? 0} icon={<IconQuotesPipe />} className="flex-1" />
-          <PipelineArrow />
-          <DarkStatCard label="Active Jobs" value={activeJobsPipelineCount ?? 0} icon={<IconJobs />} className="flex-1" />
-          <PipelineArrow />
-          <DarkStatCard label="Invoices" value={(outstandingInvoices ?? []).length} icon={<IconOutstanding />} className="flex-1" />
+        <AiSearchBar />
+      </div>
+
+      {/* ── Key metrics ───────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+
+        {/* Outstanding — the number to act on */}
+        <div className="lg:col-span-4 relative bg-surface rounded-xl border border-line shadow-card overflow-hidden flex flex-col">
+          <span aria-hidden className={['absolute inset-y-0 left-0 w-[3px]', (overdueCount ?? 0) > 0 ? 'bg-error' : 'bg-accent'].join(' ')} />
+          <div className="p-5 flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted pt-1">Outstanding</p>
+              <span className={['shrink-0 flex items-center justify-center w-8 h-8 rounded-lg', (overdueCount ?? 0) > 0 ? 'bg-red-50 text-error' : 'bg-accent-soft text-accent'].join(' ')}>
+                <IconOutstanding />
+              </span>
+            </div>
+            <p className="mt-2 text-[38px] leading-none font-bold tracking-tight tabular-nums text-ink">{fmtMoney(outstandingVal)}</p>
+            <p className="mt-2 text-xs text-ink-muted">
+              across {outstandingCount} {outstandingCount === 1 ? 'invoice' : 'invoices'} sent or overdue
+            </p>
+          </div>
+          {(overdueCount ?? 0) > 0 ? (
+            <Link href="/invoices" className="group flex items-center justify-between gap-3 px-5 py-3 bg-red-50/70 border-t border-red-100 hover:bg-red-50 transition-colors">
+              <span className="flex items-center gap-2 min-w-0">
+                <span className="flex items-center justify-center w-6 h-6 rounded-md bg-error text-white shrink-0"><IconAlert /></span>
+                <span className="text-sm font-semibold text-red-700 truncate">
+                  {overdueCount} overdue · {fmtMoney(overdueTotal)}
+                </span>
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs font-semibold text-red-700 shrink-0">
+                Chase now <IconArrow />
+              </span>
+            </Link>
+          ) : (
+            <div className="flex items-center gap-2 px-5 py-3 bg-accent-soft/60 border-t border-line-soft">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+              <span className="text-sm font-medium text-accent">All accounts are within terms</span>
+            </div>
+          )}
+        </div>
+
+        {/* Revenue — six-month view with sparkline */}
+        <div className="lg:col-span-4 relative bg-surface rounded-xl border border-line shadow-card overflow-hidden flex flex-col">
+          <span aria-hidden className="absolute inset-y-0 left-0 w-[3px] bg-accent" />
+          <div className="p-5 flex-1">
+            <div className="flex items-start justify-between gap-3">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-muted pt-1">Revenue · last 6 months</p>
+              <span className="shrink-0 flex items-center justify-center w-8 h-8 rounded-lg bg-accent-soft text-accent">
+                <IconRevenue />
+              </span>
+            </div>
+            <div className="mt-2 flex items-end justify-between gap-4">
+              <p className="text-[38px] leading-none font-bold tracking-tight tabular-nums text-ink">{fmtMoney(sixMonthRevenue)}</p>
+              <Sparkline points={revenueTrendData} />
+            </div>
+            <p className="mt-2 text-xs text-ink-muted">
+              collected from {paidInvoicesArr.length} paid {paidInvoicesArr.length === 1 ? 'invoice' : 'invoices'}
+            </p>
+          </div>
+          <div className="flex items-center gap-4 px-5 py-3 bg-surface-muted/60 border-t border-line-soft text-xs">
+            <span className="text-ink-muted">This month <span className="font-semibold text-ink tabular-nums">{fmtMoney(revenueThisMonth)}</span></span>
+            <span className="text-ink-muted">Last month <span className="font-semibold text-ink tabular-nums">{fmtMoney(revenueLastMonth)}</span></span>
+            {revPct != null && revenueThisMonth > 0 && (
+              <span className={['ml-auto inline-flex items-center gap-0.5 font-semibold tabular-nums px-1.5 py-px rounded-md', revPct >= 0 ? 'bg-accent-soft text-accent' : 'bg-red-50 text-error'].join(' ')}>
+                {revPct >= 0 ? '↑' : '↓'}{Math.abs(revPct)}%
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Supporting stats */}
+        <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+          {supporting.map(stat => (
+            <Link
+              key={stat.label}
+              href={stat.href}
+              className="group bg-surface rounded-xl border border-line shadow-card p-4 flex flex-col justify-between hover:shadow-card-hover transition-shadow"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted leading-4">{stat.label}</p>
+                <span className="shrink-0 flex items-center justify-center w-6 h-6 rounded-md bg-surface-muted text-ink-muted group-hover:bg-accent-soft group-hover:text-accent transition-colors">
+                  {stat.icon}
+                </span>
+              </div>
+              <p className="mt-3 text-[24px] leading-none font-bold tracking-tight tabular-nums text-ink">{stat.value}</p>
+            </Link>
+          ))}
         </div>
       </div>
 
-      {/* Revenue Trend */}
-      <div className="mb-6">
-        <RevenueTrendChart data={revenueTrendData} />
+      {/* ── Pipeline ──────────────────────────────────────────────────────── */}
+      <div className="bg-surface rounded-xl border border-line shadow-card p-5 mb-6">
+        <SectionLabel action={<ViewAll href="/leads">Work the pipeline</ViewAll>}>Business pipeline</SectionLabel>
+        <PipelineFunnel stages={funnelStages} />
       </div>
 
-      {/* Quick Actions */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {([
-          { label: '+ New Job',    href: '/jobs?action=new'    },
-          { label: '+ New Quote',  href: '/quotes?action=new'  },
-          { label: '+ New Client', href: '/clients?action=new' },
-          { label: '+ New Lead',   href: '/leads?action=new'   },
-        ] as const).map(({ label, href }) => (
-          <Link
-            key={href}
-            href={href}
-            className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg text-xs bg-white border border-line text-ink hover:bg-surface-muted transition-colors"
-          >
-            {label}
-          </Link>
-        ))}
-      </div>
-
-      {/* AI Insights — full width */}
-      <div className="mb-6">
-        <AiInsightsCard insights={insights} />
-      </div>
-
-      {/* Main two-column section */}
-      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
-
-        {/* Jobs Today — 3/5 */}
-        <div className="lg:col-span-3 bg-white rounded-xl border border-line shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-surface-muted">
-            <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Jobs Today</p>
-              <span
-                className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold"
-                style={{ background: 'rgba(21, 128, 61,0.15)', color: 'var(--accent)' }}
-              >
+      {/* ── Today ─────────────────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+        <div className="lg:col-span-8 bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
+            <div className="flex items-center gap-2.5">
+              <p className="text-sm font-semibold text-ink">Today</p>
+              <span className="text-xs text-ink-faint">{shortDate}</span>
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-bold bg-accent-soft text-accent tabular-nums">
                 {jobsToday.length}
               </span>
             </div>
-            <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-accent">
-              View all →
-            </Link>
+            <ViewAll href="/schedule">Open schedule</ViewAll>
           </div>
+          <TodayTimeline jobs={timelineJobs} now={today} />
+        </div>
 
-          {jobsToday.length === 0 ? (
-            <div className="px-4 py-12 text-center">
-              <p className="text-sm text-ink-faint">No jobs scheduled for today</p>
+        <div className="lg:col-span-4 bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
+            <p className="text-sm font-semibold text-ink">Crew today</p>
+            <span className="text-xs text-ink-faint">{activeStaffCount ?? 0} active staff</span>
+          </div>
+          <CrewToday crew={crew} totalActive={activeStaffCount ?? 0} unassignedJobs={unassignedToday} />
+        </div>
+      </div>
+
+      {/* ── Trend + insights ──────────────────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
+        <div className="lg:col-span-7 min-h-[300px]">
+          <RevenueTrendChart data={revenueTrendData} headline={fmtMoney(sixMonthRevenue)} />
+        </div>
+        <div className="lg:col-span-5">
+          <AiInsightsCard insights={insights} />
+        </div>
+      </div>
+
+      {/* ── Needs attention + activity ───────────────────────────────────── */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+
+        {/* Overdue invoices */}
+        <div className="lg:col-span-7 bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+          <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
+            <div className="flex items-center gap-2.5">
+              <span className={['flex items-center justify-center w-6 h-6 rounded-md', overdueInvoices.length > 0 ? 'bg-red-50 text-error' : 'bg-accent-soft text-accent'].join(' ')}>
+                <IconAlert />
+              </span>
+              <p className="text-sm font-semibold text-ink">Overdue invoices</p>
+              {overdueInvoices.length > 0 && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-bold bg-error text-white tabular-nums">
+                  {overdueCount}
+                </span>
+              )}
+            </div>
+            <ViewAll href="/invoices" />
+          </div>
+          {overdueInvoices.length === 0 ? (
+            <div className="px-5 py-10 text-center">
+              <p className="text-sm font-medium text-ink">Nothing overdue</p>
+              <p className="text-xs text-ink-muted mt-1">Every sent invoice is still within its payment terms.</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full min-w-[520px] text-sm">
+              <table className="w-full min-w-[480px] text-sm">
                 <thead>
                   <tr>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Job</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Type</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Staff</th>
-                    <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Status</th>
-                    <th className="px-4 py-2 w-6 bg-surface-muted border-b border-line" />
+                    <th className="text-left px-5 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Invoice</th>
+                    <th className="text-left px-4 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
+                    <th className="text-right px-4 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Amount</th>
+                    <th className="text-left px-4 py-2.5 text-[10.5px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Due</th>
+                    <th className="px-4 py-2.5 w-6 bg-surface-muted border-b border-line" />
                   </tr>
                 </thead>
                 <tbody>
-                  {jobsToday.map(job => (
-                    <tr key={job.id} className="border-t border-line-soft hover:bg-surface-hover transition-colors">
-                      <td className="px-4 py-2.5">
-                        <p className="font-medium text-ink truncate max-w-[130px] text-xs">
-                          {job.title ?? job.job_type ?? 'Untitled'}
-                        </p>
-                      </td>
-                      <td className="px-4 py-2.5 text-xs text-ink-muted truncate max-w-[110px]">
-                        {job.clients?.name ?? <span className="text-gray-300">—</span>}
-                      </td>
-                      <td className="px-4 py-2.5 text-xs text-ink-muted">
-                        {job.job_type ?? <span className="text-gray-300">—</span>}
-                      </td>
-                      <td className="px-4 py-2.5 text-xs text-ink-muted">
-                        {job.staff?.name ?? <span className="text-gray-300">—</span>}
-                      </td>
-                      <td className="px-4 py-2.5">
-                        <StatusBadge status={job.status} />
-                      </td>
-                      <td className="px-4 py-2.5 text-right">
-                        <Link href={`/jobs/${job.id}`} className="text-gray-300 hover:text-accent transition-colors text-sm">→</Link>
-                      </td>
-                    </tr>
-                  ))}
+                  {overdueInvoices.map(inv => {
+                    const due = inv.due_date ? new Date(inv.due_date) : null
+                    const daysLate = due ? Math.max(0, Math.floor((today.getTime() - due.getTime()) / 86400000)) : null
+                    return (
+                      <tr key={inv.id} className="border-b border-line-soft last:border-b-0 hover:bg-surface-hover transition-colors">
+                        <td className="px-5 py-3 font-mono text-xs font-semibold text-ink">
+                          INV-{inv.id.slice(0, 6).toUpperCase()}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-medium text-ink">
+                          {inv.clients?.name ?? <span className="text-ink-faint">—</span>}
+                        </td>
+                        <td className="px-4 py-3 text-sm font-bold tabular-nums text-right text-red-700">
+                          {inv.total != null ? fmtMoney(inv.total) : '—'}
+                        </td>
+                        <td className="px-4 py-3 text-xs text-ink-muted whitespace-nowrap">
+                          {due
+                            ? <>{due.toLocaleDateString('en-NZ', { day: 'numeric', month: 'short' })}{daysLate != null && daysLate > 0 && <span className="ml-1.5 text-red-600 font-semibold">{daysLate}d late</span>}</>
+                            : <span className="text-ink-faint">—</span>}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Link href={`/invoices/${inv.id}`} className="text-ink-faint hover:text-error transition-colors inline-flex"><IconArrow /></Link>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>
           )}
         </div>
 
-        {/* Right column: Recent Activity + New Leads stacked — 2/5 */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
+        {/* Leads + recent activity */}
+        <div className="lg:col-span-5 flex flex-col gap-4">
+          <div className="bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
+              <div className="flex items-center gap-2.5">
+                <p className="text-sm font-semibold text-ink">New leads</p>
+                {leads.length > 0 && (
+                  <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[11px] font-bold bg-amber-100 text-amber-800 tabular-nums">
+                    {leads.length}
+                  </span>
+                )}
+              </div>
+              <ViewAll href="/leads" />
+            </div>
+            {leads.length === 0 ? (
+              <div className="px-5 py-8 text-center">
+                <p className="text-sm text-ink-faint">No new leads waiting</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-line-soft">
+                {leads.slice(0, 5).map(lead => (
+                  <Link
+                    key={lead.id}
+                    href={`/leads/${lead.id}`}
+                    className="group flex items-center gap-3 px-5 py-2.5 hover:bg-surface-hover transition-colors"
+                  >
+                    <span className="w-8 h-8 rounded-full flex items-center justify-center text-[11px] font-bold bg-amber-100 text-amber-800 shrink-0">
+                      {(lead.name ?? '?').split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold text-ink truncate group-hover:text-accent transition-colors">
+                        {lead.name ?? 'Unnamed lead'}
+                      </p>
+                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
+                        {lead.email ?? lead.phone ?? (lead as unknown as { source?: string }).source ?? '—'}
+                      </p>
+                    </div>
+                    <span className="text-ink-faint group-hover:text-accent transition-colors shrink-0"><IconArrow /></span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
 
-          {/* Recent Activity */}
-          <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-surface-muted">
-              <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">Recent Activity</p>
-              <Link href="/jobs" className="text-xs font-medium hover:opacity-70 transition-opacity text-accent">
-                View all →
-              </Link>
+          <div className="bg-surface rounded-xl border border-line shadow-card overflow-hidden">
+            <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
+              <p className="text-sm font-semibold text-ink">Recent activity</p>
+              <ViewAll href="/jobs" />
             </div>
             {recentJobs.length === 0 ? (
-              <div className="px-4 py-8 text-center">
+              <div className="px-5 py-8 text-center">
                 <p className="text-sm text-ink-faint">No jobs yet</p>
               </div>
             ) : (
@@ -578,10 +803,11 @@ export default async function DashboardPage() {
                   <Link
                     key={job.id}
                     href={`/jobs/${job.id}`}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-hover transition-colors group"
+                    className="group flex items-center gap-3 px-5 py-2.5 hover:bg-surface-hover transition-colors"
                   >
+                    <span aria-hidden className="w-1.5 h-7 rounded-full shrink-0" style={{ background: statusDot(job.status) }} />
                     <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">
+                      <p className="text-sm font-semibold text-ink truncate group-hover:text-accent transition-colors">
                         {job.title ?? job.job_type ?? 'Untitled'}
                       </p>
                       <p className="text-[11px] text-ink-muted truncate mt-0.5">
@@ -597,110 +823,8 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
-
-          {/* New Leads */}
-          <div className="bg-white rounded-xl border border-line shadow-sm overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-3 border-b border-line bg-surface-muted">
-              <div className="flex items-center gap-2">
-                <p className="text-xs font-semibold uppercase tracking-wider text-ink-muted">New Leads</p>
-                {leads.length > 0 && (
-                  <span
-                    className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
-                    style={{ background: 'var(--accent)' }}
-                  >
-                    {leads.length}
-                  </span>
-                )}
-              </div>
-              <Link href="/leads" className="text-xs font-medium hover:opacity-70 transition-opacity text-accent">
-                View all →
-              </Link>
-            </div>
-            {leads.length === 0 ? (
-              <div className="px-4 py-8 text-center">
-                <p className="text-sm text-ink-faint">No new leads</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-line-soft">
-                {leads.slice(0, 5).map(lead => (
-                  <Link
-                    key={lead.id}
-                    href={`/leads/${lead.id}`}
-                    className="flex items-center gap-3 px-4 py-2.5 hover:bg-surface-hover transition-colors group"
-                  >
-                    <div className="min-w-0 flex-1">
-                      <p className="text-xs font-semibold text-ink truncate group-hover:text-accent transition-colors">
-                        {lead.name ?? 'Unnamed Lead'}
-                      </p>
-                      <p className="text-[11px] text-ink-muted truncate mt-0.5">
-                        {lead.email ?? lead.phone ?? (lead as unknown as { source?: string }).source ?? '—'}
-                      </p>
-                    </div>
-                    <span className="text-gray-300 group-hover:text-accent transition-colors shrink-0 text-sm">→</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </div>
-
         </div>
       </div>
-
-      {/* Overdue Invoices */}
-      {overdueInvoices.length > 0 && (
-        <div className="bg-white rounded-xl border border-red-200 shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-4 py-3 border-b border-red-200 bg-red-50">
-            <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-wider text-[#EF4444]">Overdue Invoices</p>
-              <span
-                className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold text-white"
-                style={{ background: '#EF4444' }}
-              >
-                {overdueCount}
-              </span>
-            </div>
-            <Link href="/invoices" className="text-xs font-medium hover:opacity-70 transition-opacity text-[#EF4444]">
-              View all →
-            </Link>
-          </div>
-          <div className="overflow-x-auto">
-          <table className="w-full min-w-[480px] text-sm">
-            <thead>
-              <tr>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Invoice</th>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Client</th>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Amount</th>
-                <th className="text-left px-4 py-2 text-[10px] font-semibold text-ink-muted uppercase tracking-[0.08em] bg-surface-muted border-b border-line">Due Date</th>
-                <th className="px-4 py-2 w-6 bg-surface-muted border-b border-line" />
-              </tr>
-            </thead>
-            <tbody>
-              {overdueInvoices.map(inv => (
-                <tr key={inv.id} className="border-t border-line-soft hover:bg-surface-hover transition-colors">
-                  <td className="px-4 py-2.5 font-mono text-xs font-semibold text-ink">
-                    INV-{inv.id.slice(0, 6).toUpperCase()}
-                  </td>
-                  <td className="px-4 py-2.5 text-sm font-medium text-ink">
-                    {inv.clients?.name ?? <span className="text-gray-300">—</span>}
-                  </td>
-                  <td className="px-4 py-2.5 text-sm font-semibold tabular-nums" style={{ color: '#EF4444' }}>
-                    {inv.total != null ? fmtMoney(inv.total) : '—'}
-                  </td>
-                  <td className="px-4 py-2.5 text-xs text-ink-muted">
-                    {inv.due_date
-                      ? new Date(inv.due_date).toLocaleDateString('en-NZ', { day: 'numeric', month: 'short', year: 'numeric' })
-                      : <span className="text-gray-300">—</span>}
-                  </td>
-                  <td className="px-4 py-2.5 text-right">
-                    <Link href={`/invoices/${inv.id}`} className="text-gray-300 hover:text-[#EF4444] transition-colors">→</Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          </div>
-        </div>
-      )}
 
     </div>
   )

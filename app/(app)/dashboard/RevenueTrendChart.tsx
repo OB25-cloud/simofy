@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
@@ -13,90 +13,92 @@ const tooltipFormatter = new Intl.NumberFormat('en-NZ', {
   style: 'currency', currency: 'NZD', maximumFractionDigits: 0,
 })
 
+const GREEN = '#15803d'
+
 interface Props {
   data: Point[]
   title?: string
   periodLabel?: string
+  /** Optional headline rendered in the card header (e.g. 6-month total). */
+  headline?: string
 }
 
-export default function RevenueTrendChart({ data, title = 'Revenue Trend', periodLabel = 'last 6 months' }: Props) {
+// Light revenue chart: white card, forest-green line with a soft fill, the
+// peak month called out. Animation is off so the line is there on first paint.
+export default function RevenueTrendChart({ data, title = 'Revenue Trend', periodLabel = 'last 6 months', headline }: Props) {
   const maxRevenue = data.length > 0 ? Math.max(...data.map(p => p.revenue)) : null
 
   function renderDot(props: DotRenderProps) {
     const { cx, cy, payload } = props
-    if (cx == null || cy == null || !payload || maxRevenue == null || payload.revenue !== maxRevenue) {
+    if (cx == null || cy == null || !payload || maxRevenue == null || maxRevenue === 0 || payload.revenue !== maxRevenue) {
       return <g key={`dot-${cx}-${cy}`} />
     }
     return (
       <g key={`peak-${cx}-${cy}`}>
-        <text
-          x={cx}
-          y={cy - 14}
-          textAnchor="middle"
-          fontSize={9}
-          fontWeight={700}
-          letterSpacing={0.6}
-          fill="#4ade80"
-        >
+        <text x={cx} y={cy - 14} textAnchor="middle" fontSize={9} fontWeight={700} letterSpacing={0.8} fill={GREEN}>
           PEAK
         </text>
-        <circle cx={cx} cy={cy} r={6} fill="#4ade80" stroke="#111827" strokeWidth={2} />
+        <circle cx={cx} cy={cy} r={5.5} fill={GREEN} stroke="#fff" strokeWidth={2.5} />
       </g>
     )
   }
 
   return (
-    <div
-      className="rounded-xl overflow-hidden"
-      style={{ background: 'var(--charcoal)', boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 4px 16px -4px rgba(17,24,39,0.35)' }}
-    >
-      <div className="flex items-center gap-2.5 px-6 py-4 border-b" style={{ borderColor: 'rgba(74, 222, 128,0.2)' }}>
-        <span className="text-xs font-bold tracking-widest uppercase" style={{ color: 'var(--accent-bright)' }}>{title}</span>
-        <span className="ml-auto text-[10px]" style={{ color: 'rgba(74, 222, 128,0.4)' }}>{periodLabel}</span>
+    <div className="bg-surface rounded-xl border border-line shadow-card overflow-hidden h-full flex flex-col">
+      <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-line-soft">
+        <div>
+          <p className="text-sm font-semibold text-ink leading-tight">{title}</p>
+          <p className="text-[11px] text-ink-faint leading-tight mt-0.5">{periodLabel}</p>
+        </div>
+        {headline && (
+          <p className="text-lg font-bold tracking-tight tabular-nums text-ink">{headline}</p>
+        )}
       </div>
-      <div className="px-4 py-4" style={{ height: 260 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 24, right: 16, bottom: 0, left: 0 }}>
+      <div className="px-2 pt-4 pb-2 flex-1 min-h-[220px]">
+        <ResponsiveContainer width="100%" height="100%" minHeight={220}>
+          <AreaChart data={data} margin={{ top: 24, right: 20, bottom: 0, left: 0 }}>
             <defs>
               <linearGradient id="revenueGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#4ade80" stopOpacity={0.45} />
-                <stop offset="95%" stopColor="#4ade80" stopOpacity={0} />
+                <stop offset="5%" stopColor={GREEN} stopOpacity={0.22} />
+                <stop offset="95%" stopColor={GREEN} stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid stroke="#2a2a2a" vertical={false} />
+            <CartesianGrid stroke="#eeece8" vertical={false} />
             <XAxis
               dataKey="month"
-              tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
+              tick={{ fill: '#9ca3af', fontSize: 11 }}
               tickLine={false}
-              axisLine={{ stroke: 'rgba(74, 222, 128,0.2)' }}
+              axisLine={{ stroke: '#e7e5e4' }}
             />
             <YAxis
-              tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 11 }}
+              tick={{ fill: '#9ca3af', fontSize: 11 }}
               tickLine={false}
               axisLine={false}
               tickFormatter={(v: number) => axisFormatter.format(v)}
-              width={48}
+              width={52}
             />
             <Tooltip
+              cursor={{ stroke: '#d6d3d1', strokeDasharray: '3 3' }}
               contentStyle={{
-                background: 'var(--charcoal)',
-                border: '1px solid rgba(74, 222, 128,0.3)',
-                borderRadius: 8,
-                boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
+                background: '#fff',
+                border: '1px solid #e7e5e4',
+                borderRadius: 10,
+                boxShadow: '0 8px 24px -8px rgba(17,24,39,0.18)',
+                padding: '8px 12px',
               }}
-              labelStyle={{ color: '#fff', fontWeight: 600, marginBottom: 2 }}
-              itemStyle={{ color: 'var(--accent-bright)', fontWeight: 600 }}
+              labelStyle={{ color: '#6b7280', fontWeight: 600, fontSize: 11, marginBottom: 2 }}
+              itemStyle={{ color: GREEN, fontWeight: 700, fontSize: 13 }}
               formatter={(value) => [tooltipFormatter.format(Number(value)), 'Revenue']}
             />
             <Area
               type="monotone"
               dataKey="revenue"
-              stroke="#4ade80"
+              stroke={GREEN}
               strokeWidth={2.5}
               fill="url(#revenueGradient)"
               dot={renderDot}
-              activeDot={{ r: 6, fill: '#4ade80', stroke: '#111827', strokeWidth: 2 }}
-              style={{ filter: 'drop-shadow(0 0 6px rgba(74, 222, 128,0.5))' }}
+              activeDot={{ r: 5, fill: GREEN, stroke: '#fff', strokeWidth: 2 }}
+              isAnimationActive={false}
             />
           </AreaChart>
         </ResponsiveContainer>
