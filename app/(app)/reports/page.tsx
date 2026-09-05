@@ -182,6 +182,7 @@ export default async function ReportsPage() {
       const staffCompleted = staffJobs.filter(j => COMPLETE_STATUSES.includes(j.status ?? ''))
       const revenue = staffCompleted.reduce((s, j) => s + (revenueByJobId.get(j.id) ?? 0), 0)
       return {
+        id: member.id,
         name: member.name,
         jobsAssigned: staffJobs.length,
         jobsCompleted: staffCompleted.length,
@@ -246,11 +247,15 @@ export default async function ReportsPage() {
 
   return (
     <div className="p-4 md:p-8">
-      <div className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-widest mb-1" style={{ color: 'var(--accent)' }}>Finance</p>
-        <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Reports</h1>
-        <p className="text-sm text-ink-muted mt-0.5">
-          {windowStart.toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })} – {now.toLocaleDateString('en-NZ', { month: 'long', year: 'numeric' })}
+      <div className="mb-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+        <div>
+          <p className="text-[10.5px] font-semibold uppercase tracking-[0.14em] mb-1" style={{ color: 'var(--accent)' }}>Finance · Insights</p>
+          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Reports</h1>
+        </div>
+        <p className="inline-flex items-center gap-2 text-xs text-ink-muted bg-surface border border-line rounded-lg px-3 py-1.5 shadow-[0_1px_2px_rgba(17,24,39,0.04)] self-start sm:self-auto">
+          <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+          {windowStart.toLocaleDateString('en-NZ', { month: 'short', year: 'numeric' })} – {now.toLocaleDateString('en-NZ', { month: 'short', year: 'numeric' })}
+          <span className="text-ink-faint">· trailing 12 months</span>
         </p>
       </div>
 

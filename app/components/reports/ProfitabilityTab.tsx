@@ -1,78 +1,57 @@
 'use client'
 
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import ChartCard from './ChartCard'
-import StatCard from './StatCard'
-import { axisTick, axisLine, gridStroke, tooltipContentStyle, tooltipLabelStyle, tooltipItemStyle, GOLD, PALETTE } from './chartTheme'
+import { TrendChart, HBarChart } from './PremiumCharts'
 import type { ProfitabilityData } from './types'
 
-export default function ProfitabilityTab({ data }: { data: ProfitabilityData }) {
+const pct = (v: number) => `${v}%`
+
+function Mini({ label, value, sub, tone = 'default' }: { label: string; value: string; sub?: string; tone?: 'default' | 'accent' | 'danger' }) {
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-        <StatCard
-          label="Avg Margin"
-          value={data.avgMargin != null ? `${data.avgMargin}%` : '—'}
-          sub="completed jobs, last 12 months"
-          accent
-          danger={data.avgMargin != null && data.avgMargin < 10}
-        />
-        <StatCard
-          label="Best Job Type"
-          value={data.byJobType[0]?.jobType ?? '—'}
-          sub={data.byJobType[0] ? `${data.byJobType[0].margin}% margin` : undefined}
-        />
-        <StatCard
-          label="Tightest Job Type"
-          value={data.byJobType[data.byJobType.length - 1]?.jobType ?? '—'}
-          sub={data.byJobType.length > 0 ? `${data.byJobType[data.byJobType.length - 1].margin}% margin` : undefined}
-          danger={data.byJobType.length > 0 && data.byJobType[data.byJobType.length - 1].margin < 10}
-        />
+    <div className="relative bg-surface rounded-xl border border-line shadow-card px-4 py-3 overflow-hidden">
+      <span aria-hidden className={['absolute inset-y-0 left-0 w-[3px]', tone === 'accent' ? 'bg-accent' : tone === 'danger' ? 'bg-error' : 'bg-line'].join(' ')} />
+      <p className="text-[10.5px] font-semibold uppercase tracking-[0.1em] text-ink-muted">{label}</p>
+      <p className={['mt-1.5 text-[22px] leading-none font-bold tracking-tight tabular-nums truncate', tone === 'danger' ? 'text-error' : 'text-ink'].join(' ')}>{value}</p>
+      {sub && <p className="mt-1.5 text-[11px] text-ink-muted truncate">{sub}</p>}
+    </div>
+  )
+}
+
+export default function ProfitabilityTab({ data }: { data: ProfitabilityData }) {
+  const best = data.byJobType[0]
+  const worst = data.byJobType[data.byJobType.length - 1]
+  const monthsWithData = data.byMonth.filter(m => m.margin !== 0)
+  const peak = monthsWithData.reduce((b, m) => (m.margin > b.margin ? m : b), monthsWithData[0] ?? { month: '—', margin: 0 })
+
+  // Bars fade from best to tightest; anything under 10% is flagged red so a
+  // thin margin is visible at a glance, not just on hover.
+  const bars = data.byJobType.map(d => ({ label: d.jobType, value: d.margin, color: d.margin < 10 ? '#f87171' : undefined }))
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 xl:grid-cols-3 gap-3">
+        <Mini label="Avg margin" value={data.avgMargin != null ? pct(data.avgMargin) : '—'} sub="completed jobs, last 12 months" tone={data.avgMargin != null && data.avgMargin < 10 ? 'danger' : 'accent'} />
+        <Mini label="Best job type" value={best?.jobType ?? '—'} sub={best ? `${best.margin}% margin` : 'No margin data yet'} tone="accent" />
+        <Mini label="Tightest job type" value={worst?.jobType ?? '—'} sub={worst ? `${worst.margin}% margin` : 'No margin data yet'} tone={worst && worst.margin < 10 ? 'danger' : 'default'} />
       </div>
 
-      <ChartCard title="Margin Trend" subtitle="last 12 months">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data.byMonth} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke={gridStroke} vertical={false} />
-            <XAxis dataKey="month" tick={axisTick} tickLine={false} axisLine={axisLine} />
-            <YAxis tick={axisTick} tickLine={false} axisLine={false} tickFormatter={(v: number) => `${v}%`} width={40} />
-            <Tooltip
-              contentStyle={tooltipContentStyle}
-              labelStyle={tooltipLabelStyle}
-              itemStyle={tooltipItemStyle}
-              formatter={(value) => [`${value}%`, 'Margin']}
-            />
-            <Line
-              type="monotone"
-              dataKey="margin"
-              stroke={GOLD}
-              strokeWidth={2.5}
-              dot={{ fill: GOLD, r: 4, strokeWidth: 0 }}
-              activeDot={{ r: 6, fill: GOLD, stroke: '#111827', strokeWidth: 2 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      <ChartCard
+        title="Margin trend"
+        subtitle={monthsWithData.length > 0 ? `Peak ${peak.month} · ${peak.margin}% · quote total less materials and labour` : 'No completed jobs with quotes in the last 12 months'}
+        headline={data.avgMargin != null ? pct(data.avgMargin) : '—'}
+        headlineSub="average margin"
+        height={300}
+      >
+        <TrendChart
+          data={data.byMonth.map(m => ({ month: m.month, value: m.margin }))}
+          format={pct}
+          seriesLabel="avg margin"
+          gradientId="margin-month"
+        />
       </ChartCard>
 
-      <ChartCard title="Margin by Job Type" subtitle={`${data.byJobType.length} types`}>
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data.byJobType} margin={{ top: 8, right: 16, bottom: 0, left: 0 }}>
-            <CartesianGrid stroke={gridStroke} vertical={false} />
-            <XAxis dataKey="jobType" tick={axisTick} tickLine={false} axisLine={axisLine} />
-            <YAxis tick={axisTick} tickLine={false} axisLine={false} tickFormatter={(v: number) => `${v}%`} width={40} />
-            <Tooltip
-              contentStyle={tooltipContentStyle}
-              labelStyle={tooltipLabelStyle}
-              itemStyle={tooltipItemStyle}
-              formatter={(value) => [`${value}%`, 'Margin']}
-            />
-            <Bar dataKey="margin" radius={[4, 4, 0, 0]}>
-              {data.byJobType.map((entry, i) => (
-                <Cell key={entry.jobType} fill={PALETTE[i % PALETTE.length]} />
-              ))}
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+      <ChartCard title="Margin by job type" subtitle={`${data.byJobType.length} types · red = under 10%`} height={Math.max(260, 40 + data.byJobType.length * 34)}>
+        <HBarChart data={bars} format={pct} seriesLabel="margin" gradientId="margin-type" labelWidth={124} />
       </ChartCard>
     </div>
   )

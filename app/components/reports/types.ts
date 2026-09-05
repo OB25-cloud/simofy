@@ -16,6 +16,8 @@ export type JobsStatsData = {
 }
 
 export type StaffPerfRow = {
+  /** Staff id — drives the avatar/bar colour so it matches the scheduler. */
+  id?: string
   name: string
   jobsAssigned: number
   jobsCompleted: number
