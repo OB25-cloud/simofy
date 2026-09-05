@@ -14,14 +14,6 @@ function HamburgerIcon() {
   )
 }
 
-function ChevronRightIcon() {
-  return (
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="9 18 15 12 9 6" />
-    </svg>
-  )
-}
-
 const COLLAPSE_KEY = 'operify:sidebar-collapsed'
 
 interface Props {
@@ -97,15 +89,18 @@ export default function AppShell({ role, userName, userEmail, permissions, demoM
             />
           </div>
 
-          {/* Collapsed rail — desktop only */}
-          <div className={`hidden h-full bg-sidebar flex-col items-center pt-7 ${collapsed ? 'md:flex' : ''}`}>
-            <button
-              onClick={() => setCollapsed(false)}
-              className="flex items-center justify-center w-8 h-8 rounded-md text-white/50 hover:text-white hover:bg-white/10 transition-colors"
-              aria-label="Expand sidebar"
-            >
-              <ChevronRightIcon />
-            </button>
+          {/* Collapsed rail — desktop only: icon-only nav with tooltips */}
+          <div className={`hidden h-full ${collapsed ? 'md:block' : ''}`}>
+            <Sidebar
+              role={role}
+              userName={userName}
+              userEmail={userEmail}
+              permissions={permissions}
+              demoMode={demoMode}
+              companyName={companyName}
+              collapsed
+              onExpand={() => setCollapsed(false)}
+            />
           </div>
         </div>
 

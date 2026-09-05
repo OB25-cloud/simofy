@@ -93,6 +93,13 @@ function UsersIcon() {
     </svg>
   )
 }
+function ChevronRightIcon() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  )
+}
 function ChevronLeftIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -152,7 +159,6 @@ const ADMIN_SECTIONS: Section[] = [
       { name: 'Dashboard', href: '/dashboard', Icon: DashboardIcon },
       { name: 'Jobs',      href: '/jobs',      Icon: JobsIcon      },
       { name: 'Schedule',  href: '/schedule',  Icon: ScheduleIcon  },
-      { name: 'Staff',     href: '/staff',     Icon: StaffIcon     },
     ],
   },
   {
@@ -174,6 +180,7 @@ const ADMIN_SECTIONS: Section[] = [
   {
     label: 'SETTINGS',
     items: [
+      { name: 'Staff',         href: '/staff',                  Icon: StaffIcon     },
       { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon      },
       { name: 'Users',         href: '/settings/users',         Icon: UsersIcon     },
       { name: 'Checklists',    href: '/settings/checklists',    Icon: ChecklistIcon },
@@ -194,7 +201,6 @@ function buildDynamicSections(role: string, permissions: PermissionMap | null): 
     can(permissions, 'dashboard') ? { name: 'Dashboard', href: '/dashboard',                       Icon: DashboardIcon } : null,
     can(permissions, 'jobs')      ? { name: isField ? 'My Jobs' : 'Jobs', href: isField ? '/my-jobs' : '/jobs', Icon: isField ? MyJobsIcon : JobsIcon } : null,
     can(permissions, 'schedule')  ? { name: 'Schedule',  href: '/schedule',                        Icon: ScheduleIcon  } : null,
-    can(permissions, 'staff')     ? { name: 'Staff',     href: '/staff',                           Icon: StaffIcon     } : null,
   ].filter(Boolean) as NavItem[]
   if (opItems.length > 0) sections.push({ label: 'OPERATIONS', items: opItems })
 
@@ -211,7 +217,8 @@ function buildDynamicSections(role: string, permissions: PermissionMap | null): 
   if (clientItems.length > 0) sections.push({ label: 'CLIENTS', items: clientItems })
 
   const settingsItems: NavItem[] = [
-    can(permissions, 'settings') ? { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon } : null,
+    can(permissions, 'staff')    ? { name: 'Staff',         href: '/staff',                  Icon: StaffIcon } : null,
+    can(permissions, 'settings') ? { name: 'Notifications', href: '/settings/notifications', Icon: BellIcon  } : null,
   ].filter(Boolean) as NavItem[]
   if (settingsItems.length > 0) sections.push({ label: 'SETTINGS', items: settingsItems })
 
@@ -227,6 +234,9 @@ interface Props {
   permissions?: PermissionMap | null
   onNavigate?: () => void
   onCollapse?: () => void
+  /** Icon-only rail (desktop collapsed state). */
+  collapsed?: boolean
+  onExpand?: () => void
   demoMode?: boolean
   companyName?: string
 }
@@ -237,7 +247,7 @@ const ROLE_DISPLAY: Record<string, string> = {
   field:      'Field Staff',
 }
 
-export default function Sidebar({ role, userName, userEmail, permissions, onNavigate, onCollapse, demoMode, companyName }: Props) {
+export default function Sidebar({ role, userName, userEmail, permissions, onNavigate, onCollapse, collapsed, onExpand, demoMode, companyName }: Props) {
   const pathname = usePathname()
   const sections = role === 'admin' ? ADMIN_SECTIONS : buildDynamicSections(role, permissions ?? null)
   // Every nav href above is written as a real, unprefixed app route
@@ -251,6 +261,76 @@ export default function Sidebar({ role, userName, userEmail, permissions, onNavi
 
   const displayRole = ROLE_DISPLAY[role] ?? 'Field Staff'
   const displayName = userName ?? userEmail ?? 'User'
+
+  // Collapsed rail: same sections and active states, icons only, with the
+  // item name as a hover tooltip. Logo and profile stay pinned as before.
+  if (collapsed) {
+    return (
+      <aside className="w-full h-full bg-sidebar flex flex-col items-center">
+        <div className="pt-5 pb-3 flex flex-col items-center gap-1.5 shrink-0">
+          <Link href={`${basePath}/dashboard`} title="Operify" aria-label="Operify dashboard" className="flex items-center justify-center w-8 h-8 rounded-lg bg-accent text-white shadow-[0_1px_2px_rgba(0,0,0,0.3)]">
+            <LogoMark />
+          </Link>
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              className="flex items-center justify-center w-7 h-7 rounded-md text-white/40 hover:text-white hover:bg-white/10 transition-colors"
+              aria-label="Expand sidebar"
+              title="Expand sidebar"
+            >
+              <ChevronRightIcon />
+            </button>
+          )}
+        </div>
+
+        <nav className="flex-1 min-h-0 w-full overflow-y-auto sidebar-scroll flex flex-col items-center px-2 pb-3">
+          {sections.map((section, si) => (
+            <div
+              key={section.label}
+              className={['w-full flex flex-col items-center', si > 0 ? 'mt-2 pt-2 border-t border-[var(--sidebar-line)]' : ''].join(' ')}
+            >
+              {section.items.map(({ name, href, Icon }) => {
+                const isActive = pathname === `${basePath}${href}` || pathname.startsWith(`${basePath}${href}/`)
+                return (
+                  <Link
+                    key={href}
+                    href={`${basePath}${href}`}
+                    onClick={onNavigate}
+                    title={name}
+                    aria-label={name}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={[
+                      'relative flex items-center justify-center w-10 h-10 rounded-lg mb-1 transition-colors duration-150',
+                      isActive
+                        ? 'bg-[var(--sidebar-active-bg)] text-[var(--sidebar-active-fg)]'
+                        : 'text-white/55 hover:bg-[var(--sidebar-hover)] hover:text-white',
+                    ].join(' ')}
+                  >
+                    {isActive && (
+                      <span aria-hidden className="absolute -left-2 top-1/2 -translate-y-1/2 h-[18px] w-[3px] rounded-r-full bg-[var(--sidebar-active-fg)]" />
+                    )}
+                    <Icon />
+                  </Link>
+                )
+              })}
+            </div>
+          ))}
+        </nav>
+
+        <div className="w-full border-t border-[var(--sidebar-line)] py-3 flex flex-col items-center gap-2 shrink-0">
+          <div className="relative" title={`${demoMode ? 'Demo User' : displayName} · ${companyName ?? displayRole}`}>
+            <div
+              className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white"
+              style={{ background: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)', boxShadow: '0 0 0 2px rgba(74,222,128,0.18)' }}
+            >
+              {initials}
+            </div>
+            <span aria-hidden className="absolute -bottom-px -right-px w-2.5 h-2.5 rounded-full bg-[#4ade80] ring-2 ring-[var(--sidebar-bg)]" />
+          </div>
+        </div>
+      </aside>
+    )
+  }
 
   return (
     <aside className="w-full h-full bg-sidebar flex flex-col">
