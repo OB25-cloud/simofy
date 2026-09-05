@@ -4,12 +4,8 @@ import Link from 'next/link'
 import type { Staff, Job } from '@/lib/types'
 import StaffActions from '@/app/components/staff/StaffActions'
 import StaffDetailTabs from '@/app/components/staff/StaffDetailTabs'
+import { RoleChip, StaffAvatarCircle } from '@/app/components/staff/StaffView'
 import { StatusBadge } from '@/app/components/ui/Badge'
-
-const ROLE_CONFIG: Record<string, { bg: string; text: string; label: string }> = {
-  admin: { bg: 'rgba(21, 128, 61,0.12)', text: 'var(--accent)', label: 'Admin' },
-  field: { bg: '#DBEAFE', text: '#3B82F6', label: 'Field' },
-}
 
 export default async function StaffDetailPage({
   params,
@@ -31,13 +27,25 @@ export default async function StaffDetailPage({
 
   const typedStaff = staff as unknown as Staff
   const jobList = (jobs ?? []) as unknown as Job[]
-  const roleConfig = typedStaff.role ? (ROLE_CONFIG[typedStaff.role] ?? null) : null
+
+  // Jobs carry no value of their own — the quote raised against a job is
+  // the closest thing, and feeds the "avg job value" stat on the profile.
+  const jobIds = jobList.map(j => j.id)
+  const { data: quotes } = jobIds.length > 0
+    ? await supabase.from('quotes').select('job_id, total').in('job_id', jobIds).not('total', 'is', null)
+    : { data: [] as { job_id: string; total: number }[] }
+  const quoteTotals: Record<string, number> = {}
+  for (const q of (quotes ?? []) as { job_id: string; total: number }[]) {
+    quoteTotals[q.job_id] = Math.max(quoteTotals[q.job_id] ?? 0, Number(q.total) || 0)
+  }
+
+  const memberSince = new Date(typedStaff.created_at).toLocaleDateString('en-NZ', { month: 'short', year: 'numeric' })
 
   return (
-    <div className="p-4 md:p-8 max-w-4xl">
+    <div className="p-4 md:p-8 max-w-5xl">
       <Link
         href="/staff"
-        className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors mb-6"
+        className="inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink transition-colors mb-5"
       >
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="15 18 9 12 15 6" />
@@ -46,26 +54,31 @@ export default async function StaffDetailPage({
       </Link>
 
       {/* Header */}
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-3 mb-1 flex-wrap">
-            <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">{typedStaff.name}</h1>
-            {roleConfig && (
-              <span
-                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium"
-                style={{ background: roleConfig.bg, color: roleConfig.text }}
-              >
-                {roleConfig.label}
-              </span>
-            )}
-            <StatusBadge status={typedStaff.is_active ? 'active' : 'inactive'} />
+      <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4 min-w-0">
+          <StaffAvatarCircle staffId={typedStaff.id} name={typedStaff.name} size="xl" inactive={!typedStaff.is_active} />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink truncate">{typedStaff.name}</h1>
+              <RoleChip role={typedStaff.role} size="md" />
+              <StatusBadge
+                status={typedStaff.is_active ? 'active' : 'inactive'}
+                label={typedStaff.is_active ? 'Active' : 'Inactive'}
+                className={typedStaff.is_active ? '' : '!bg-red-50 !text-red-800 !ring-red-600/20'}
+              />
+            </div>
+            <p className="mt-1 text-xs text-ink-muted flex items-center gap-3 flex-wrap">
+              <span>Member since {memberSince}</span>
+              {typedStaff.phone && <a href={`tel:${typedStaff.phone}`} className="hover:text-accent transition-colors tabular-nums">{typedStaff.phone}</a>}
+              {typedStaff.email && <a href={`mailto:${typedStaff.email}`} className="hover:text-accent transition-colors truncate">{typedStaff.email}</a>}
+            </p>
           </div>
         </div>
         <StaffActions staff={typedStaff} />
       </div>
 
       {/* Tabbed content */}
-      <StaffDetailTabs staff={typedStaff} jobs={jobList} />
+      <StaffDetailTabs staff={typedStaff} jobs={jobList} quoteTotals={quoteTotals} />
     </div>
   )
 }
