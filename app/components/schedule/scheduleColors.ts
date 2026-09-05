@@ -1,11 +1,9 @@
-import type { CSSProperties } from 'react'
-
 export const UNASSIGNED_KEY = 'unassigned'
 
 export type StaffColor = { rgb: string; solid: string }
 
 // 8 distinct hues, consistent per staff member regardless of list order/composition.
-// Used for staff avatars (column headers, week-view job card avatars) — job
+// Used for staff avatars (schedule row headers, dashboard crew list) — job
 // blocks themselves are colour-coded by status, not by staff, see below.
 const STAFF_COLORS: StaffColor[] = [
   { rgb: '245,158,11', solid: '#f59e0b' }, // amber
@@ -25,26 +23,34 @@ function hashId(id: string): number {
   return hash
 }
 
-export function colorForStaff(staffId: string | null): StaffColor {
+export function colorForStaff(staffId: string | null | undefined): StaffColor {
   if (!staffId) return UNASSIGNED_COLOR
   return STAFF_COLORS[hashId(staffId) % STAFF_COLORS.length]
 }
 
 // ─── status colours ─────────────────────────────────────────────────────────
-// Single source of truth for job-block colour coding across Day/Week/Map —
-// matches the badge system used everywhere else in the app.
+// Single source of truth for job-block colour coding across Day/Week/Map.
+// Scheduler palette: Scheduled = blue, In Progress = green, Pending = amber,
+// Completed/Invoiced = grey, Cancelled = red. `text` is the darker shade used
+// for legible text on the light tint; `solid` is the bar/dot colour.
 
-const STATUS_COLORS: Record<string, StaffColor> = {
-  scheduled:   { solid: '#3B82F6', rgb: '59,130,246' },
-  in_progress: { solid: '#F59E0B', rgb: '245,158,11' },
-  complete:    { solid: '#22C55E', rgb: '34,197,94' },
-  invoiced:    { solid: '#22C55E', rgb: '34,197,94' }, // treated as "done", same as complete
-  cancelled:   { solid: '#EF4444', rgb: '239,68,68' },
-  pending:     { solid: 'var(--ink-muted)', rgb: '107,114,128' },
+export type StatusColor = StaffColor & { text: string; tint: string; tintStrong: string }
+
+function make(solid: string, rgb: string, text: string): StatusColor {
+  return { solid, rgb, text, tint: `rgba(${rgb}, 0.10)`, tintStrong: `rgba(${rgb}, 0.18)` }
 }
-const DEFAULT_STATUS_COLOR: StaffColor = STATUS_COLORS.pending
 
-export function colorForStatus(status: string | null | undefined): StaffColor {
+const STATUS_COLORS: Record<string, StatusColor> = {
+  scheduled:   make('#3b82f6', '59,130,246', '#1d4ed8'),
+  in_progress: make('#16a34a', '22,163,74', '#15803d'),
+  pending:     make('#f59e0b', '245,158,11', '#b45309'),
+  complete:    make('#9ca3af', '107,114,128', '#4b5563'),
+  invoiced:    make('#9ca3af', '107,114,128', '#4b5563'),
+  cancelled:   make('#ef4444', '239,68,68', '#b91c1c'),
+}
+const DEFAULT_STATUS_COLOR = STATUS_COLORS.pending
+
+export function colorForStatus(status: string | null | undefined): StatusColor {
   if (!status) return DEFAULT_STATUS_COLOR
   return STATUS_COLORS[status] ?? DEFAULT_STATUS_COLOR
 }
@@ -53,18 +59,14 @@ export const STATUS_LABELS: Record<string, string> = {
   pending: 'Pending',
   scheduled: 'Scheduled',
   in_progress: 'In Progress',
-  complete: 'Complete',
+  complete: 'Completed',
   invoiced: 'Invoiced',
   cancelled: 'Cancelled',
 }
 
-// Frosted-glass card styling shared by the Day and Week job blocks.
-export function glassCardStyle(rgb: string): CSSProperties {
-  return {
-    background: `rgba(${rgb}, 0.22)`,
-    border: `1px solid rgba(${rgb}, 0.55)`,
-    boxShadow: `0 0 14px rgba(${rgb}, 0.28), inset 0 1px 1px rgba(255,255,255,0.1)`,
-    backdropFilter: 'blur(6px)',
-    WebkitBackdropFilter: 'blur(6px)',
-  }
+export function statusLabelFor(status: string | null | undefined): string {
+  return STATUS_LABELS[status ?? ''] ?? 'Pending'
 }
+
+// Order used by the legend and by the quick status switcher.
+export const STATUS_ORDER = ['scheduled', 'in_progress', 'pending', 'complete', 'invoiced', 'cancelled'] as const

@@ -2,27 +2,17 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import Script from 'next/script'
-import type { Job } from '@/lib/types'
 import { TOWN_COORDS } from '@/lib/townMatch'
+import { colorForStatus } from './scheduleColors'
+import type { ScheduleJob } from './scheduleDates'
 
-// jobs.location is rarely filled in by staff — the address that's actually
-// populated lives on the job's linked site instead. Fall back to it so the
-// map isn't empty for jobs that have a site but no standalone location text.
-export type ScheduleJob = Job & { sites?: { address: string | null } | null }
+// Re-exported for callers that used to import the type from here.
+export type { ScheduleJob }
 
 // Leaflet + OpenStreetMap via CDN — free, no API key, unlike Mapbox GL JS
 // which requires an access token even for the CDN build.
 const LEAFLET_JS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'
 const LEAFLET_CSS = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
-
-const STATUS_COLOR: Record<string, string> = {
-  pending: 'var(--ink-muted)',
-  scheduled: '#3B82F6',
-  in_progress: '#F59E0B',
-  complete: '#22C55E',
-  invoiced: '#22C55E',
-  cancelled: '#EF4444',
-}
 
 // ─── minimal ambient Leaflet typings (CDN global, no @types package) ────────
 
@@ -161,7 +151,7 @@ export default function MapView({ jobs: allJobs }: { jobs: ScheduleJob[] }) {
       if (!town) continue
 
       const [dx, dy] = jitter(job.id)
-      const color = STATUS_COLOR[job.status ?? ''] ?? STATUS_COLOR.pending
+      const color = colorForStatus(job.status).solid
       const dateLabel = job.scheduled_date
         ? new Date(job.scheduled_date).toLocaleDateString('en-NZ', { weekday: 'short', day: 'numeric', month: 'short' })
         : '—'

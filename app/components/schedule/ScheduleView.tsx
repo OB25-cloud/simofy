@@ -1,768 +1,769 @@
 'use client'
 
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  DndContext,
+  DragOverlay,
+  pointerWithin,
+  type DragEndEvent,
+  type DragMoveEvent,
+  type DragStartEvent,
+} from '@dnd-kit/core'
 import { supabase } from '@/lib/supabase'
-import type { Job, Staff, Client } from '@/lib/types'
-import { DEFAULT_START_TIME, DEFAULT_END_TIME, TIME_OPTIONS, formatTime } from '@/lib/timeOptions'
-import MapView, { type ScheduleJob } from './MapView'
+import { isDemoRoute } from '@/lib/demoGuard'
+import type { Client, Job, Staff } from '@/lib/types'
+import { minutesToTime } from '@/lib/timeOptions'
 import AddJobModal from '@/app/components/jobs/AddJobModal'
-import DayTimeGrid, { type DragReschedulePayload } from './DayTimeGrid'
-import WeekGrid, { type WeekDragReschedulePayload } from './WeekGrid'
-import JobDetailPanel from './JobDetailPanel'
-import { UNASSIGNED_KEY, colorForStatus, STATUS_LABELS } from './scheduleColors'
 import { StatCard } from '@/app/components/ui/StatCard'
+import MapView from './MapView'
+import DayBoard, { staffIdFromRowId, type BoardGeometry, type StaffRow } from './DayBoard'
+import WeekBoard, { parseCellId } from './WeekBoard'
+import UnassignedPanel, { PANEL_DROP_ID } from './UnassignedPanel'
+import JobDetailPanel from './JobDetailPanel'
+import ReschedulePickerModal, { type ReschedulePayload } from './ReschedulePickerModal'
+import ScheduleToast, { type ToastState } from './ScheduleToast'
+import MobileDayList from './MobileDayList'
+import { DragGhost, type JobDragData } from './JobBlock'
+import { JobHoverProvider, useJobHover } from './JobTooltip'
+import { setDropPreview } from './dragPreviewStore'
+import { useScheduleSensors, markDragEnded } from './dndSensors'
+import { colorForStatus, STATUS_ORDER, statusLabelFor } from './scheduleColors'
+import {
+  VIEW_RANGE_MIN, VIEW_START_MIN,
+  addDays, buildWeekDays, clampStart, compactTime, formatShortDate, formatWeekRange, fromDateKey, getMonday,
+  jobDateKey, jobDurationMin, jobLabel, jobTimes, snapMinutes, startOfDay, toDateKey,
+  type ScheduleJob,
+} from './scheduleDates'
 
-// ─── date helpers ───────────────────────────────────────────────────────────────
+// ─── constants ───────────────────────────────────────────────────────────────
 
-function getMonday(d: Date): Date {
-  const date = new Date(d)
-  const day = date.getDay()
-  date.setDate(date.getDate() - (day === 0 ? 6 : day - 1))
-  date.setHours(0, 0, 0, 0)
-  return date
+type View = 'day' | 'week' | 'map'
+type StaffLite = Pick<Staff, 'id' | 'name'>
+type ClientLite = Pick<Client, 'id' | 'name' | 'business_name'>
+type AddJobPrefill = { staffId: string; date: string; startTime?: string; endTime?: string }
+type JobPatch = Partial<Pick<Job, 'scheduled_date' | 'start_time' | 'end_time' | 'staff_id' | 'status'>>
+type TodayStats = { jobs: number; staff: number; completed: number; inProgress: number }
+type CommitOpts = { notifyClient?: boolean; notifyStaff?: boolean; message?: string; undoable?: boolean }
+
+const PANEL_KEY = 'operify:schedule-panel-collapsed'
+const HIDE_FREE_KEY = 'operify:schedule-hide-free'
+const VIEW_KEY = 'operify:schedule-view'
+const UPCOMING_DAYS = 28
+const JOB_SELECT = 'id, title, job_type, status, scheduled_date, start_time, end_time, location, notes, client_id, site_id, staff_id, staff(name), clients(name, business_name), sites(address)'
+
+// ─── icons ───────────────────────────────────────────────────────────────────
+
+const Icon = {
+  chevronLeft: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>,
+  chevronRight: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.25" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>,
+  plus: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.75" strokeLinecap="round"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>,
+  calendar: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" /><line x1="16" y1="2" x2="16" y2="6" /><line x1="8" y1="2" x2="8" y2="6" /><line x1="3" y1="10" x2="21" y2="10" /></svg>,
+  crew: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></svg>,
+  inbox: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12" /><path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /></svg>,
+  check: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>,
 }
 
-function startOfDay(d: Date): Date {
-  const date = new Date(d)
-  date.setHours(0, 0, 0, 0)
-  return date
-}
+// ─── small pieces ────────────────────────────────────────────────────────────
 
-function toDateKey(d: Date): string {
-  const y = d.getFullYear()
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${y}-${m}-${day}`
-}
-
-function addDays(d: Date, n: number): Date {
-  const next = new Date(d)
-  next.setDate(next.getDate() + n)
-  return next
-}
-
-function formatWeekRange(start: Date): string {
-  const end = addDays(start, 6) // Mon–Sun
-  const opts: Intl.DateTimeFormatOptions = { month: 'long' }
-  const startMonth = start.toLocaleDateString('en-NZ', opts)
-  const endMonth = end.toLocaleDateString('en-NZ', opts)
-  const year = end.getFullYear()
-  if (startMonth === endMonth) {
-    return `${start.getDate()} – ${end.getDate()} ${startMonth} ${year}`
-  }
-  return `${start.getDate()} ${startMonth} – ${end.getDate()} ${endMonth} ${year}`
-}
-
-function formatModalDate(dateKey: string): string {
-  return new Date(`${dateKey}T00:00:00`).toLocaleDateString('en-NZ', {
-    weekday: 'short', day: 'numeric', month: 'short',
-  })
-}
-
-// Mon–Sun, 7 days.
-function buildWeekDays(weekStart: Date): Date[] {
-  return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i))
-}
-
-function jobTimes(job: Job): { start: string; end: string } {
-  return {
-    start: job.start_time?.slice(0, 5) ?? DEFAULT_START_TIME,
-    end: job.end_time?.slice(0, 5) ?? DEFAULT_END_TIME,
-  }
-}
-
-// ─── shared notify checkboxes ────────────────────────────────────────────────
-
-function NotifyCheckboxes({
-  clientName, staffName, notifyClient, notifyStaff, onToggleClient, onToggleStaff,
-}: {
-  clientName: string | null
-  staffName: string | null
-  notifyClient: boolean
-  notifyStaff: boolean
-  onToggleClient: (v: boolean) => void
-  onToggleStaff: (v: boolean) => void
-}) {
-  if (!clientName && !staffName) return null
-
+function BoardSkeleton() {
   return (
-    <div className="space-y-1 pt-1">
-      {clientName && (
-        <label className="flex items-center gap-2.5 py-2 md:py-0 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={notifyClient}
-            onChange={(e) => onToggleClient(e.target.checked)}
-            className="w-4 h-4 rounded cursor-pointer shrink-0"
-            style={{ accentColor: 'var(--accent)' }}
-          />
-          <span className="text-sm text-ink-muted">Notify client of this schedule change?</span>
-        </label>
-      )}
-      {staffName && (
-        <label className="flex items-center gap-2.5 py-2 md:py-0 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={notifyStaff}
-            onChange={(e) => onToggleStaff(e.target.checked)}
-            className="w-4 h-4 rounded cursor-pointer shrink-0"
-            style={{ accentColor: 'var(--accent)' }}
-          />
-          <span className="text-sm text-ink-muted">Notify {staffName} of this schedule change?</span>
-        </label>
-      )}
-    </div>
-  )
-}
-
-// ─── reschedule confirmation modal (drag & drop result) ──────────────────────
-
-// ─── reschedule picker modal (right-click / long-press) ──────────────────────
-
-function ReschedulePickerModal({
-  job, showTime, notifyClient, notifyStaff, onToggleClient, onToggleStaff, saving, onConfirm, onCancel,
-}: {
-  job: Job
-  showTime: boolean
-  notifyClient: boolean
-  notifyStaff: boolean
-  onToggleClient: (v: boolean) => void
-  onToggleStaff: (v: boolean) => void
-  saving: boolean
-  onConfirm: (newDateKey: string, newStartTime: string, newEndTime: string) => void
-  onCancel: () => void
-}) {
-  const currentKey = job.scheduled_date?.split('T')[0] ?? toDateKey(new Date())
-  const { start: currentStart, end: currentEnd } = jobTimes(job)
-  const [dateKey, setDateKey] = useState(currentKey)
-  const [startTime, setStartTime] = useState(currentStart)
-  const [endTime, setEndTime] = useState(currentEnd)
-
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') onCancel()
-    }
-    window.addEventListener('keydown', onKeyDown)
-    return () => window.removeEventListener('keydown', onKeyDown)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const unchanged = dateKey === currentKey && (!showTime || (startTime === currentStart && endTime === currentEnd))
-
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
-      style={{ background: 'rgba(0,0,0,0.45)' }}
-      onClick={(e) => { if (e.target === e.currentTarget) onCancel() }}
-    >
-      <div className="bg-white w-full max-w-md rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
-        <div className="px-6 py-4 border-b border-line shrink-0" style={{ background: 'rgba(21, 128, 61,0.12)' }}>
-          <h2 className="text-sm font-semibold text-ink">Reschedule Job</h2>
-        </div>
-
-        <div className="px-6 py-5 space-y-4 overflow-y-auto">
-          <div>
-            <p className="text-sm font-medium text-ink">{job.title ?? job.job_type ?? 'Untitled job'}</p>
-            <p className="mt-1.5 text-sm text-ink-muted">
-              Currently {formatModalDate(currentKey)}{showTime && <> · {formatTime(currentStart)} – {formatTime(currentEnd)}</>}
-            </p>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-ink-muted mb-1.5">New date</label>
-            <input
-              type="date"
-              value={dateKey}
-              onChange={(e) => setDateKey(e.target.value)}
-              className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
-            />
-          </div>
-
-          {showTime && (
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs font-medium text-ink-muted mb-1.5">Start Time</label>
-                <select
-                  value={startTime}
-                  onChange={(e) => setStartTime(e.target.value)}
-                  className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
-                >
-                  {TIME_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-ink-muted mb-1.5">End Time</label>
-                <select
-                  value={endTime}
-                  onChange={(e) => setEndTime(e.target.value)}
-                  className="w-full border border-line rounded-md px-3 py-2.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-accent/25 focus:border-accent bg-white"
-                >
-                  {TIME_OPTIONS.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
-                </select>
-              </div>
+    <div className="flex-1 min-h-0 bg-surface rounded-xl border border-line shadow-card overflow-hidden flex flex-col">
+      <div className="h-11 bg-surface-muted border-b border-line flex items-center px-4 gap-3">
+        <div className="h-3 w-20 rounded bg-line animate-pulse" />
+      </div>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} className="flex border-b border-line-soft" style={{ height: 72 }}>
+          <div className="w-[208px] shrink-0 flex items-center gap-3 px-4 border-r border-line">
+            <div className="w-9 h-9 rounded-full bg-line animate-pulse" />
+            <div className="space-y-1.5">
+              <div className="h-3 w-24 rounded bg-line animate-pulse" />
+              <div className="h-2.5 w-16 rounded bg-line-soft animate-pulse" />
             </div>
-          )}
-
-          <NotifyCheckboxes
-            clientName={job.client_id && job.clients?.name ? job.clients.name : null}
-            staffName={job.staff_id && job.staff?.name ? job.staff.name : null}
-            notifyClient={notifyClient}
-            notifyStaff={notifyStaff}
-            onToggleClient={onToggleClient}
-            onToggleStaff={onToggleStaff}
-          />
+          </div>
+          <div className="flex-1 relative">
+            {i % 3 !== 2 && <div className="absolute top-2 h-14 rounded-lg bg-surface-muted animate-pulse" style={{ left: `${8 + i * 9}%`, width: '18%' }} />}
+            {i % 2 === 0 && <div className="absolute top-2 h-14 rounded-lg bg-surface-muted animate-pulse" style={{ left: `${45 + i * 5}%`, width: '22%' }} />}
+          </div>
         </div>
-
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-line shrink-0">
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={saving}
-            className="px-4 py-3 md:py-2 text-sm bg-white border border-line text-ink rounded-lg hover:bg-surface-muted transition-colors disabled:opacity-60"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            onClick={() => onConfirm(dateKey, startTime, endTime)}
-            disabled={saving || unchanged}
-            className="px-4 py-3 md:py-2 text-sm font-medium text-white font-semibold rounded-lg transition-[filter] hover:brightness-110 disabled:opacity-60 disabled:hover:opacity-60"
-            style={{ background: 'var(--accent)' }}
-          >
-            {saving ? 'Rescheduling…' : 'Confirm'}
-          </button>
-        </div>
-      </div>
+      ))}
     </div>
   )
 }
 
-// ─── toast ────────────────────────────────────────────────────────────────────
-
-function Toast({ message, onUndo }: { message: string; onUndo?: () => void }) {
+function BoardError({ onRetry }: { onRetry: () => void }) {
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      <div
-        className="flex items-center gap-3 pl-4 pr-2 py-3 rounded-lg shadow-lg text-sm font-medium text-white"
-        style={{ background: 'var(--charcoal)' }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="shrink-0">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-        <span>{message}</span>
-        {onUndo && (
-          <button
-            onClick={onUndo}
-            className="shrink-0 px-2.5 py-1 text-xs font-semibold rounded-md hover:bg-white/10 transition-colors"
-            style={{ color: 'var(--accent-bright)' }}
-          >
-            Undo
-          </button>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ─── grid loading / error states ───────────────────────────────────────────────
-// Shared by the Day grid, Week grid and mobile list so a slow or failed fetch
-// always shows something intentional instead of an empty/half-built layout.
-
-function GridLoading() {
-  return (
-    <div className="flex-1 flex flex-col items-center justify-center gap-3 rounded-lg" style={{ background: 'var(--charcoal)' }}>
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#4ade80" strokeWidth="2.5" strokeLinecap="round" className="animate-spin">
-        <path d="M21 12a9 9 0 1 1-6.219-8.56" />
-      </svg>
-      <p className="text-sm text-gray-500">Loading schedule…</p>
-    </div>
-  )
-}
-
-function GridError({ onRetry }: { onRetry: () => void }) {
-  return (
-    <div className="flex-1 flex items-center justify-center rounded-lg" style={{ background: 'var(--charcoal)' }}>
-      <button
-        onClick={onRetry}
-        className="flex flex-col items-center gap-2 px-6 py-4 text-center hover:opacity-90 transition-opacity"
-      >
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="12" y1="8" x2="12" y2="12" />
-          <line x1="12" y1="16" x2="12.01" y2="16" />
-        </svg>
-        <span className="text-sm font-medium text-white">Something went wrong — click to refresh</span>
+    <div className="flex-1 min-h-0 bg-surface rounded-xl border border-line shadow-card flex items-center justify-center">
+      <button onClick={onRetry} className="flex flex-col items-center gap-2 px-6 py-4 text-center group">
+        <span className="w-10 h-10 rounded-full bg-red-50 text-error flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+        </span>
+        <span className="text-sm font-semibold text-ink">Couldn&apos;t load the schedule</span>
+        <span className="text-xs text-accent font-semibold group-hover:underline">Try again</span>
       </button>
     </div>
   )
 }
 
-// ─── mobile list view ─────────────────────────────────────────────────────────
-// "On mobile switch to a simple list view of today's jobs sorted by time" —
-// always today, regardless of which day/week is selected in the desktop grid.
-
-function MobileJobList({ jobs, todayKey, onOpen }: { jobs: Job[]; todayKey: string; onOpen: (job: Job) => void }) {
-  const todaysJobs = useMemo(
-    () => jobs
-      .filter(j => j.scheduled_date?.split('T')[0] === todayKey)
-      .sort((a, b) => (a.start_time ?? '').localeCompare(b.start_time ?? '')),
-    [jobs, todayKey],
-  )
-
-  if (todaysJobs.length === 0) {
-    return (
-      <div className="rounded-xl border border-line bg-white py-12 text-center">
-        <p className="text-sm text-ink-muted">No jobs scheduled for today</p>
-      </div>
-    )
-  }
-
+function Legend() {
   return (
-    <div className="bg-white rounded-xl border border-line shadow-sm divide-y divide-line-soft">
-      {todaysJobs.map(job => {
-        const color = colorForStatus(job.status)
+    <div className="hidden lg:flex items-center gap-3.5">
+      {STATUS_ORDER.filter(s => s !== 'invoiced').map(s => {
+        const c = colorForStatus(s)
         return (
-          <button
-            key={job.id}
-            onClick={() => onOpen(job)}
-            className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-surface-hover transition-colors"
-          >
-            <span className="shrink-0 w-1 h-10 rounded-full" style={{ background: color.solid }} />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-medium text-ink truncate">{job.title ?? job.job_type ?? 'Untitled'}</p>
-              <p className="text-xs text-ink-muted truncate mt-0.5">
-                {formatTime(job.start_time)} · {job.clients?.name ?? 'No client'} · {job.staff?.name ?? 'Unassigned'}
-              </p>
-            </div>
-            <span
-              className="shrink-0 text-[10px] font-semibold px-2 py-0.5 rounded-full"
-              style={{ background: `${color.solid}1F`, color: color.solid }}
-            >
-              {STATUS_LABELS[job.status ?? ''] ?? 'Pending'}
-            </span>
-          </button>
+          <span key={s} className="inline-flex items-center gap-1.5 text-[11px] text-ink-muted">
+            <span className="w-2 h-2 rounded-sm" style={{ background: c.solid }} />
+            {statusLabelFor(s)}
+          </span>
         )
       })}
     </div>
   )
 }
 
-// ─── main view ──────────────────────────────────────────────────────────────────
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className="inline-flex items-center gap-2 text-[11.5px] font-medium text-ink-muted hover:text-ink transition-colors"
+    >
+      <span
+        className={['relative w-7 h-4 rounded-full transition-colors', checked ? 'bg-accent' : 'bg-line'].join(' ')}
+      >
+        <span className={['absolute top-0.5 w-3 h-3 rounded-full bg-white shadow transition-transform', checked ? 'translate-x-3.5' : 'translate-x-0.5'].join(' ')} />
+      </span>
+      {label}
+    </button>
+  )
+}
 
-type AddJobPrefill = { staffId: string; date: string; startTime?: string; endTime?: string }
+// ─── view ────────────────────────────────────────────────────────────────────
 
 export default function ScheduleView() {
-  const [view, setView] = useState<'day' | 'week' | 'map'>('day')
+  return (
+    <JobHoverProvider>
+      <ScheduleInner />
+    </JobHoverProvider>
+  )
+}
+
+function ScheduleInner() {
+  const hover = useJobHover()
+  const sensors = useScheduleSensors()
+  const geometry = useRef<BoardGeometry>({ rows: new Map() })
+
+  // ── view / navigation state
+  const [view, setView] = useState<View>('day')
   const [gridMode, setGridMode] = useState<'day' | 'week'>('day')
-  // MapView is mounted the first time Map View is opened and then never
-  // unmounted again — only hidden via CSS when switching back to the grid.
-  // Conditionally unmounting/remounting it broke Leaflet's CDN script
-  // loading: next/script's onLoad doesn't reliably re-fire for a script
-  // that's already loaded elsewhere in the document, so a remounted
-  // MapView would wait forever for a load event that never comes.
   const [mapEverShown, setMapEverShown] = useState(false)
   const [dayDate, setDayDate] = useState<Date>(() => startOfDay(new Date()))
   const [weekStart, setWeekStart] = useState<Date>(() => getMonday(new Date()))
+  const [todayKey, setTodayKey] = useState('')
+  const [panelCollapsed, setPanelCollapsed] = useState(false)
+  const [hideFree, setHideFree] = useState(false)
+
+  // ── data
   const [jobs, setJobs] = useState<ScheduleJob[]>([])
-  const [staffList, setStaffList] = useState<Pick<Staff, 'id' | 'name'>[]>([])
-  const [clients, setClients] = useState<Pick<Client, 'id' | 'name' | 'business_name'>[]>([])
+  const [extraUnassigned, setExtraUnassigned] = useState<ScheduleJob[]>([])
+  const [todayStats, setTodayStats] = useState<TodayStats>({ jobs: 0, staff: 0, completed: 0, inProgress: 0 })
+  const [staffList, setStaffList] = useState<StaffLite[]>([])
+  const [clients, setClients] = useState<ClientLite[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState(false)
   const [retryTick, setRetryTick] = useState(0)
-  const [todayKey, setTodayKey] = useState('')
-  useEffect(() => { setTodayKey(toDateKey(new Date())) }, [])
+  const staffClientsLoadedRef = useRef(false)
+  // Undo closures need to call the latest commitPatch without the callback
+  // referencing itself during its own declaration.
+  const commitPatchRef = useRef<((job: ScheduleJob, patch: JobPatch, opts?: CommitOpts) => Promise<boolean>) | null>(null)
 
-  const [contextMenuJob, setContextMenuJob] = useState<Job | null>(null)
-  const [notifyClient, setNotifyClient] = useState(true)
-  const [notifyStaff, setNotifyStaff] = useState(true)
-  const [savingReschedule, setSavingReschedule] = useState(false)
-  const [toast, setToast] = useState<{ message: string; undo?: () => void } | null>(null)
+  // ── overlays
+  const [pickerJob, setPickerJob] = useState<ScheduleJob | null>(null)
+  const [savingPicker, setSavingPicker] = useState(false)
+  const [toast, setToast] = useState<ToastState | null>(null)
   const [addJobPrefill, setAddJobPrefill] = useState<AddJobPrefill | null>(null)
-  const [detailJob, setDetailJob] = useState<ScheduleJob | null>(null)
+  const [detailJobId, setDetailJobId] = useState<string | null>(null)
+  // Last known copy of the open job, for when it moves out of both lists
+  // (e.g. assigned and rescheduled to a day outside the visible range).
+  const [detailSnapshot, setDetailSnapshot] = useState<ScheduleJob | null>(null)
+  const [activeDrag, setActiveDrag] = useState<{ job: ScheduleJob; width: number } | null>(null)
+
+  useEffect(() => {
+    // Client-only reads: today's date (avoids SSR/CSR mismatch) and persisted prefs.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTodayKey(toDateKey(new Date()))
+    try {
+      if (localStorage.getItem(PANEL_KEY) === '1') setPanelCollapsed(true)
+      if (localStorage.getItem(HIDE_FREE_KEY) === '1') setHideFree(true)
+      const v = localStorage.getItem(VIEW_KEY)
+      if (v === 'week') { setView('week'); setGridMode('week') }
+    } catch { /* storage unavailable */ }
+    // Deep links: /schedule?view=week&date=2026-09-07 (e.g. from the dashboard).
+    const params = new URLSearchParams(window.location.search)
+    const paramView = params.get('view')
+    const paramDate = params.get('date')
+    if (paramDate && /^\d{4}-\d{2}-\d{2}$/.test(paramDate) && !Number.isNaN(fromDateKey(paramDate).getTime())) {
+      setDayDate(fromDateKey(paramDate))
+      setWeekStart(getMonday(fromDateKey(paramDate)))
+    }
+    if (paramView === 'day' || paramView === 'week') { setView(paramView); setGridMode(paramView) }
+    else if (paramView === 'map') { setView('map'); setMapEverShown(true) }
+  }, [])
+  useEffect(() => { try { localStorage.setItem(PANEL_KEY, panelCollapsed ? '1' : '0') } catch { /* noop */ } }, [panelCollapsed])
+  useEffect(() => { try { localStorage.setItem(HIDE_FREE_KEY, hideFree ? '1' : '0') } catch { /* noop */ } }, [hideFree])
+  useEffect(() => { try { if (view !== 'map') localStorage.setItem(VIEW_KEY, view) } catch { /* noop */ } }, [view])
 
   useEffect(() => {
     if (!toast) return
-    const t = setTimeout(() => setToast(null), 4000)
+    const t = setTimeout(() => setToast(null), 4500)
     return () => clearTimeout(t)
   }, [toast])
 
   const isDayMode = view === 'map' ? gridMode === 'day' : view === 'day'
   const dayKey = toDateKey(dayDate)
   const weekKey = toDateKey(weekStart)
+  const rangeStartKey = isDayMode ? dayKey : weekKey
+  const rangeEndKey = toDateKey(isDayMode ? addDays(dayDate, 1) : addDays(weekStart, 7))
+  const weekDays = useMemo(() => buildWeekDays(weekStart), [weekStart])
 
-  // Staff + clients rarely change and don't depend on the selected
-  // day/week, so they're only fetched once — but that fetch is folded into
-  // the same effect/load cycle as the jobs query (via Promise.all) rather
-  // than living in its own separate effect. Two independent effects
-  // resolving at different times was exactly the "half-loaded" bug: the
-  // jobs fetch could finish (loading -> false, grid renders) while
-  // staff/clients were still in flight, or either fetch's error was
-  // silently swallowed (data defaulted to []), rendering an empty-looking
-  // grid with no indication anything had gone wrong.
-  const staffClientsLoadedRef = useRef(false)
+  const inRange = useCallback(
+    (key: string | null) => !!key && key >= rangeStartKey && key < rangeEndKey,
+    [rangeStartKey, rangeEndKey],
+  )
 
+  // ── load ───────────────────────────────────────────────────────────────────
   useEffect(() => {
+    if (!todayKey) return
     let cancelled = false
     async function load() {
       setLoading(true)
       setLoadError(false)
-      const rangeStart = isDayMode ? dayKey : weekKey
-      const rangeEnd = isDayMode ? addDays(dayDate, 1) : addDays(weekStart, 7)
       const needsStaffClients = !staffClientsLoadedRef.current
+      const upcomingEndKey = toDateKey(addDays(new Date(`${todayKey}T00:00:00`), UPCOMING_DAYS))
 
-      const [jobsResult, staffResult, clientResult] = await Promise.all([
-        supabase
-          .from('jobs')
-          .select('id, title, job_type, status, scheduled_date, start_time, end_time, location, client_id, staff_id, staff(name), clients(name), sites(address)')
-          .gte('scheduled_date', rangeStart)
-          .lt('scheduled_date', toDateKey(rangeEnd))
-          .order('scheduled_date'),
-        needsStaffClients
-          ? supabase.from('staff').select('id, name').eq('is_active', true).order('name')
-          : Promise.resolve(null),
-        needsStaffClients
-          ? supabase.from('clients').select('id, name, business_name').order('name')
-          : Promise.resolve(null),
+      const [jobsResult, extraResult, todayResult, staffResult, clientResult] = await Promise.all([
+        supabase.from('jobs').select(JOB_SELECT)
+          .gte('scheduled_date', rangeStartKey).lt('scheduled_date', rangeEndKey)
+          .order('scheduled_date').order('start_time'),
+        supabase.from('jobs').select(JOB_SELECT)
+          .is('staff_id', null)
+          .neq('status', 'cancelled')
+          .or(`scheduled_date.is.null,and(scheduled_date.gte.${todayKey},scheduled_date.lt.${upcomingEndKey})`)
+          .order('scheduled_date', { nullsFirst: false }).order('start_time')
+          .limit(60),
+        supabase.from('jobs').select('id, staff_id, status').eq('scheduled_date', todayKey),
+        needsStaffClients ? supabase.from('staff').select('id, name').eq('is_active', true).order('name') : Promise.resolve(null),
+        needsStaffClients ? supabase.from('clients').select('id, name, business_name').order('name') : Promise.resolve(null),
       ])
-
       if (cancelled) return
 
-      if (jobsResult.error || staffResult?.error || clientResult?.error) {
-        console.error('[Schedule] load failed:', jobsResult.error ?? staffResult?.error ?? clientResult?.error)
+      const err = jobsResult.error ?? extraResult.error ?? todayResult.error ?? staffResult?.error ?? clientResult?.error
+      if (err) {
+        console.error('[Schedule] load failed:', err)
         setLoadError(true)
         setLoading(false)
         return
       }
 
-      setJobs((jobsResult.data as unknown as ScheduleJob[]) ?? [])
+      const rangeJobs = (jobsResult.data as unknown as ScheduleJob[]) ?? []
+      const extra = ((extraResult.data as unknown as ScheduleJob[]) ?? []).filter(j => !inRange(jobDateKey(j)))
+      const today = (todayResult.data as { id: string; staff_id: string | null; status: string | null }[]) ?? []
+      setJobs(rangeJobs)
+      setExtraUnassigned(extra)
+      setTodayStats({
+        jobs: today.length,
+        staff: new Set(today.filter(j => j.staff_id).map(j => j.staff_id)).size,
+        completed: today.filter(j => j.status === 'complete' || j.status === 'invoiced').length,
+        inProgress: today.filter(j => j.status === 'in_progress').length,
+      })
       if (needsStaffClients) {
-        setStaffList(staffResult?.data ?? [])
-        setClients(clientResult?.data ?? [])
+        setStaffList((staffResult?.data as StaffLite[]) ?? [])
+        setClients((clientResult?.data as ClientLite[]) ?? [])
         staffClientsLoadedRef.current = true
       }
       setLoading(false)
     }
     load()
     return () => { cancelled = true }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDayMode, dayKey, weekKey, retryTick])
+  }, [rangeStartKey, rangeEndKey, todayKey, retryTick, inRange])
 
-  const weekDays = buildWeekDays(weekStart)
-
-  const staffRows = useMemo(() => {
+  // ── derived ────────────────────────────────────────────────────────────────
+  const staffRows: StaffRow[] = useMemo(() => {
     const map = new Map<string, string>()
     staffList.forEach(s => map.set(s.id, s.name))
-    jobs.forEach(j => {
-      if (j.staff_id && j.staff?.name && !map.has(j.staff_id)) map.set(j.staff_id, j.staff.name)
-    })
-    return Array.from(map.entries())
-      .map(([id, name]) => ({ id, name }))
-      .sort((a, b) => a.name.localeCompare(b.name))
+    jobs.forEach(j => { if (j.staff_id && j.staff?.name && !map.has(j.staff_id)) map.set(j.staff_id, j.staff.name) })
+    return Array.from(map.entries()).map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name))
   }, [staffList, jobs])
 
-  const hasUnassigned = jobs.some(j => !j.staff_id)
+  const dayJobs = useMemo(() => jobs.filter(j => jobDateKey(j) === dayKey), [jobs, dayKey])
+  const unassignedInRange = useMemo(
+    () => jobs.filter(j => !j.staff_id && j.status !== 'cancelled').sort((a, b) => (a.scheduled_date ?? '').localeCompare(b.scheduled_date ?? '') || (a.start_time ?? '').localeCompare(b.start_time ?? '')),
+    [jobs],
+  )
 
-  // Safety filter: if a job's date moved out of the displayed day (e.g. via the
-  // reschedule picker), it must not linger in the Day grid using stale geometry.
-  const dayJobs = useMemo(() => jobs.filter(j => j.scheduled_date?.split('T')[0] === dayKey), [jobs, dayKey])
+  const detailJob = useMemo(() => {
+    if (!detailJobId) return null
+    return jobs.find(j => j.id === detailJobId) ?? extraUnassigned.find(j => j.id === detailJobId) ?? detailSnapshot
+  }, [detailJobId, jobs, extraUnassigned, detailSnapshot])
 
-  function resolveStaffKey(key: string): { id: string | null; name: string } {
-    if (key === UNASSIGNED_KEY) return { id: null, name: 'Unassigned' }
-    return { id: key, name: staffRows.find(s => s.id === key)?.name ?? 'Unassigned' }
-  }
+  const staffNameFor = useCallback((id: string | null) => (id ? staffRows.find(s => s.id === id)?.name ?? null : null), [staffRows])
 
-  function handleRetry() {
-    setRetryTick(t => t + 1)
-  }
+  // ── local state placement ──────────────────────────────────────────────────
+  // After any change a job belongs in exactly one bucket: the visible range,
+  // the "other dates" unassigned list, or nowhere (moved out of view).
+  const placeJob = useCallback((updated: ScheduleJob) => {
+    const key = jobDateKey(updated)
+    const visible = inRange(key)
+    setJobs(prev => {
+      const without = prev.filter(j => j.id !== updated.id)
+      return visible ? [...without, updated] : without
+    })
+    setExtraUnassigned(prev => {
+      const without = prev.filter(j => j.id !== updated.id)
+      const belongs = !visible && !updated.staff_id && updated.status !== 'cancelled' && (key == null || (key >= todayKey && key < toDateKey(addDays(new Date(`${todayKey}T00:00:00`), UPCOMING_DAYS))))
+      return belongs ? [...without, updated] : without
+    })
+    setDetailSnapshot(prev => (prev && prev.id === updated.id ? updated : prev))
+  }, [inRange, todayKey])
 
-  function goPrev() {
-    if (isDayMode) setDayDate(d => addDays(d, -1))
-    else setWeekStart(d => addDays(d, -7))
-  }
-  function goNext() {
-    if (isDayMode) setDayDate(d => addDays(d, 1))
-    else setWeekStart(d => addDays(d, 7))
-  }
-  function goToday() {
-    setDayDate(startOfDay(new Date()))
-    setWeekStart(getMonday(new Date()))
-  }
-  function jumpToDay(date: Date) {
-    setDayDate(startOfDay(date))
-    setView('day')
-    setGridMode('day')
-  }
+  const bumpTodayStats = useCallback((before: ScheduleJob, after: ScheduleJob) => {
+    const wasToday = jobDateKey(before) === todayKey
+    const isToday = jobDateKey(after) === todayKey
+    if (!wasToday && !isToday) return
+    setTodayStats(s => {
+      let { jobs: n, completed, inProgress } = s
+      const done = (j: ScheduleJob) => j.status === 'complete' || j.status === 'invoiced'
+      if (wasToday) { n -= 1; if (done(before)) completed -= 1; if (before.status === 'in_progress') inProgress -= 1 }
+      if (isToday) { n += 1; if (done(after)) completed += 1; if (after.status === 'in_progress') inProgress += 1 }
+      return { ...s, jobs: n, completed, inProgress }
+    })
+  }, [todayKey])
 
-  function openReschedulePicker(job: Job) {
-    setNotifyClient(true)
-    setNotifyStaff(true)
-    setContextMenuJob(job)
-  }
+  // ── commit a change ────────────────────────────────────────────────────────
+  const commitPatch = useCallback(async (
+    job: ScheduleJob,
+    patch: JobPatch,
+    opts: CommitOpts = {},
+  ): Promise<boolean> => {
+    const current: JobPatch = {
+      scheduled_date: jobDateKey(job),
+      start_time: jobTimes(job).start,
+      end_time: jobTimes(job).end,
+      staff_id: job.staff_id ?? null,
+      status: job.status ?? null,
+    }
+    const changed: JobPatch = {}
+    const prev: JobPatch = {}
+    for (const key of Object.keys(patch) as (keyof JobPatch)[]) {
+      const next = patch[key] ?? null
+      if (next !== (current[key] ?? null)) {
+        ;(changed as Record<string, unknown>)[key] = next
+        ;(prev as Record<string, unknown>)[key] = current[key] ?? null
+      }
+    }
+    if (Object.keys(changed).length === 0) return false
 
-  // Drag-and-drop applies immediately — no confirmation modal — since a
-  // toast with Undo covers the same "did I mean to do that?" need with far
-  // less friction for something done many times a day.
-  function handleWeekDragReschedule({ job, toStaffKey, toDateKey: toDateKeyStr }: WeekDragReschedulePayload) {
-    const to = resolveStaffKey(toStaffKey)
-    const { start, end } = jobTimes(job)
-    applyReschedule(job, toDateKeyStr, start, end, to.id, to.name, true, true)
-  }
-
-  function handleDayDragReschedule({ job, toStaffKey, newStartTime, newEndTime }: DragReschedulePayload) {
-    const to = resolveStaffKey(toStaffKey)
-    applyReschedule(job, dayKey, newStartTime, newEndTime, to.id, to.name, true, true)
-  }
-
-  // Reverts a reschedule (from the toast's Undo button) — same DB update
-  // shape as applyReschedule, but silent: no notifications queued, no
-  // follow-up toast beyond a small confirmation.
-  async function revertReschedule(
-    jobId: string,
-    prev: { scheduledDate: string | undefined; startTime: string; endTime: string; staffId: string | null; staffName: string },
-  ) {
-    const { error } = await supabase
-      .from('jobs')
-      .update({ scheduled_date: prev.scheduledDate, start_time: prev.startTime, end_time: prev.endTime, staff_id: prev.staffId })
-      .eq('id', jobId)
-
-    if (error) {
-      console.error('[Reschedule] undo failed:', error)
-      return
+    const nextStaffId = changed.staff_id !== undefined ? changed.staff_id : job.staff_id
+    const updated: ScheduleJob = {
+      ...job,
+      ...changed,
+      staff: changed.staff_id !== undefined
+        ? (nextStaffId ? { name: staffNameFor(nextStaffId) ?? job.staff?.name ?? 'Staff', pay_rate: job.staff?.pay_rate ?? null } : null)
+        : job.staff,
     }
 
-    setJobs(prevJobs => prevJobs.map(j => (
-      j.id === jobId
-        ? {
-          ...j, scheduled_date: prev.scheduledDate ?? null, start_time: prev.startTime, end_time: prev.endTime, staff_id: prev.staffId,
-          staff: prev.staffId ? { name: prev.staffName, pay_rate: j.staff?.pay_rate ?? null } : null,
-        }
-        : j
-    )))
-    setToast({ message: 'Reschedule undone' })
-  }
+    placeJob(updated)
+    bumpTodayStats(job, updated)
 
-  // Shared by the drag-and-drop flow and the right-click/long-press picker
-  // flow — same DB update, same notification queueing, same toast (with an
-  // Undo button that restores exactly what this call is about to change).
-  async function applyReschedule(
-    job: Job, toDateKey: string, toStartTime: string, toEndTime: string, toStaffId: string | null, toStaffName: string,
-    notifyClientFlag: boolean, notifyStaffFlag: boolean,
-  ) {
-    const fromDateKey = job.scheduled_date?.split('T')[0]
-    const { start: fromStart, end: fromEnd } = jobTimes(job)
-    const fromStaffId = job.staff_id
-    const fromStaffName = job.staff?.name ?? 'Unassigned'
-
-    const { error } = await supabase
-      .from('jobs')
-      .update({ scheduled_date: toDateKey, start_time: toStartTime, end_time: toEndTime, staff_id: toStaffId })
-      .eq('id', job.id)
-
-    if (error) {
-      console.error('[Reschedule] update failed:', error)
-      setToast({ message: 'Failed to reschedule job' })
-      return
+    const { error } = await supabase.from('jobs').update(changed).eq('id', job.id)
+    if (error || isDemoRoute()) {
+      placeJob(job)
+      bumpTodayStats(updated, job)
+      if (error) {
+        console.error('[Schedule] update failed:', error)
+        setToast({ message: 'Couldn’t save that change', error: true })
+      }
+      return false
     }
 
-    setJobs(prev => prev.map(j => (
-      j.id === job.id
-        ? {
-          ...j, scheduled_date: toDateKey, start_time: toStartTime, end_time: toEndTime, staff_id: toStaffId,
-          staff: toStaffId ? { name: toStaffName, pay_rate: j.staff?.pay_rate ?? null } : null,
-        }
-        : j
-    )))
-
-    const nowIso = new Date().toISOString()
+    // Reschedule notifications — same queue the job page uses.
+    const timeChanged = 'scheduled_date' in changed || 'start_time' in changed || 'end_time' in changed
+    const staffChanged = 'staff_id' in changed
     const rows: { client_id: string | null; job_id: string; type: string; recipient: string; status: string; scheduled_for: string }[] = []
-    if (notifyClientFlag && job.client_id) {
+    const nowIso = new Date().toISOString()
+    if (opts.notifyClient !== false && timeChanged && job.client_id) {
       rows.push({ client_id: job.client_id, job_id: job.id, type: 'reschedule', recipient: 'client', status: 'pending', scheduled_for: nowIso })
     }
-    if (notifyStaffFlag && toStaffId) {
+    if (opts.notifyStaff !== false && (timeChanged || staffChanged) && nextStaffId) {
       rows.push({ client_id: null, job_id: job.id, type: 'reschedule', recipient: 'staff', status: 'pending', scheduled_for: nowIso })
     }
     if (rows.length > 0) {
       const { error: notifErr } = await supabase.from('notifications').insert(rows)
-      if (notifErr) {
-        console.error(
-          '[Reschedule] notification insert failed — code:', notifErr.code,
-          '| message:', notifErr.message,
-          '| details:', notifErr.details,
-          '| hint:', notifErr.hint
-        )
-      }
+      if (notifErr) console.error('[Schedule] notification insert failed:', notifErr.code, notifErr.message)
     }
 
-    const jobLabel = job.title ?? job.job_type ?? 'Job'
-    let message: string
-    if (fromDateKey !== toDateKey) message = `${jobLabel} rescheduled to ${formatModalDate(toDateKey)}`
-    else if (fromStart !== toStartTime) message = `${jobLabel} moved to ${formatTime(toStartTime)}`
-    else if ((fromStaffId ?? null) !== toStaffId) message = `${jobLabel} reassigned to ${toStaffName}`
-    else message = `${jobLabel} updated`
-
+    const label = jobLabel(job)
+    let message = opts.message
+    if (!message) {
+      if ('scheduled_date' in changed) message = `${label} moved to ${formatShortDate(changed.scheduled_date!)}${'start_time' in changed ? `, ${compactTime(changed.start_time)}` : ''}`
+      else if ('start_time' in changed) message = `${label} moved to ${compactTime(changed.start_time)}`
+      else if ('end_time' in changed) message = `${label} now ends at ${compactTime(changed.end_time)}`
+      else if ('staff_id' in changed) message = nextStaffId ? `${label} assigned to ${staffNameFor(nextStaffId) ?? 'staff'}` : `${label} unassigned`
+      else if ('status' in changed) message = `${label} marked ${statusLabelFor(changed.status)}`
+      else message = `${label} updated`
+      if ('staff_id' in changed && ('scheduled_date' in changed || 'start_time' in changed)) {
+        message += nextStaffId ? ` · ${staffNameFor(nextStaffId) ?? 'staff'}` : ' · unassigned'
+      }
+    }
     setToast({
       message,
-      undo: () => revertReschedule(job.id, {
-        scheduledDate: fromDateKey, startTime: fromStart, endTime: fromEnd, staffId: fromStaffId, staffName: fromStaffName,
-      }),
+      undo: opts.undoable === false ? undefined : () => {
+        setToast(null)
+        commitPatchRef.current?.(updated, prev, { notifyClient: false, notifyStaff: false, message: 'Change undone', undoable: false })
+      },
     })
+    return true
+  }, [placeJob, bumpTodayStats, staffNameFor])
+  useEffect(() => { commitPatchRef.current = commitPatch }, [commitPatch])
+
+  // ── navigation ─────────────────────────────────────────────────────────────
+  function goPrev() { if (isDayMode) setDayDate(d => addDays(d, -1)); else setWeekStart(d => addDays(d, -7)) }
+  function goNext() { if (isDayMode) setDayDate(d => addDays(d, 1)); else setWeekStart(d => addDays(d, 7)) }
+  function goToday() { setDayDate(startOfDay(new Date())); setWeekStart(getMonday(new Date())) }
+  function jumpToDay(date: Date) { setDayDate(startOfDay(date)); setView('day'); setGridMode('day') }
+  function switchView(v: View) {
+    setView(v)
+    if (v !== 'map') setGridMode(v)
+    else setMapEverShown(true)
+    if (v === 'week') setWeekStart(getMonday(dayDate))
+    if (v === 'day' && (dayDate < weekStart || dayDate >= addDays(weekStart, 7))) setDayDate(weekStart)
   }
 
-  async function handleConfirmPickerReschedule(newDateKey: string, newStartTime: string, newEndTime: string) {
-    if (!contextMenuJob) return
-    setSavingReschedule(true)
-    await applyReschedule(
-      contextMenuJob, newDateKey, newStartTime, newEndTime, contextMenuJob.staff_id, contextMenuJob.staff?.name ?? '',
-      notifyClient, notifyStaff,
-    )
-    setSavingReschedule(false)
-    setContextMenuJob(null)
+  // Keyboard shortcuts — skipped while typing or while any overlay is open.
+  const overlayOpen = !!(pickerJob || addJobPrefill || detailJobId)
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (overlayOpen || e.metaKey || e.ctrlKey || e.altKey) return
+      const t = e.target as HTMLElement | null
+      if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return
+      switch (e.key) {
+        case 'ArrowLeft': goPrev(); break
+        case 'ArrowRight': goNext(); break
+        case 't': case 'T': goToday(); break
+        case 'd': case 'D': switchView('day'); break
+        case 'w': case 'W': switchView('week'); break
+        case 'm': case 'M': switchView('map'); break
+        case 'u': case 'U': setPanelCollapsed(c => !c); break
+        case 'n': case 'N': setAddJobPrefill({ staffId: '', date: isDayMode ? dayKey : todayKey }); break
+        default: return
+      }
+      e.preventDefault()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
+  // ── drag & drop ────────────────────────────────────────────────────────────
+  // Pixels per minute on the Day board, measured from any registered row
+  // track (its width is exactly the 6am–6pm range).
+  function boardPxPerMin(): number | null {
+    const first = geometry.current.rows.values().next().value as HTMLElement | undefined
+    if (!first) return null
+    return first.getBoundingClientRect().width / VIEW_RANGE_MIN
   }
 
-  function handleCancelPickerReschedule() {
-    setContextMenuJob(null)
+  function dropStartFor(job: ScheduleJob, rowId: string, translatedLeft: number): number | null {
+    const el = geometry.current.rows.get(rowId)
+    if (!el) return null
+    const rect = el.getBoundingClientRect()
+    const pxPerMin = rect.width / VIEW_RANGE_MIN
+    const raw = VIEW_START_MIN + (translatedLeft - rect.left) / pxPerMin
+    return clampStart(snapMinutes(raw), jobDurationMin(job))
   }
 
+  function handleDragStart(e: DragStartEvent) {
+    const data = e.active.data.current as JobDragData | undefined
+    if (!data) return
+    hover.suspend(true)
+    const pxPerMin = view === 'day' ? boardPxPerMin() : null
+    const width = pxPerMin ? Math.max(120, jobDurationMin(data.job) * pxPerMin - 2) : 176
+    setActiveDrag({ job: data.job, width })
+  }
+
+  function handleDragMove(e: DragMoveEvent) {
+    if (view !== 'day') return
+    const data = e.active.data.current as JobDragData | undefined
+    const overId = e.over ? String(e.over.id) : null
+    const translated = e.active.rect.current.translated
+    if (!data || !overId || !overId.startsWith('row:') || !translated) { setDropPreview(null); return }
+    const start = dropStartFor(data.job, overId, translated.left)
+    if (start == null) { setDropPreview(null); return }
+    setDropPreview({ rowId: overId, startMin: start, endMin: start + jobDurationMin(data.job), jobId: data.job.id })
+  }
+
+  function finishDrag() {
+    markDragEnded()
+    setDropPreview(null)
+    setActiveDrag(null)
+    hover.suspend(false)
+  }
+
+  function handleDragEnd(e: DragEndEvent) {
+    const data = e.active.data.current as JobDragData | undefined
+    const translated = e.active.rect.current.translated
+    finishDrag()
+    if (!data || !e.over) return
+    const job = data.job
+    const overId = String(e.over.id)
+
+    if (overId === PANEL_DROP_ID) {
+      if (!job.staff_id) return
+      commitPatch(job, { staff_id: null })
+      return
+    }
+
+    const rowStaff = staffIdFromRowId(overId)
+    if (rowStaff) {
+      if (!translated) return
+      const start = dropStartFor(job, overId, translated.left)
+      if (start == null) return
+      const duration = jobDurationMin(job)
+      commitPatch(job, {
+        scheduled_date: dayKey,
+        start_time: minutesToTime(start),
+        end_time: minutesToTime(start + duration),
+        staff_id: rowStaff,
+      })
+      return
+    }
+
+    const cell = parseCellId(overId)
+    if (cell) {
+      commitPatch(job, { scheduled_date: cell.dateKey, staff_id: cell.staffId })
+    }
+  }
+
+  // ── other handlers ─────────────────────────────────────────────────────────
+  const openDetail = useCallback((job: ScheduleJob) => { setDetailSnapshot(job); setDetailJobId(job.id) }, [])
+  const openPicker = useCallback((job: ScheduleJob) => setPickerJob(job), [])
+  const handleResizeEnd = useCallback((job: ScheduleJob, newEndTime: string) => {
+    commitPatch(job, { end_time: newEndTime })
+  }, [commitPatch])
+
+  async function handlePickerConfirm(p: ReschedulePayload) {
+    if (!pickerJob) return
+    setSavingPicker(true)
+    await commitPatch(pickerJob, { scheduled_date: p.dateKey, start_time: p.startTime, end_time: p.endTime, staff_id: p.staffId }, {
+      notifyClient: p.notifyClient, notifyStaff: p.notifyStaff,
+    })
+    setSavingPicker(false)
+    setPickerJob(null)
+  }
+
+  const handleAssign = useCallback(async (job: ScheduleJob, staffId: string | null) => {
+    await commitPatch(job, { staff_id: staffId })
+  }, [commitPatch])
+  const handleStatusChange = useCallback(async (job: ScheduleJob, status: string) => {
+    await commitPatch(job, { status }, { notifyClient: false, notifyStaff: false })
+  }, [commitPatch])
+
+  const onEmptySlotClick = useCallback((staffId: string, startTime: string, endTime: string) => {
+    setAddJobPrefill({ staffId, date: dayKey, startTime, endTime })
+  }, [dayKey])
+  const onEmptyCellClick = useCallback((staffId: string, dateKey: string) => {
+    setAddJobPrefill({ staffId, date: dateKey })
+  }, [])
+
+  // ── header bits ────────────────────────────────────────────────────────────
+  const isViewingToday = isDayMode ? dayKey === todayKey : (todayKey >= weekKey && todayKey < rangeEndKey)
   const headerLabel = isDayMode
     ? dayDate.toLocaleDateString('en-NZ', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })
     : formatWeekRange(weekStart)
+  const rangeWord = isDayMode ? (dayKey === todayKey ? 'Today' : formatShortDate(dayKey)) : 'This week'
+  const ghostStaffName = activeDrag ? staffNameFor(activeDrag.job.staff_id) : null
 
-  const completedTodayCount = jobs.filter(j => j.status === 'complete' && j.scheduled_date?.split('T')[0] === todayKey).length
+  const segment = (v: View, label: string) => (
+    <button
+      key={v}
+      onClick={() => switchView(v)}
+      className={[
+        'px-3.5 py-1.5 text-[12.5px] rounded-md transition-[background-color,color,box-shadow] duration-150',
+        view === v ? 'bg-white text-ink font-semibold shadow-[0_1px_2px_rgba(17,24,39,0.12),0_0_0_1px_rgba(17,24,39,0.05)]' : 'text-ink-muted hover:text-ink font-medium',
+      ].join(' ')}
+    >
+      {label}
+    </button>
+  )
 
   return (
     <div className="h-full flex flex-col">
-      {/* Page header */}
-      <div className="shrink-0 mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <div>
-          <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Schedule</h1>
-          <p className="mt-1 text-xs text-ink-muted">{headerLabel}</p>
+      {/* ── Header ── */}
+      <div className="shrink-0 mb-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-[26px] leading-tight font-bold tracking-tight text-ink">Schedule</h1>
+            <p className="mt-0.5 text-xs text-ink-muted flex items-center gap-2">
+              {headerLabel}
+              {isViewingToday && <span className="text-[10px] font-bold uppercase tracking-[0.08em] px-1.5 py-px rounded bg-accent-soft text-accent">Today</span>}
+            </p>
+          </div>
         </div>
+
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={goToday}
-            className="px-3 py-3 sm:py-1.5 text-sm bg-white border border-line text-ink rounded-lg hover:bg-surface-muted transition-colors"
+            className="px-3 py-1.5 text-[12.5px] font-medium bg-white border border-line text-ink rounded-lg hover:bg-surface-muted hover:border-[#d6d3d1] transition-colors shadow-[0_1px_2px_rgba(17,24,39,0.04)]"
           >
             Today
           </button>
-          <div className="flex items-center rounded-md border border-line overflow-hidden">
-            <button
-              onClick={goPrev}
-              className="p-3.5 sm:p-1.5 text-ink-muted hover:text-ink hover:bg-surface-hover transition-colors border-r border-line"
-              aria-label={isDayMode ? 'Previous day' : 'Previous week'}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="15 18 9 12 15 6" />
-              </svg>
+          <div className="flex items-center rounded-lg border border-line bg-white overflow-hidden shadow-[0_1px_2px_rgba(17,24,39,0.04)]">
+            <button onClick={goPrev} className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors border-r border-line" aria-label={isDayMode ? 'Previous day' : 'Previous week'}>
+              {Icon.chevronLeft}
             </button>
-            <button
-              onClick={goNext}
-              className="p-3.5 sm:p-1.5 text-ink-muted hover:text-ink hover:bg-surface-hover transition-colors"
-              aria-label={isDayMode ? 'Next day' : 'Next week'}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <polyline points="9 18 15 12 9 6" />
-              </svg>
+            <button onClick={goNext} className="p-1.5 text-ink-muted hover:text-ink hover:bg-surface-muted transition-colors" aria-label={isDayMode ? 'Next day' : 'Next week'}>
+              {Icon.chevronRight}
             </button>
           </div>
-          <div className="inline-flex rounded-md border border-line overflow-hidden shrink-0">
-            {(['day', 'week', 'map'] as const).map(v => (
-              <button
-                key={v}
-                onClick={() => { setView(v); if (v !== 'map') setGridMode(v); if (v === 'map') setMapEverShown(true) }}
-                className={[
-                  'px-3.5 py-3 sm:py-2 text-sm transition-colors',
-                  view === v ? 'bg-accent text-white font-semibold' : 'bg-white text-ink-muted hover:bg-surface-muted',
-                ].join(' ')}
-              >
-                {v === 'day' ? 'Day' : v === 'week' ? 'Week' : 'Map View'}
-              </button>
-            ))}
+          <div className="inline-flex items-center gap-0.5 p-0.5 rounded-lg bg-surface-muted border border-line">
+            {segment('day', 'Day')}
+            {segment('week', 'Week')}
+            {segment('map', 'Map')}
           </div>
+          <button
+            onClick={() => setAddJobPrefill({ staffId: '', date: isDayMode ? dayKey : todayKey })}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-[12.5px] font-semibold text-white rounded-lg bg-accent hover:brightness-110 active:brightness-95 transition-[filter] shadow-[0_1px_2px_rgba(17,24,39,0.12)]"
+          >
+            {Icon.plus} New job
+          </button>
         </div>
       </div>
 
-      {/* Stats bar */}
-      <div className="shrink-0 grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-        <StatCard label={isDayMode ? "Today's Jobs" : "This Week's Jobs"} value={String(jobs.length)} />
-        <StatCard label="Staff Scheduled" value={String(staffRows.length)} />
+      {/* ── Stat strip ── */}
+      <div className="shrink-0 grid grid-cols-2 xl:grid-cols-4 gap-3 md:gap-4 mb-4">
+        <StatCard label="Today's Jobs" value={String(todayStats.jobs)} icon={Icon.calendar} sub={todayStats.inProgress > 0 ? `${todayStats.inProgress} in progress` : 'None in progress'} className="!p-4" />
+        <StatCard label="Staff Scheduled" value={String(todayStats.staff)} icon={Icon.crew} sub={`of ${staffList.length} active today`} className="!p-4" />
         <StatCard
           label="Unassigned"
-          value={String(jobs.filter(j => !j.staff_id).length)}
-          danger={hasUnassigned}
+          value={String(unassignedInRange.length)}
+          icon={Icon.inbox}
+          danger={unassignedInRange.length > 0}
+          sub={extraUnassigned.length > 0 ? `${rangeWord.toLowerCase()} · ${extraUnassigned.length} more on other dates` : rangeWord.toLowerCase()}
+          className="!p-4"
         />
-        <StatCard label="Completed Today" value={String(completedTodayCount)} />
+        <StatCard label="Completed Today" value={String(todayStats.completed)} icon={Icon.check} sub={todayStats.jobs > 0 ? `of ${todayStats.jobs} jobs` : 'No jobs today'} className="!p-4" />
       </div>
 
-      {/* Desktop grid / week / map — hidden on mobile in favour of the simple list below */}
+      {/* ── Desktop board ── */}
       <div className="hidden md:flex flex-1 min-h-0 flex-col">
-        {/* Day grid */}
-        <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'day' ? 'flex' : 'none' }}>
-          {loading ? (
-            <GridLoading />
-          ) : loadError ? (
-            <GridError onRetry={handleRetry} />
-          ) : (
-            <DayTimeGrid
-              // Remounts on date navigation so all of the grid's internal
-              // state — staff column pagination, hover card, active drag —
-              // starts clean rather than carrying over stale state (e.g. a
-              // staff page index) from whatever day was viewed before.
-              key={dayKey}
-              jobs={dayJobs}
-              staffRows={staffRows}
-              isToday={dayKey === todayKey}
-              onOpenDetail={setDetailJob}
-              onReschedulePicker={openReschedulePicker}
-              onEmptySlotClick={(staffKey, startTime, endTime) => setAddJobPrefill({
-                staffId: staffKey === UNASSIGNED_KEY ? '' : staffKey, date: dayKey, startTime, endTime,
-              })}
-              onDragReschedule={handleDayDragReschedule}
-            />
-          )}
-        </div>
-
-        {/* Week grid */}
-        <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'week' ? 'flex' : 'none' }}>
-          {loading ? (
-            <GridLoading />
-          ) : loadError ? (
-            <GridError onRetry={handleRetry} />
-          ) : (
-            <WeekGrid
-              jobs={jobs}
-              weekDays={weekDays}
-              todayKey={todayKey}
-              toDateKey={toDateKey}
-              onOpenDetail={setDetailJob}
-              onReschedulePicker={openReschedulePicker}
-              onJumpToDay={jumpToDay}
-              onEmptyDayClick={(dateKeyStr) => setAddJobPrefill({ staffId: '', date: dateKeyStr })}
-              onDragReschedule={handleWeekDragReschedule}
-            />
-          )}
-        </div>
-
-        {/* Map — stays mounted once opened (and across date changes) so
-            Leaflet's CDN script and the map instance are never torn down and
-            reinitialized; markers just update via the jobs prop instead */}
-        {mapEverShown && (
-          <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'map' ? 'flex' : 'none' }}>
-            <MapView jobs={jobs} />
+        {view !== 'map' && (
+          <div className="shrink-0 flex items-center justify-between gap-3 mb-2 px-0.5">
+            <Legend />
+            <div className="flex items-center gap-4 ml-auto">
+              <Toggle checked={hideFree} onChange={setHideFree} label="Hide free staff" />
+              <span className="hidden xl:inline text-[10.5px] text-ink-faint">
+                <kbd className="font-sans font-semibold text-ink-muted">←</kbd> <kbd className="font-sans font-semibold text-ink-muted">→</kbd> navigate · <kbd className="font-sans font-semibold text-ink-muted">T</kbd> today · <kbd className="font-sans font-semibold text-ink-muted">N</kbd> new job
+              </span>
+            </div>
           </div>
         )}
+
+        <DndContext
+          sensors={sensors}
+          collisionDetection={pointerWithin}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+          onDragCancel={finishDrag}
+        >
+          <div className="flex-1 min-h-0 flex gap-3">
+            {view !== 'map' && !loading && !loadError && (
+              <UnassignedPanel
+                inRange={unassignedInRange}
+                upcoming={extraUnassigned}
+                rangeLabel={rangeWord}
+                collapsed={panelCollapsed}
+                onToggle={() => setPanelCollapsed(c => !c)}
+                onOpen={openDetail}
+                onReschedulePicker={openPicker}
+                onAddJob={() => setAddJobPrefill({ staffId: '', date: isDayMode ? dayKey : todayKey })}
+              />
+            )}
+
+            <div className="flex-1 min-w-0 min-h-0 flex flex-col">
+              {view === 'day' && (
+                loading ? <BoardSkeleton /> : loadError ? <BoardError onRetry={() => setRetryTick(t => t + 1)} /> : (
+                  <DayBoard
+                    key={dayKey}
+                    jobs={dayJobs}
+                    staffRows={staffRows}
+                    isToday={dayKey === todayKey}
+                    hideFree={hideFree}
+                    geometry={geometry}
+                    onOpen={openDetail}
+                    onReschedulePicker={openPicker}
+                    onEmptySlotClick={onEmptySlotClick}
+                    onResizeEnd={handleResizeEnd}
+                  />
+                )
+              )}
+              {view === 'week' && (
+                loading ? <BoardSkeleton /> : loadError ? <BoardError onRetry={() => setRetryTick(t => t + 1)} /> : (
+                  <WeekBoard
+                    jobs={jobs}
+                    staffRows={staffRows}
+                    weekDays={weekDays}
+                    todayKey={todayKey}
+                    hideFree={hideFree}
+                    onOpen={openDetail}
+                    onReschedulePicker={openPicker}
+                    onJumpToDay={jumpToDay}
+                    onEmptyCellClick={onEmptyCellClick}
+                  />
+                )
+              )}
+              {/* Map stays mounted once opened so Leaflet's CDN script and map
+                  instance are never torn down; markers update via props. */}
+              {mapEverShown && (
+                <div className="flex-1 min-h-0 flex-col" style={{ display: view === 'map' ? 'flex' : 'none' }}>
+                  <MapView jobs={jobs} />
+                </div>
+              )}
+            </div>
+          </div>
+
+          <DragOverlay dropAnimation={{ duration: 180, easing: 'cubic-bezier(0.2, 0, 0, 1)' }} zIndex={100}>
+            {activeDrag && <DragGhost job={activeDrag.job} width={activeDrag.width} staffName={ghostStaffName} />}
+          </DragOverlay>
+        </DndContext>
       </div>
 
-      {/* Mobile — simple list of today's jobs, sorted by time */}
+      {/* ── Mobile: simple day list ── */}
       <div className="md:hidden flex-1 min-h-0 overflow-y-auto flex flex-col">
+        {view === 'week' && (
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <button onClick={() => setDayDate(d => addDays(d, -1))} className="p-2.5 rounded-lg border border-line bg-white text-ink-muted" aria-label="Previous day">{Icon.chevronLeft}</button>
+            <p className="text-sm font-semibold text-ink">{formatShortDate(dayKey)}</p>
+            <button onClick={() => setDayDate(d => addDays(d, 1))} className="p-2.5 rounded-lg border border-line bg-white text-ink-muted" aria-label="Next day">{Icon.chevronRight}</button>
+          </div>
+        )}
         {loading ? (
-          <GridLoading />
+          <div className="rounded-xl border border-line bg-white p-4 space-y-3 shadow-card">
+            {[...Array(4)].map((_, i) => <div key={i} className="h-12 rounded-lg bg-surface-muted animate-pulse" />)}
+          </div>
         ) : loadError ? (
-          <GridError onRetry={handleRetry} />
+          <BoardError onRetry={() => setRetryTick(t => t + 1)} />
         ) : (
-          <MobileJobList jobs={jobs} todayKey={todayKey} onOpen={setDetailJob} />
+          <MobileDayList
+            jobs={jobs.filter(j => jobDateKey(j) === dayKey)}
+            dateLabel={dayKey === todayKey ? 'Today' : formatShortDate(dayKey)}
+            onOpen={openDetail}
+            onAddJob={() => setAddJobPrefill({ staffId: '', date: dayKey })}
+          />
         )}
       </div>
 
+      {/* ── Overlays ── */}
       {addJobPrefill && (
         <AddJobModal
           clients={clients}
@@ -775,23 +776,29 @@ export default function ScheduleView() {
         />
       )}
 
-      {contextMenuJob && (
+      {pickerJob && (
         <ReschedulePickerModal
-          job={contextMenuJob}
-          showTime={isDayMode}
-          notifyClient={notifyClient}
-          notifyStaff={notifyStaff}
-          onToggleClient={setNotifyClient}
-          onToggleStaff={setNotifyStaff}
-          saving={savingReschedule}
-          onConfirm={handleConfirmPickerReschedule}
-          onCancel={handleCancelPickerReschedule}
+          job={pickerJob}
+          staffList={staffList}
+          saving={savingPicker}
+          onConfirm={handlePickerConfirm}
+          onCancel={() => setPickerJob(null)}
         />
       )}
 
-      {detailJob && <JobDetailPanel job={detailJob} onClose={() => setDetailJob(null)} />}
+      {detailJob && (
+        <JobDetailPanel
+          job={detailJob}
+          staffList={staffList}
+          clients={clients}
+          onClose={() => setDetailJobId(null)}
+          onReschedule={(job) => { setDetailJobId(null); setPickerJob(job) }}
+          onAssign={handleAssign}
+          onStatusChange={handleStatusChange}
+        />
+      )}
 
-      {toast && <Toast message={toast.message} onUndo={toast.undo} />}
+      {toast && <ScheduleToast toast={toast} />}
     </div>
   )
 }

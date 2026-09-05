@@ -11,3 +11,16 @@ export function useScheduleSensors() {
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } })
   )
 }
+
+// A completed drag is followed by a synthetic click on the block that was
+// dragged (mousedown + mouseup on the same element). Blocks check this so a
+// drop never also opens the job detail panel.
+let lastDragEndedAt = 0
+
+export function markDragEnded() {
+  lastDragEndedAt = Date.now()
+}
+
+export function recentlyDragged(): boolean {
+  return Date.now() - lastDragEndedAt < 250
+}
