@@ -15,13 +15,8 @@ export default function LogoutButton() {
     <button
       onClick={handleLogout}
       disabled={pending}
-      className="flex items-center gap-3 w-full px-4 py-2 rounded-lg text-[13.5px] transition-colors duration-150 disabled:opacity-50 text-[var(--sidebar-text)] hover:text-white hover:bg-[var(--sidebar-hover)]"
+      className="flex items-center w-full px-4 py-[7px] rounded-lg text-[14px] font-semibold tracking-[0.02em] transition-colors duration-150 disabled:opacity-50 text-[var(--sidebar-text)] hover:text-white hover:bg-[var(--sidebar-hover)]"
     >
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-        <polyline points="16 17 21 12 16 7" />
-        <line x1="21" y1="12" x2="9" y2="12" />
-      </svg>
       {pending ? 'Signing out…' : 'Sign out'}
     </button>
   )

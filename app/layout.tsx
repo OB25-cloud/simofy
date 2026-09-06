@@ -16,13 +16,10 @@ export const metadata: Metadata = {
     title: 'Runsite',
     statusBarStyle: 'black-translucent',
   },
-  icons: {
-    icon: [
-      { url: '/icon-192x192.png', sizes: '192x192', type: 'image/png' },
-      { url: '/icon-512x512.png', sizes: '512x512', type: 'image/png' },
-    ],
-    apple: '/apple-touch-icon.png',
-  },
+  // Icons come from the file conventions in app/ (favicon.ico, icon.svg,
+  // apple-icon.png). Listing them here as well would override those files,
+  // so this object deliberately has no icons entry. PWA install icons live
+  // in app/manifest.ts.
 }
 
 export const viewport: Viewport = {

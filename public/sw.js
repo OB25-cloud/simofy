@@ -1,4 +1,4 @@
-const CACHE = 'operify-v1'
+const CACHE = 'runsite-v2'
 
 self.addEventListener('install', event => {
   self.skipWaiting()
